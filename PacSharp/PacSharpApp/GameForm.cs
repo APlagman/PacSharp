@@ -14,7 +14,7 @@ namespace PacSharpApp
             InitializeComponent();
         }
 
-        internal void UpdateControls(bool gameStarted)
+        internal void UpdateControls(GameState state)
         {
             throw new NotImplementedException();
         }

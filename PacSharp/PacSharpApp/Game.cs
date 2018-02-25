@@ -17,10 +17,10 @@ namespace PacSharpApp
         
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
-        private bool started = false;
 
-        protected bool Paused { get; private protected set; } = true;
-        protected int Score { get; set; } = 0;
+        internal protected GameState State { get; private protected set; }
+        internal protected bool Paused { get; private protected set; } = true;
+        internal protected int Score { get; set; } = 0;
 
         private protected Game(GameForm owner, Control gameArea)
         {
@@ -38,7 +38,7 @@ namespace PacSharpApp
             Application.Idle += TickWhileIdle;
         }
 
-        internal void InitGameObject(Control control)
+        internal void InitGameObject(PictureBox control)
         {
             GameObjects[control.Name] = new GameObject(control.Size);
             GraphicsHandler.Register(GameObjects[control.Name], control);
@@ -60,21 +60,20 @@ namespace PacSharpApp
             TimeSpan elapsedTime = currentTime - previousTime;
             previousTime = currentTime;
             Update(elapsedTime);
-            GraphicsHandler.Draw(started);
+            GraphicsHandler.Draw(State);
         }
 
         private void Update(TimeSpan elapsedTime)
         {
-            if (Paused)
-                return;
-            CheckCollisions();
             HandleInput();
+            if (PreventUpdate)
+                return;
             UpdateGameObjects(elapsedTime);
             InputHandler.Update();
             LogPostUpdate();
         }
 
-        private protected abstract void CheckCollisions();
+        private protected abstract bool PreventUpdate { get; }
         private protected abstract void HandleInput();
         private protected abstract void UpdateGameObjects(TimeSpan elapsedTime);
         private protected abstract void LogPostUpdate();
@@ -83,16 +82,12 @@ namespace PacSharpApp
         #region Game State / Initialization
         internal void NewGame()
         {
-            if (!started)
-                Start();
-            else
-                Reset();
+            Reset();
             Paused = false;
         }
 
         private void Start()
         {
-            started = true;
             GraphicsHandler.OnNewGame();
             accumulatedTime = TimeSpan.Zero;
             previousTime = DateTime.Now;
@@ -109,14 +104,8 @@ namespace PacSharpApp
             GraphicsHandler.Close();
         }
 
-        internal void Reset()
-        {
-            Score = 0;
-            ResetImpl();
-        }
-
         private protected abstract void UpdateHighScore();
-        private protected abstract void ResetImpl();
+        private protected abstract void Reset();
         #endregion
     }
 }

@@ -19,10 +19,7 @@ namespace PacSharpApp
             : base(owner, gameArea)
         { }
 
-        private protected override void CheckCollisions()
-        {
-            throw new NotImplementedException();
-        }
+        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
         private protected override void HandleInput()
         {
@@ -30,6 +27,11 @@ namespace PacSharpApp
         }
 
         private protected override void UpdateGameObjects(TimeSpan elapsedTime)
+        {
+            CheckCollisions();
+        }
+
+        private void CheckCollisions()
         {
             throw new NotImplementedException();
         }
@@ -39,7 +41,7 @@ namespace PacSharpApp
             throw new NotImplementedException();
         }
 
-        private protected override void ResetImpl()
+        private protected override void Reset()
         {
             throw new NotImplementedException();
         }
