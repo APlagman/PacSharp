@@ -10,7 +10,7 @@ namespace PacSharpApp
 {
     abstract class Game
     {
-        protected private GraphicsId[,] Tiles { get; } = new GraphicsId[36, 28];
+        protected private Tile[,] Tiles { get; } = new Tile[36, 28];
         protected internal InputHandler InputHandler { get; private set; }
         protected private GraphicsHandler GraphicsHandler { get; private set; }
 

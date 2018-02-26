@@ -63,6 +63,16 @@ namespace PacSharpApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Palettes {
+            get {
+                object obj = ResourceManager.GetObject("Palettes", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Sprites {
             get {
                 object obj = ResourceManager.GetObject("Sprites", resourceCulture);

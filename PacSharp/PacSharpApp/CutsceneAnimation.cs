@@ -11,7 +11,9 @@ namespace PacSharpApp
         {
         }
 
-        protected private override void UpdateImpl(GraphicsId[,] tiles)
+        private protected override bool Repeat => false;
+
+        protected private override void UpdateTiles(Tile[,] tiles)
         {
             throw new NotImplementedException();
         }
