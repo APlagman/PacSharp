@@ -5,6 +5,7 @@ namespace PacSharpApp
 {
     enum GraphicsId
     {
+        TileEmpty,
         Tile0Bottom,
         Tile1Bottom,
         Tile2Bottom,

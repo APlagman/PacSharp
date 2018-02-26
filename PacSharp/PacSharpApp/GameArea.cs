@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 /// <summary>
@@ -11,19 +12,22 @@ namespace PacSharpApp
     /// </summary>
     class GameArea
     {
-        private Control control;
+        private Control Control { get; }
 
         internal double Left { get { return 0; } }
-        internal double Right { get { return control.Width; } }
+        internal double Right { get { return Control.Width; } }
         internal double Top { get { return 0; } }
-        internal double Bottom { get { return control.Height; } }
-        internal Vector2 Origin { get { return new Vector2(control.Width / 2d, control.Height / 2d); } }
-        internal Size Size { get { return control.Size; } }
-        internal Point Location { get { return control.Location; } }
+        internal double Bottom { get { return Control.Height; } }
+        internal Vector2 Origin { get { return new Vector2(Control.Width / 2d, Control.Height / 2d); } }
+        internal Size Size { get { return Control.Size; } }
+        internal Point Location { get { return Control.Location; } }
 
-        internal GameArea(Control control)
+        internal GameArea(Control control, PaintEventHandler OnPaint)
         {
-            this.control = control;
+            Control = control;
+            Control.Paint += OnPaint;
         }
+
+        internal void Draw() => Control.Invalidate();
     }
 }

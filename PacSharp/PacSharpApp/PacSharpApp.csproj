@@ -46,9 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation.cs" />
+    <Compile Include="CutsceneAnimation.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="GraphicsId.cs" />
+    <Compile Include="MainMenuAnimation.cs" />
     <Compile Include="PacSharpGame.cs" />
     <Compile Include="GameArea.cs" />
     <Compile Include="GameForm.cs">

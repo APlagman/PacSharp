@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 /// <summary>
@@ -9,11 +10,12 @@ namespace PacSharpApp
 {
     abstract class Game
     {
-        private protected GameArea GameArea { get; private set; }
-        internal protected InputHandler InputHandler { get; private set; }
-        private protected GraphicsHandler GraphicsHandler { get; private set; }
+        protected private GraphicsId[,] Tiles { get; } = new GraphicsId[36, 28];
+        protected internal InputHandler InputHandler { get; private set; }
+        protected private GraphicsHandler GraphicsHandler { get; private set; }
 
-        private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
+        protected private IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
+        protected private bool TilesUpdated { get; set; }
 
         private const int UpMultiplier = -1;
         private const int DownMultiplier = 1;
@@ -21,14 +23,13 @@ namespace PacSharpApp
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
 
-        internal protected GameState State { get; private protected set; }
-        internal protected bool Paused { get; private protected set; } = true;
-        internal protected int Score { get; set; } = 0;
+        protected internal GameState State { get; protected private set; }
+        protected internal bool Paused { get; protected private set; } = true;
+        protected internal int Score { get; set; } = 0;
 
-        private protected Game(GameForm owner, Control gameArea)
+        protected private Game(GameForm owner, Control gameArea)
         {
-            GameArea = new GameArea(gameArea);
-            GraphicsHandler = new GraphicsHandler(owner, GameArea);
+            GraphicsHandler = new GraphicsHandler(owner, gameArea);
             InputHandler = new InputHandler();
         }
 
@@ -63,6 +64,8 @@ namespace PacSharpApp
             TimeSpan elapsedTime = currentTime - previousTime;
             previousTime = currentTime;
             Update(elapsedTime);
+            if (TilesUpdated)
+                GraphicsHandler.CommitTiles(Tiles);
             GraphicsHandler.Draw(State);
         }
 
@@ -71,15 +74,16 @@ namespace PacSharpApp
             HandleInput();
             if (PreventUpdate)
                 return;
-            UpdateGameObjects(elapsedTime);
+            UpdateImpl(elapsedTime);
             InputHandler.Update();
             LogPostUpdate();
         }
 
-        private protected abstract bool PreventUpdate { get; }
-        private protected abstract void HandleInput();
-        private protected abstract void UpdateGameObjects(TimeSpan elapsedTime);
-        private protected abstract void LogPostUpdate();
+        protected private abstract bool PreventUpdate { get; }
+
+        protected private abstract void HandleInput();
+        protected private abstract void UpdateImpl(TimeSpan elapsedTime);
+        protected private abstract void LogPostUpdate();
         #endregion
 
         #region Game State / Initialization
@@ -107,8 +111,8 @@ namespace PacSharpApp
             GraphicsHandler.Close();
         }
 
-        private protected abstract void UpdateHighScore();
-        private protected abstract void Reset();
+        protected private abstract void UpdateHighScore();
+        protected internal abstract void Reset();
         #endregion
     }
 }

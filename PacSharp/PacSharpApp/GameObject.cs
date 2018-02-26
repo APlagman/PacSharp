@@ -51,9 +51,11 @@ namespace PacSharpApp
 
     static class ControlExtensions
     {
-        public static void UpdateLocation(this Control self, GameObject obj, GameArea gameArea)
+        public static bool UpdateLocation(this Control self, GameObject obj, GameArea gameArea)
         {
+            var temp = self.Location;
             self.Location = obj.ScreenPosition(gameArea);
+            return temp == self.Location;
         }
     }
 }

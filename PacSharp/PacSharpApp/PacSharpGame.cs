@@ -15,38 +15,84 @@ namespace PacSharpApp
         private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
 
+        private Animation animation;
+
         internal PacSharpGame(GameForm owner, Control gameArea)
             : base(owner, gameArea)
         { }
 
-        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
+        protected private override bool PreventUpdate => GameState.Playing == State && Paused;
 
-        private protected override void HandleInput()
+        protected private override void HandleInput()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        private protected override void UpdateGameObjects(TimeSpan elapsedTime)
+        protected private override void UpdateImpl(TimeSpan elapsedTime)
         {
-            CheckCollisions();
+            if (State == GameState.Cutscene || State == GameState.Menu)
+                UpdateAnimation(elapsedTime);
+            else
+            {
+                UpdateTiles();
+                CheckCollisions();
+            }
+        }
+
+        private void UpdateAnimation(TimeSpan elapsedTime)
+        {
+            if (animation == null)
+                StartAnimation();
+            if (animation.Update(elapsedTime, Tiles))
+                TilesUpdated = true;
+        }
+
+        private void StartAnimation()
+        {
+            switch (State)
+            {
+                case GameState.Menu:
+                    animation = new MainMenuAnimation();
+                    break;
+                case GameState.Cutscene:
+                    animation = new CutsceneAnimation();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateTiles()
+        {
+            TilesUpdated = false;
+            switch (State)
+            {   
+                case GameState.Highscores:
+                    break;
+                case GameState.Playing:
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void CheckCollisions()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        private protected override void UpdateHighScore()
+        protected private override void UpdateHighScore()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        private protected override void Reset()
+        protected internal override void Reset()
         {
-            throw new NotImplementedException();
+            State = GameState.Menu;
+            Paused = false;
         }
         
-        private protected override void LogPostUpdate()
+        protected private override void LogPostUpdate()
         {
 #pragma warning disable CS0162 // Unreachable code detected
 #if !DEBUG
@@ -56,8 +102,8 @@ namespace PacSharpApp
                 return;
             Debug.WriteLine(
 $@"Game Area:
-    Location: {GameArea.Location}
-    Size: {GameArea.Size}");
+    Location: {GraphicsHandler.GameArea.Location}
+    Size: {GraphicsHandler.GameArea.Size}");
             Debug.WriteLine("");
 #pragma warning restore CS0162 // Unreachable code detected
         }

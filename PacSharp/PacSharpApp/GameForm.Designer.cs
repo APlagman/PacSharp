@@ -37,15 +37,16 @@
             this.gameArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gameArea.Location = new System.Drawing.Point(0, 0);
             this.gameArea.Name = "gameArea";
-            this.gameArea.Size = new System.Drawing.Size(224, 288);
+            this.gameArea.Size = new System.Drawing.Size(218, 289);
             this.gameArea.TabIndex = 0;
             // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(224, 288);
+            this.ClientSize = new System.Drawing.Size(218, 289);
             this.Controls.Add(this.gameArea);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "GameForm";
