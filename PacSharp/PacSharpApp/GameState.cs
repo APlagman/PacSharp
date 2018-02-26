@@ -1,4 +1,7 @@
-﻿namespace PacSharpApp
+﻿/// <summary>
+/// Alex Plagman
+/// </summary>
+namespace PacSharpApp
 {
     enum GameState
     {

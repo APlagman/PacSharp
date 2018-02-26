@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp
 {
     abstract class Game

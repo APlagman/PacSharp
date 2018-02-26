@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp
 {
     public partial class GameForm : Form
