@@ -10,12 +10,12 @@ namespace PacSharpApp
 {
     abstract class Game
     {
-        protected private Tile[,] Tiles { get; } = new Tile[36, 28];
+        private protected Tile[,] Tiles { get; } = new Tile[36, 28];
         protected internal InputHandler InputHandler { get; private set; }
-        protected private GraphicsHandler GraphicsHandler { get; private set; }
+        private protected GraphicsHandler GraphicsHandler { get; private set; }
 
-        protected private IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
-        protected private bool TilesUpdated { get; set; }
+        private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
+        private protected bool TilesUpdated { get; set; }
 
         private const int UpMultiplier = -1;
         private const int DownMultiplier = 1;
@@ -23,11 +23,11 @@ namespace PacSharpApp
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
 
-        protected internal GameState State { get; protected private set; }
-        protected internal bool Paused { get; protected private set; } = true;
+        protected internal GameState State { get; private protected set; }
+        protected internal bool Paused { get; private protected set; } = true;
         protected internal int Score { get; set; } = 0;
 
-        protected private Game(GameForm owner, Control gameArea)
+        private protected Game(GameForm owner, Control gameArea)
         {
             GraphicsHandler = new GraphicsHandler(owner, gameArea);
             InputHandler = new InputHandler();
@@ -36,16 +36,17 @@ namespace PacSharpApp
         #region Initialization
         internal void Init()
         {
+            previousTime = DateTime.Now;
 #if DEBUG
             Properties.Settings.Default.Reset();
 #endif
             Application.Idle += TickWhileIdle;
         }
 
-        internal void InitGameObject(PictureBox control)
+        private protected void InitGameObject(string name, Image source)
         {
-            GameObjects[control.Name] = new GameObject(control.Size);
-            GraphicsHandler.Register(GameObjects[control.Name], control);
+            GameObjects.Add(name, new GameObject(source.Size));
+            GraphicsHandler.Register(GameObjects[name], source);
         }
 
         void TickWhileIdle(object sender, EventArgs e)
@@ -79,11 +80,11 @@ namespace PacSharpApp
             LogPostUpdate();
         }
 
-        protected private abstract bool PreventUpdate { get; }
+        private protected abstract bool PreventUpdate { get; }
 
-        protected private abstract void HandleInput();
-        protected private abstract void UpdateImpl(TimeSpan elapsedTime);
-        protected private abstract void LogPostUpdate();
+        private protected abstract void HandleInput();
+        private protected abstract void UpdateImpl(TimeSpan elapsedTime);
+        private protected abstract void LogPostUpdate();
         #endregion
 
         #region Game State / Initialization
@@ -111,7 +112,7 @@ namespace PacSharpApp
             GraphicsHandler.Close();
         }
 
-        protected private abstract void UpdateHighScore();
+        private protected abstract void UpdateHighScore();
         protected internal abstract void Reset();
         #endregion
     }

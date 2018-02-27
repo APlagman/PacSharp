@@ -912,67 +912,62 @@ namespace PacSharpApp
         internal GameArea GameArea { get; }
 
         private GameForm ui;
-        private Dictionary<GameObject, PictureBox> gameObjectMap = new Dictionary<GameObject, PictureBox>();
-        private Image screenImage = new Bitmap(1, 1);
-        private bool needsRedrawn = false;
+        private IDictionary<GameObject, Image> gameObjectMap = new Dictionary<GameObject, Image>();
+        private Image tileImage;
+        private Image screenImage;
 
         internal GraphicsHandler(GameForm ui, Control gameArea)
         {
             this.ui = ui;
             GameArea = new GameArea(gameArea, OnPaint);
+            screenImage = new Bitmap(GridWidth * TileWidth, GridHeight * TileWidth);
+            tileImage = new Bitmap(GridWidth * TileWidth, GridHeight * TileWidth);
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
             if (sender is Control control)
-            {
-                e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
                 e.Graphics.DrawImage(screenImage, new Rectangle(control.Location, control.Size));
-            }
         }
 
         internal void CommitTiles(Tile[,] tiles)
         {
-            screenImage = new Bitmap(GridWidth * TileWidth, GridHeight * TileWidth);
-            Graphics renderedTiles = Graphics.FromImage(screenImage);
-            for (int row = 0; row < tiles.GetLength(0); ++row)
-                for (int col = 0; col < tiles.GetLength(1); ++col)
-                {
-                    Bitmap source = Resources.Tiles.Clone(GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
-                    if (tiles[row, col].Palette != PaletteID.Empty)
-                        SwapColors(source, tiles[row, col].Palette);
-                    renderedTiles.DrawImage(source, new Point(col * TileWidth, row * TileWidth));
-                }
-            needsRedrawn = true;
+            using (var tileGraphics = Graphics.FromImage(tileImage))
+            {
+                tileGraphics.Clear(Color.Black);
+                for (int row = 0; row < tiles.GetLength(0); ++row)
+                    for (int col = 0; col < tiles.GetLength(1); ++col)
+                    {
+                        Bitmap source = Resources.Tiles.Clone(GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
+                        if (tiles[row, col].Palette != PaletteID.Empty)
+                            SwapColors(source, tiles[row, col].Palette);
+                        tileGraphics.DrawImage(source, new Point(col * TileWidth, row * TileWidth));
+                    }
+            }
         }
 
         internal void UpdateGraphic(GameObject obj, GraphicsIDs id, Bitmap source)
         {
-            gameObjectMap[obj].Image = source.Clone(GetGraphicLocation(id), source.PixelFormat);
+            gameObjectMap[obj] = source.Clone(GetGraphicLocation(id), source.PixelFormat);
         }
 
         internal void Draw(GameState state)
         {
-            foreach (var goPair in gameObjectMap)
-                UpdateGameObjectGraphics(goPair);
-            if (needsRedrawn)
-                GameArea.Draw();
-        }
-
-        private void UpdateGameObjectGraphics(KeyValuePair<GameObject, PictureBox> goPair)
-        {
-            Control graphic = goPair.Value;
-            if (graphic.InvokeRequired)
-                graphic.Invoke((MethodInvoker)delegate { UpdateGameObjectGraphics(goPair); });
-            else
+            using (var screenGraphics = Graphics.FromImage(screenImage))
             {
-                GameObject obj = goPair.Key;
-                if (graphic.UpdateLocation(obj, GameArea))
-                    needsRedrawn = true;
+                screenGraphics.Clear(Color.Black);
+                screenGraphics.DrawImage(tileImage, Point.Empty);
+                //foreach (var pair in gameObjectMap)
+                //{
+                //    GameObject obj = pair.Key;
+                //    Point location = obj.ScreenPosition(GameArea);
+                //    screenGraphics.DrawImage(pair.Value, location);
+                //}
             }
+            GameArea.CommitDraw();
         }
 
-        internal void Register(GameObject obj, PictureBox graphics)
+        internal void Register(GameObject obj, Image graphics)
         {
             gameObjectMap.Add(obj, graphics);
         }

@@ -28,6 +28,6 @@ namespace PacSharpApp
             Control.Paint += OnPaint;
         }
 
-        internal void Draw() => Control.Invalidate();
+        internal void CommitDraw() => Control.Invalidate();
     }
 }

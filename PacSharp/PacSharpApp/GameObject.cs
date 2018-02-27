@@ -48,14 +48,4 @@ namespace PacSharpApp
             Position.Y = Position.Y.Clamp(boundingBox.Location.Y + Size.Height / 2d, boundingBox.Location.Y + boundingBox.Size.Height - Size.Height / 2d);
         }
     }
-
-    static class ControlExtensions
-    {
-        public static bool UpdateLocation(this Control self, GameObject obj, GameArea gameArea)
-        {
-            var temp = self.Location;
-            self.Location = obj.ScreenPosition(gameArea);
-            return temp == self.Location;
-        }
-    }
 }

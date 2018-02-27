@@ -21,29 +21,26 @@ namespace PacSharpApp
             : base(owner, gameArea)
         { }
 
-        protected private override bool PreventUpdate => GameState.Playing == State && Paused;
+        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
-        protected private override void HandleInput()
+        private protected override void HandleInput()
         {
             //throw new NotImplementedException();
         }
 
-        protected private override void UpdateImpl(TimeSpan elapsedTime)
+        private protected override void UpdateImpl(TimeSpan elapsedTime)
         {
-            if (State == GameState.Cutscene || State == GameState.Menu)
-                UpdateAnimation(elapsedTime);
-            else
-            {
-                UpdateTiles();
-                CheckCollisions();
-            }
+            TilesUpdated = false;
+            UpdateAnimation(elapsedTime);
+            UpdateTiles();
+            CheckCollisions();
         }
 
         private void UpdateAnimation(TimeSpan elapsedTime)
         {
             if (animation == null)
                 StartAnimation();
-            if (animation.Update(elapsedTime, Tiles))
+            if (animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler))
                 TilesUpdated = true;
         }
 
@@ -64,7 +61,7 @@ namespace PacSharpApp
 
         private void UpdateTiles()
         {
-            TilesUpdated = false;
+            bool updated = false;
             switch (State)
             {   
                 case GameState.Highscores:
@@ -74,6 +71,8 @@ namespace PacSharpApp
                 default:
                     break;
             }
+            if (updated)
+                TilesUpdated = true;
         }
 
         private void CheckCollisions()
@@ -81,7 +80,7 @@ namespace PacSharpApp
             //throw new NotImplementedException();
         }
 
-        protected private override void UpdateHighScore()
+        private protected override void UpdateHighScore()
         {
             //throw new NotImplementedException();
         }
@@ -92,7 +91,7 @@ namespace PacSharpApp
             Paused = false;
         }
         
-        protected private override void LogPostUpdate()
+        private protected override void LogPostUpdate()
         {
 #pragma warning disable CS0162 // Unreachable code detected
 #if !DEBUG

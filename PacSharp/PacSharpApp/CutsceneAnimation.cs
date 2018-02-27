@@ -13,7 +13,7 @@ namespace PacSharpApp
 
         private protected override bool Repeat => false;
 
-        protected private override void UpdateTiles(Tile[,] tiles)
+        private protected override void UpdateTiles(Tile[,] tiles)
         {
             throw new NotImplementedException();
         }
