@@ -17,6 +17,7 @@ namespace PacSharpApp
     /// </summary>
     class GraphicsHandler
     {
+        internal static readonly Size SpriteSize = new Size(SpriteWidth, SpriteWidth);
         internal const int GridWidth = 28;
         internal const int GridHeight = 36;
         internal const int TileWidth = 8;
@@ -81,825 +82,825 @@ namespace PacSharpApp
         }
 
 
-        private static Rectangle GetGraphicLocation(GraphicsIDs id)
+        private static Rectangle GetGraphicLocation(GraphicsID id)
         {
             Point location = new Point();
             int width;
             switch (id)
             {
-                case GraphicsIDs.TileEmpty:
+                case GraphicsID.TileEmpty:
                     location = new Point(15, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile0Bottom:
+                case GraphicsID.Tile0Bottom:
                     location = new Point(0, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile1Bottom:
+                case GraphicsID.Tile1Bottom:
                     location = new Point(1, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile2Bottom:
+                case GraphicsID.Tile2Bottom:
                     location = new Point(2, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile3Bottom:
+                case GraphicsID.Tile3Bottom:
                     location = new Point(3, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile4Bottom:
+                case GraphicsID.Tile4Bottom:
                     location = new Point(4, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile5Bottom:
+                case GraphicsID.Tile5Bottom:
                     location = new Point(5, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile6Bottom:
+                case GraphicsID.Tile6Bottom:
                     location = new Point(6, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile7Bottom:
+                case GraphicsID.Tile7Bottom:
                     location = new Point(7, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile8Bottom:
+                case GraphicsID.Tile8Bottom:
                     location = new Point(8, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile9Bottom:
+                case GraphicsID.Tile9Bottom:
                     location = new Point(9, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileABottom:
+                case GraphicsID.TileABottom:
                     location = new Point(10, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileBBottom:
+                case GraphicsID.TileBBottom:
                     location = new Point(11, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCBottom:
+                case GraphicsID.TileCBottom:
                     location = new Point(12, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileDBottom:
+                case GraphicsID.TileDBottom:
                     location = new Point(13, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileEBottom:
+                case GraphicsID.TileEBottom:
                     location = new Point(14, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileFBottom:
+                case GraphicsID.TileFBottom:
                     location = new Point(15, 0);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePelletSmall:
+                case GraphicsID.TilePelletSmall:
                     location = new Point(0, 1);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePelletMedium:
+                case GraphicsID.TilePelletMedium:
                     location = new Point(2, 1);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePelletLarge:
+                case GraphicsID.TilePelletLarge:
                     location = new Point(4, 1);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePeriod:
+                case GraphicsID.TilePeriod:
                     location = new Point(5, 2);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileQuotationMark:
+                case GraphicsID.TileQuotationMark:
                     location = new Point(6, 2);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile0:
+                case GraphicsID.Tile0:
                     location = new Point(0, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile1:
+                case GraphicsID.Tile1:
                     location = new Point(1, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile2:
+                case GraphicsID.Tile2:
                     location = new Point(2, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile3:
+                case GraphicsID.Tile3:
                     location = new Point(3, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile4:
+                case GraphicsID.Tile4:
                     location = new Point(4, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile5:
+                case GraphicsID.Tile5:
                     location = new Point(5, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile6:
+                case GraphicsID.Tile6:
                     location = new Point(6, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile7:
+                case GraphicsID.Tile7:
                     location = new Point(7, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile8:
+                case GraphicsID.Tile8:
                     location = new Point(8, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.Tile9:
+                case GraphicsID.Tile9:
                     location = new Point(9, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileForwardSlash:
+                case GraphicsID.TileForwardSlash:
                     location = new Point(10, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileHyphen:
+                case GraphicsID.TileHyphen:
                     location = new Point(11, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCornerTopRight:
+                case GraphicsID.TileCornerTopRight:
                     location = new Point(12, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCornerBottomRight:
+                case GraphicsID.TileCornerBottomRight:
                     location = new Point(13, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCornerTopLeft:
+                case GraphicsID.TileCornerTopLeft:
                     location = new Point(14, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCornerBottomLeft:
+                case GraphicsID.TileCornerBottomLeft:
                     location = new Point(15, 3);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileA:
+                case GraphicsID.TileA:
                     location = new Point(1, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileB:
+                case GraphicsID.TileB:
                     location = new Point(2, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileC:
+                case GraphicsID.TileC:
                     location = new Point(3, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileD:
+                case GraphicsID.TileD:
                     location = new Point(4, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileE:
+                case GraphicsID.TileE:
                     location = new Point(5, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileF:
+                case GraphicsID.TileF:
                     location = new Point(6, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileG:
+                case GraphicsID.TileG:
                     location = new Point(7, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileH:
+                case GraphicsID.TileH:
                     location = new Point(8, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileI:
+                case GraphicsID.TileI:
                     location = new Point(9, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileJ:
+                case GraphicsID.TileJ:
                     location = new Point(10, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileK:
+                case GraphicsID.TileK:
                     location = new Point(11, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileL:
+                case GraphicsID.TileL:
                     location = new Point(12, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileM:
+                case GraphicsID.TileM:
                     location = new Point(13, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileN:
+                case GraphicsID.TileN:
                     location = new Point(14, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileO:
+                case GraphicsID.TileO:
                     location = new Point(15, 4);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileP:
+                case GraphicsID.TileP:
                     location = new Point(0, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileQ:
+                case GraphicsID.TileQ:
                     location = new Point(1, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileR:
+                case GraphicsID.TileR:
                     location = new Point(2, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileS:
+                case GraphicsID.TileS:
                     location = new Point(3, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileT:
+                case GraphicsID.TileT:
                     location = new Point(4, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileU:
+                case GraphicsID.TileU:
                     location = new Point(5, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileV:
+                case GraphicsID.TileV:
                     location = new Point(6, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileW:
+                case GraphicsID.TileW:
                     location = new Point(7, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileX:
+                case GraphicsID.TileX:
                     location = new Point(8, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileY:
+                case GraphicsID.TileY:
                     location = new Point(9, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileZ:
+                case GraphicsID.TileZ:
                     location = new Point(10, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileExclamationMark:
+                case GraphicsID.TileExclamationMark:
                     location = new Point(11, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCopyright:
+                case GraphicsID.TileCopyright:
                     location = new Point(12, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePts0:
+                case GraphicsID.TilePts0:
                     location = new Point(13, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePts1:
+                case GraphicsID.TilePts1:
                     location = new Point(14, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePts2:
+                case GraphicsID.TilePts2:
                     location = new Point(15, 5);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints10:
+                case GraphicsID.TilePoints10:
                     location = new Point(1, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints30:
+                case GraphicsID.TilePoints30:
                     location = new Point(2, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints50:
+                case GraphicsID.TilePoints50:
                     location = new Point(3, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints70:
+                case GraphicsID.TilePoints70:
                     location = new Point(4, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints00End:
+                case GraphicsID.TilePoints00End:
                     location = new Point(5, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints10LeftAligned:
+                case GraphicsID.TilePoints10LeftAligned:
                     location = new Point(6, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints20Left:
+                case GraphicsID.TilePoints20Left:
                     location = new Point(7, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints20Right:
+                case GraphicsID.TilePoints20Right:
                     location = new Point(8, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints30Left:
+                case GraphicsID.TilePoints30Left:
                     location = new Point(9, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints30Right:
+                case GraphicsID.TilePoints30Right:
                     location = new Point(10, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints50Left:
+                case GraphicsID.TilePoints50Left:
                     location = new Point(11, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints50Right:
+                case GraphicsID.TilePoints50Right:
                     location = new Point(12, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints00Left:
+                case GraphicsID.TilePoints00Left:
                     location = new Point(13, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TilePoints00Right:
+                case GraphicsID.TilePoints00Right:
                     location = new Point(14, 8);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCherryTopRight:
+                case GraphicsID.TileCherryTopRight:
                     location = new Point(0, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCherryTopLeft:
+                case GraphicsID.TileCherryTopLeft:
                     location = new Point(1, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCherryBottomRight:
+                case GraphicsID.TileCherryBottomRight:
                     location = new Point(2, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileCherryBottomLeft:
+                case GraphicsID.TileCherryBottomLeft:
                     location = new Point(3, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileStrawberryTopRight:
+                case GraphicsID.TileStrawberryTopRight:
                     location = new Point(4, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileStrawberryTopLeft:
+                case GraphicsID.TileStrawberryTopLeft:
                     location = new Point(5, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileStrawberryBottomRight:
+                case GraphicsID.TileStrawberryBottomRight:
                     location = new Point(6, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileStrawberryBottomLeft:
+                case GraphicsID.TileStrawberryBottomLeft:
                     location = new Point(7, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileOrangeTopRight:
+                case GraphicsID.TileOrangeTopRight:
                     location = new Point(8, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileOrangeTopLeft:
+                case GraphicsID.TileOrangeTopLeft:
                     location = new Point(9, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileOrangeBottomRight:
+                case GraphicsID.TileOrangeBottomRight:
                     location = new Point(10, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileOrangeBottomLeft:
+                case GraphicsID.TileOrangeBottomLeft:
                     location = new Point(11, 9);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileAppleTopRight:
+                case GraphicsID.TileAppleTopRight:
                     location = new Point(0, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileAppleTopLeft:
+                case GraphicsID.TileAppleTopLeft:
                     location = new Point(1, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileAppleBottomRight:
+                case GraphicsID.TileAppleBottomRight:
                     location = new Point(2, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileAppleBottomLeft:
+                case GraphicsID.TileAppleBottomLeft:
                     location = new Point(3, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMelonTopRight:
+                case GraphicsID.TileMelonTopRight:
                     location = new Point(4, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMelonTopLeft:
+                case GraphicsID.TileMelonTopLeft:
                     location = new Point(5, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMelonBottomRight:
+                case GraphicsID.TileMelonBottomRight:
                     location = new Point(6, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMelonBottomLeft:
+                case GraphicsID.TileMelonBottomLeft:
                     location = new Point(7, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGalaxianTopRight:
+                case GraphicsID.TileGalaxianTopRight:
                     location = new Point(8, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGalaxianTopLeft:
+                case GraphicsID.TileGalaxianTopLeft:
                     location = new Point(9, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGalaxianBottomRight:
+                case GraphicsID.TileGalaxianBottomRight:
                     location = new Point(10, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGalaxianBottomLeft:
+                case GraphicsID.TileGalaxianBottomLeft:
                     location = new Point(11, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileKeyTopRight:
+                case GraphicsID.TileKeyTopRight:
                     location = new Point(12, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileKeyTopLeft:
+                case GraphicsID.TileKeyTopLeft:
                     location = new Point(13, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileKeyBottomRight:
+                case GraphicsID.TileKeyBottomRight:
                     location = new Point(14, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileKeyBottomLeft:
+                case GraphicsID.TileKeyBottomLeft:
                     location = new Point(15, 10);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGhostTopLeft:
+                case GraphicsID.TileGhostTopLeft:
                     location = new Point(0, 11);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGhostTopRight:
+                case GraphicsID.TileGhostTopRight:
                     location = new Point(1, 11);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGhostMiddleLeft:
+                case GraphicsID.TileGhostMiddleLeft:
                     location = new Point(2, 11);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGhostMiddleRight:
+                case GraphicsID.TileGhostMiddleRight:
                     location = new Point(3, 11);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGhostBottomLeft:
+                case GraphicsID.TileGhostBottomLeft:
                     location = new Point(4, 11);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileGhostBottomRight:
+                case GraphicsID.TileGhostBottomRight:
                     location = new Point(5, 11);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowTopRight:
+                case GraphicsID.TileMazeElbowTopRight:
                     location = new Point(0, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowTopLeft:
+                case GraphicsID.TileMazeElbowTopLeft:
                     location = new Point(1, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeRight:
+                case GraphicsID.TileMazeRight:
                     location = new Point(2, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeLeft:
+                case GraphicsID.TileMazeLeft:
                     location = new Point(3, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowBottomRight:
+                case GraphicsID.TileMazeElbowBottomRight:
                     location = new Point(4, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowBottomLeft:
+                case GraphicsID.TileMazeElbowBottomLeft:
                     location = new Point(5, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowSquareBottomRight:
+                case GraphicsID.TileMazeElbowSquareBottomRight:
                     location = new Point(6, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowSquareBottomLeft:
+                case GraphicsID.TileMazeElbowSquareBottomLeft:
                     location = new Point(7, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowSquareTopRight:
+                case GraphicsID.TileMazeElbowSquareTopRight:
                     location = new Point(8, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeElbowSquareTopLeft:
+                case GraphicsID.TileMazeElbowSquareTopLeft:
                     location = new Point(9, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeTop:
+                case GraphicsID.TileMazeTop:
                     location = new Point(10, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeBottom:
+                case GraphicsID.TileMazeBottom:
                     location = new Point(12, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidBottom:
+                case GraphicsID.TileMazeSolidBottom:
                     location = new Point(14, 13);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCurvedBottomRight:
+                case GraphicsID.TileMazeCurvedBottomRight:
                     location = new Point(0, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCurvedBottomLeft:
+                case GraphicsID.TileMazeCurvedBottomLeft:
                     location = new Point(1, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCurvedTopRight:
+                case GraphicsID.TileMazeCurvedTopRight:
                     location = new Point(2, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCurvedTopLeft:
+                case GraphicsID.TileMazeCurvedTopLeft:
                     location = new Point(3, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidTop:
+                case GraphicsID.TileMazeSolidTop:
                     location = new Point(4, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerTopRight:
+                case GraphicsID.TileMazeCornerTopRight:
                     location = new Point(6, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerTopLeft:
+                case GraphicsID.TileMazeCornerTopLeft:
                     location = new Point(7, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidLeft:
+                case GraphicsID.TileMazeSolidLeft:
                     location = new Point(8, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidRight:
+                case GraphicsID.TileMazeSolidRight:
                     location = new Point(9, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerBottomRight:
+                case GraphicsID.TileMazeCornerBottomRight:
                     location = new Point(10, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerBottomLeft:
+                case GraphicsID.TileMazeCornerBottomLeft:
                     location = new Point(11, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerSquareTopRight:
+                case GraphicsID.TileMazeCornerSquareTopRight:
                     location = new Point(12, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerSquareTopLeft:
+                case GraphicsID.TileMazeCornerSquareTopLeft:
                     location = new Point(13, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerSquareBottomRight:
+                case GraphicsID.TileMazeCornerSquareBottomRight:
                     location = new Point(14, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeCornerSquareBottomLeft:
+                case GraphicsID.TileMazeCornerSquareBottomLeft:
                     location = new Point(15, 14);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeBottomLeft:
+                case GraphicsID.TileMazeBottomLeft:
                     location = new Point(2, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeBottomRight:
+                case GraphicsID.TileMazeBottomRight:
                     location = new Point(3, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidElbowSquareTopLeft:
+                case GraphicsID.TileMazeSolidElbowSquareTopLeft:
                     location = new Point(4, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidElbowSquareTopRight:
+                case GraphicsID.TileMazeSolidElbowSquareTopRight:
                     location = new Point(5, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidElbowSquareBottomLeft:
+                case GraphicsID.TileMazeSolidElbowSquareBottomLeft:
                     location = new Point(10, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.TileMazeSolidElbowSquareBottomRight:
+                case GraphicsID.TileMazeSolidElbowSquareBottomRight:
                     location = new Point(11, 15);
                     width = TileWidth;
                     break;
-                case GraphicsIDs.SpriteCherry:
+                case GraphicsID.SpriteCherry:
                     location = new Point(0, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteStrawberry:
+                case GraphicsID.SpriteStrawberry:
                     location = new Point(1, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteOrange:
+                case GraphicsID.SpriteOrange:
                     location = new Point(2, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteApple:
+                case GraphicsID.SpriteApple:
                     location = new Point(3, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteMelon:
+                case GraphicsID.SpriteMelon:
                     location = new Point(5, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGalaxian:
+                case GraphicsID.SpriteGalaxian:
                     location = new Point(6, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteKey:
+                case GraphicsID.SpriteKey:
                     location = new Point(7, 0);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostSpeckedLeft0:
+                case GraphicsID.SpriteGhostSpeckedLeft0:
                     location = new Point(0, 1);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostSpeckedLeft1:
+                case GraphicsID.SpriteGhostSpeckedLeft1:
                     location = new Point(1, 1);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanTopLeftOpen:
+                case GraphicsID.SpriteLargePacmanTopLeftOpen:
                     location = new Point(0, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanTopRightOpen:
+                case GraphicsID.SpriteLargePacmanTopRightOpen:
                     location = new Point(1, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanBottomLeftOpen:
+                case GraphicsID.SpriteLargePacmanBottomLeftOpen:
                     location = new Point(2, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanBottomRightOpen:
+                case GraphicsID.SpriteLargePacmanBottomRightOpen:
                     location = new Point(3, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanTopLeftMiddle:
+                case GraphicsID.SpriteLargePacmanTopLeftMiddle:
                     location = new Point(4, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanTopRightMiddle:
+                case GraphicsID.SpriteLargePacmanTopRightMiddle:
                     location = new Point(5, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanBottomLeftMiddle:
+                case GraphicsID.SpriteLargePacmanBottomLeftMiddle:
                     location = new Point(6, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanBottomRightMiddle:
+                case GraphicsID.SpriteLargePacmanBottomRightMiddle:
                     location = new Point(7, 2);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanTopLeftClosed:
+                case GraphicsID.SpriteLargePacmanTopLeftClosed:
                     location = new Point(0, 3);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanTopRightClosed:
+                case GraphicsID.SpriteLargePacmanTopRightClosed:
                     location = new Point(1, 3);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanBottomLeftClosed:
+                case GraphicsID.SpriteLargePacmanBottomLeftClosed:
                     location = new Point(2, 3);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteLargePacmanBottomRightClosed:
+                case GraphicsID.SpriteLargePacmanBottomRightClosed:
                     location = new Point(3, 3);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostAfraid0:
+                case GraphicsID.SpriteGhostAfraid0:
                     location = new Point(4, 3);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostAfraid1:
+                case GraphicsID.SpriteGhostAfraid1:
                     location = new Point(5, 3);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostRight0:
+                case GraphicsID.SpriteGhostRight0:
                     location = new Point(0, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostRight1:
+                case GraphicsID.SpriteGhostRight1:
                     location = new Point(1, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostDown0:
+                case GraphicsID.SpriteGhostDown0:
                     location = new Point(2, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostDown1:
+                case GraphicsID.SpriteGhostDown1:
                     location = new Point(3, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostLeft0:
+                case GraphicsID.SpriteGhostLeft0:
                     location = new Point(4, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostLeft1:
+                case GraphicsID.SpriteGhostLeft1:
                     location = new Point(5, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostUp:
+                case GraphicsID.SpriteGhostUp:
                     location = new Point(6, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGhostUp2:
+                case GraphicsID.SpriteGhostUp2:
                     location = new Point(7, 4);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePoints200:
+                case GraphicsID.SpritePoints200:
                     location = new Point(0, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePoints400:
+                case GraphicsID.SpritePoints400:
                     location = new Point(1, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePoints800:
+                case GraphicsID.SpritePoints800:
                     location = new Point(2, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePoints1600:
+                case GraphicsID.SpritePoints1600:
                     location = new Point(3, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanOpenRight:
+                case GraphicsID.SpritePacmanOpenRight:
                     location = new Point(4, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanOpenDown:
+                case GraphicsID.SpritePacmanOpenDown:
                     location = new Point(5, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanMiddleRight:
+                case GraphicsID.SpritePacmanMiddleRight:
                     location = new Point(6, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanMiddleDown:
+                case GraphicsID.SpritePacmanMiddleDown:
                     location = new Point(7, 5);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanSolid:
+                case GraphicsID.SpritePacmanSolid:
                     location = new Point(0, 6);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpriteGlitch:
+                case GraphicsID.SpriteGlitch:
                     location = new Point(1, 6);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying0:
+                case GraphicsID.SpritePacmanDying0:
                     location = new Point(4, 6);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying1:
+                case GraphicsID.SpritePacmanDying1:
                     location = new Point(5, 6);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying2:
+                case GraphicsID.SpritePacmanDying2:
                     location = new Point(6, 6);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying3:
+                case GraphicsID.SpritePacmanDying3:
                     location = new Point(7, 6);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying4:
+                case GraphicsID.SpritePacmanDying4:
                     location = new Point(0, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying5:
+                case GraphicsID.SpritePacmanDying5:
                     location = new Point(1, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying6:
+                case GraphicsID.SpritePacmanDying6:
                     location = new Point(2, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying7:
+                case GraphicsID.SpritePacmanDying7:
                     location = new Point(3, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying8:
+                case GraphicsID.SpritePacmanDying8:
                     location = new Point(4, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying9:
+                case GraphicsID.SpritePacmanDying9:
                     location = new Point(5, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying10:
+                case GraphicsID.SpritePacmanDying10:
                     location = new Point(6, 7);
                     width = SpriteWidth;
                     break;
-                case GraphicsIDs.SpritePacmanDying11:
+                case GraphicsID.SpritePacmanDying11:
                     location = new Point(7, 7);
                     width = SpriteWidth;
                     break;
@@ -946,7 +947,12 @@ namespace PacSharpApp
             }
         }
 
-        internal void UpdateGraphic(GameObject obj, GraphicsIDs id, Bitmap source)
+        internal void UpdateGraphic(GameObject obj, GraphicsID id)
+        {
+            UpdateGraphic(obj, id, Resources.Sprites);
+        }
+
+        internal void UpdateGraphic(GameObject obj, GraphicsID id, Bitmap source)
         {
             gameObjectMap[obj] = source.Clone(GetGraphicLocation(id), source.PixelFormat);
         }
@@ -957,12 +963,12 @@ namespace PacSharpApp
             {
                 screenGraphics.Clear(Color.Black);
                 screenGraphics.DrawImage(tileImage, Point.Empty);
-                //foreach (var pair in gameObjectMap)
-                //{
-                //    GameObject obj = pair.Key;
-                //    Point location = obj.ScreenPosition(GameArea);
-                //    screenGraphics.DrawImage(pair.Value, location);
-                //}
+                foreach (var pair in gameObjectMap)
+                {
+                    GameObject obj = pair.Key;
+                    Point location = obj.ScreenPosition(GameArea);
+                    screenGraphics.DrawImage(pair.Value, location);
+                }
             }
             GameArea.CommitDraw();
         }

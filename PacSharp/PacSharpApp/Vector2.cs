@@ -46,5 +46,10 @@ namespace PacSharpApp
         {
             return lhs + (right * -1);
         }
+
+        internal static Vector2 FromTilePosition(double x, double y)
+        {
+            return new Vector2(x * GraphicsHandler.TileWidth, y * GraphicsHandler.TileWidth);
+        }
     }
 }

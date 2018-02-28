@@ -1,7 +1,5 @@
-﻿using PacSharpApp.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 
 /// <summary>
 /// Alex Plagman
@@ -10,6 +8,7 @@ namespace PacSharpApp
 {
     abstract class Animation
     {
+        private protected GraphicsHandler graphicsHandler;
         private protected int CurrentFrame { get; set; } = 0;
         private protected long[] UntilNextFrame { get; }
         private int FrameCount => UntilNextFrame.Length;
@@ -18,8 +17,9 @@ namespace PacSharpApp
 
         private TimeSpan elapsedTimeThisFrame;
 
-        private protected Animation(long[] untilNextFrame)
+        private protected Animation(GraphicsHandler graphicsHandler, long[] untilNextFrame)
         {
+            this.graphicsHandler = graphicsHandler;
             UntilNextFrame = untilNextFrame;
             elapsedTimeThisFrame = new TimeSpan();
         }
@@ -39,24 +39,17 @@ namespace PacSharpApp
                     if (!Repeat)
                         return false;
                 }
-                UpdateTiles(tiles);
+                NextFrame(tiles, gameObjects);
                 return true;
             }
             else if (CurrentFrame == 0 && !Finished)
             {
-                UpdateTiles(tiles);
+                NextFrame(tiles, gameObjects);
                 return true;
             }
             return false;
         }
 
-        private protected void EmptyTiles(Tile[,] tiles)
-        {
-            for (int row = 0; row < tiles.GetLength(0); ++row)
-                for (int col = 0; col < tiles.GetLength(1); ++col)
-                    tiles[row, col] = new Tile(GraphicsIDs.TileEmpty, PaletteID.Empty);
-        }
-
-        private protected abstract void UpdateTiles(Tile[,] tiles);
+        private protected abstract void NextFrame(Tile[,] tiles, IDictionary<string, GameObject> gameObjects);
     }
 }

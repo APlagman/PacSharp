@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PacSharpApp
 {
@@ -6,14 +7,14 @@ namespace PacSharpApp
     {
         private static readonly long[] FrameTimings = new long[] { };
 
-        public CutsceneAnimation()
-            : base(FrameTimings)
+        public CutsceneAnimation(GraphicsHandler graphicsHandler)
+            : base(graphicsHandler, FrameTimings)
         {
         }
 
         private protected override bool Repeat => false;
 
-        private protected override void UpdateTiles(Tile[,] tiles)
+        private protected override void NextFrame(Tile[,] tiles, IDictionary<string, GameObject> gameObjects)
         {
             throw new NotImplementedException();
         }

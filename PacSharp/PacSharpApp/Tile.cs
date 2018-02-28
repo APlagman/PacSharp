@@ -4,10 +4,10 @@ namespace PacSharpApp
 {
     class Tile
     {
-        internal GraphicsIDs GraphicsId { get; }
+        internal GraphicsID GraphicsId { get; }
         internal PaletteID Palette { get; }
 
-        public Tile(GraphicsIDs graphicsId, PaletteID palette)
+        public Tile(GraphicsID graphicsId, PaletteID palette)
         {
             GraphicsId = graphicsId;
             Palette = palette;

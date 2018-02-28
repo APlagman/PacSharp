@@ -3,7 +3,7 @@
 /// </summary>
 namespace PacSharpApp
 {
-    enum GraphicsIDs
+    enum GraphicsID
     {
         TileEmpty,
         Tile0Bottom,

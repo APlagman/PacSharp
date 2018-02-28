@@ -10,6 +10,13 @@ namespace PacSharpApp
 {
     abstract class Game
     {
+        internal static void EmptyTiles(Tile[,] tiles)
+        {
+            for (int row = 0; row < tiles.GetLength(0); ++row)
+                for (int col = 0; col < tiles.GetLength(1); ++col)
+                    tiles[row, col] = new Tile(GraphicsID.TileEmpty, PaletteID.Empty);
+        }
+
         private protected Tile[,] Tiles { get; } = new Tile[36, 28];
         protected internal InputHandler InputHandler { get; private set; }
         private protected GraphicsHandler GraphicsHandler { get; private set; }

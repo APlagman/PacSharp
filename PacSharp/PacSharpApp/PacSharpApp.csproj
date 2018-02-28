@@ -49,6 +49,7 @@
     <Compile Include="Animation.cs" />
     <Compile Include="CutsceneAnimation.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="GraphicsIDs.cs" />
     <Compile Include="MainMenuAnimation.cs" />

@@ -49,10 +49,10 @@ namespace PacSharpApp
             switch (State)
             {
                 case GameState.Menu:
-                    animation = new MainMenuAnimation();
+                    animation = new MainMenuAnimation(GraphicsHandler);
                     break;
                 case GameState.Cutscene:
-                    animation = new CutsceneAnimation();
+                    animation = new CutsceneAnimation(GraphicsHandler);
                     break;
                 default:
                     break;
