@@ -936,6 +936,7 @@ namespace PacSharpApp
                         Bitmap source = Resources.Tiles.Clone(GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
                         SwapColors(source, tiles[row, col].Palette);
                         tileGraphics.DrawImage(source, new Point(col * TileWidth, row * TileWidth));
+                        tiles[row, col].Updated = false;
                     }
             }
         }

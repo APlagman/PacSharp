@@ -5,22 +5,9 @@ namespace PacSharpApp
 {
     class Tile
     {
-        private bool updated = true;
-
         internal GraphicsID GraphicsId { get; }
         internal PaletteID Palette { get; }
-        internal bool Updated
-        {
-            get
-            {
-                if (updated)
-                {
-                    updated = false;
-                    return true;
-                }
-                return updated;
-            }
-        }
+        internal bool Updated { get; set; } = true;
 
         public Tile(GraphicsID graphicsId, PaletteID palette)
         {
