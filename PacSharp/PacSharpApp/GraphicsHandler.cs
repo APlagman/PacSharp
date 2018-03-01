@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -17,12 +16,13 @@ namespace PacSharpApp
     /// </summary>
     class GraphicsHandler
     {
-        internal static readonly Size SpriteSize = new Size(SpriteWidth, SpriteWidth);
         internal const int GridWidth = 28;
         internal const int GridHeight = 36;
         internal const int TileWidth = 8;
         internal const int SpriteWidth = 16;
         private const int ColorsPerPalette = 4;
+        internal static readonly Size SpriteSize = new Size(SpriteWidth, SpriteWidth);
+        internal static readonly Size TileSize = new Size(TileWidth, TileWidth);
 
         private const PaletteID BasePaletteID = PaletteID.Blinky;
         private static readonly Bitmap BasePalette = GetPalette(BasePaletteID);
@@ -42,16 +42,9 @@ namespace PacSharpApp
         private static void SwapColors(Bitmap source, PaletteID palette)
         {
             DateTime temp = DateTime.Now;
-            if ((int)palette == (int)PaletteID.Blinky)
+            if ((int)palette == (int)PaletteID.Blinky || palette == (int)PaletteID.Empty)
                 return;
             IDictionary<Color, Color> paletteMap = GetColorMap(palette);
-            //for (int x = 0; x < source.Width; ++x)
-            //{
-            //    for (int y = 0; y < source.Height; ++y)
-            //    {
-            //        source.SetPixel(x, y, paletteMap[source.GetPixel(x, y)]);
-            //    }
-            //}
             BitmapData bmpData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadWrite, source.PixelFormat);
 
             IntPtr ptr = bmpData.Scan0;
@@ -61,7 +54,8 @@ namespace PacSharpApp
 
             for (int i = 0; i < bytes; i += 4)
             {
-                Color dest = paletteMap[Color.FromArgb(values[i + 2], values[i + 1], values[i])];
+                Color src = Color.FromArgb(values[i + 2], values[i + 1], values[i]);
+                Color dest = paletteMap[src];
                 values[i + 2] = dest.R;
                 values[i + 1] = dest.G;
                 values[i] = dest.B;
@@ -934,28 +928,28 @@ namespace PacSharpApp
         {
             using (var tileGraphics = Graphics.FromImage(tileImage))
             {
-                tileGraphics.Clear(Color.Black);
                 for (int row = 0; row < tiles.GetLength(0); ++row)
                     for (int col = 0; col < tiles.GetLength(1); ++col)
                     {
                         if (!tiles[row, col].Updated)
                             continue;
                         Bitmap source = Resources.Tiles.Clone(GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
-                        if (tiles[row, col].Palette != PaletteID.Empty)
-                            SwapColors(source, tiles[row, col].Palette);
+                        SwapColors(source, tiles[row, col].Palette);
                         tileGraphics.DrawImage(source, new Point(col * TileWidth, row * TileWidth));
                     }
             }
         }
 
-        internal void UpdateGraphic(GameObject obj, GraphicsID id)
+        internal void UpdateGraphic(GameObject obj, GraphicsID id, PaletteID palette)
         {
-            UpdateGraphic(obj, id, Resources.Sprites);
+            UpdateGraphic(obj, id, palette, Resources.Sprites);
         }
 
-        internal void UpdateGraphic(GameObject obj, GraphicsID id, Bitmap source)
+        internal void UpdateGraphic(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source)
         {
-            gameObjectMap[obj] = source.Clone(GetGraphicLocation(id), source.PixelFormat);
+            Bitmap sprite = source.Clone(GetGraphicLocation(id), source.PixelFormat);
+            SwapColors(sprite, palette);
+            gameObjectMap[obj] = sprite;
         }
 
         internal void Draw(GameState state)
@@ -971,7 +965,7 @@ namespace PacSharpApp
                     screenGraphics.DrawImage(pair.Value, location);
                 }
             }
-            GameArea.CommitDraw();
+            GameArea.Render(screenImage);
         }
 
         internal void Register(GameObject obj, Image graphics)

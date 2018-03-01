@@ -22,12 +22,9 @@ namespace PacSharpApp
         internal Size Size { get { return Control.Size; } }
         internal Point Location { get { return Control.Location; } }
 
-        internal GameArea(Control control, PaintEventHandler OnPaint)
-        {
-            Control = control;
-            Control.Paint += OnPaint;
-        }
+        internal GameArea(Control control, PaintEventHandler OnPaint) => Control = control;
 
-        internal void CommitDraw() => Control.Invalidate();
+        internal void Render(Image screenImage) =>
+            Control.CreateGraphics().DrawImage(screenImage, new Rectangle(Control.Location, Control.Size));
     }
 }
