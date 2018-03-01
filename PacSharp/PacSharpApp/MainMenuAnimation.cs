@@ -8,31 +8,12 @@ namespace PacSharpApp
 {
     internal class MainMenuAnimation : Animation
     {
-        private static readonly long[] FrameTimings = new long[]
-        {
-            1500,
-            1000,
-            500,
-            500,
-            1000,
-            500,
-            500,
-            1000,
-            500,
-            500,
-            1000,
-            500,
-            500,
-            1000,
-            1000
-        };
-
-        private protected override bool Repeat => false;
-        private protected override int FrameCount => 14;
-
         public MainMenuAnimation(GraphicsHandler graphicsHandler)
             : base(graphicsHandler, 1500)
         { }
+
+        private protected override bool Repeat => false;
+        private protected override int FrameCount => 14;
 
         private protected override void NextFrame(Tile[,] tiles, IDictionary<string, GameObject> gameObjects)
         {

@@ -15,12 +15,12 @@ namespace PacSharpApp
         private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
 
-        private protected override bool UseFixedTimeStep => true;
-        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
-
         internal PacSharpGame(GameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
+
+        private protected override bool UseFixedTimeStep => true;
+        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
         private protected override void HandleInput()
         {

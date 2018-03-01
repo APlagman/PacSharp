@@ -903,8 +903,6 @@ namespace PacSharpApp
             return new Rectangle(new Point(location.X * width, location.Y * width), new Size(width, width));
         }
 
-        internal GameArea GameArea { get; }
-
         private GameUI ui;
         private IDictionary<GameObject, Image> gameObjectMap = new Dictionary<GameObject, Image>();
         private Image tileImage;
@@ -917,6 +915,8 @@ namespace PacSharpApp
             screenImage = new Bitmap(GridWidth * TileWidth, GridHeight * TileWidth);
             tileImage = new Bitmap(GridWidth * TileWidth, GridHeight * TileWidth);
         }
+
+        internal GameArea GameArea { get; }
 
         private void OnPaint(object sender, PaintEventArgs e)
         {

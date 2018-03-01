@@ -17,22 +17,27 @@ namespace PacSharpApp
                     tiles[row, col] = new Tile(GraphicsID.TileEmpty, PaletteID.Empty);
         }
 
-        private protected Tile[,] Tiles { get; } = new Tile[36, 28];
-        protected internal InputHandler InputHandler { get; private set; }
-        private protected GraphicsHandler GraphicsHandler { get; private set; }
-        private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
-        private protected Animation Animation { get; set; }
-
         private const int UpMultiplier = -1;
         private const int DownMultiplier = 1;
         
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
+
+        private protected Game(GameUI owner, Control gameArea)
+        {
+            GraphicsHandler = new GraphicsHandler(owner, gameArea);
+            InputHandler = new InputHandler();
+        }
+
+        private protected Tile[,] Tiles { get; } = new Tile[36, 28];
+        protected internal InputHandler InputHandler { get; private set; }
+        private protected GraphicsHandler GraphicsHandler { get; private set; }
+        private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
+        private protected Animation Animation { get; set; }
         private protected virtual int TargetFPS { get; } = 60;
         private protected virtual TimeSpan MaxElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 10);
         private protected virtual bool UseFixedTimeStep { get; } = false;
         private TimeSpan TargetElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
-
         private protected bool TilesUpdated
         {
             get
@@ -44,16 +49,9 @@ namespace PacSharpApp
                 return false;
             }
         }
-
         protected internal GameState State { get; private protected set; }
         protected internal bool Paused { get; private protected set; } = true;
         protected internal int Score { get; set; } = 0;
-
-        private protected Game(GameUI owner, Control gameArea)
-        {
-            GraphicsHandler = new GraphicsHandler(owner, gameArea);
-            InputHandler = new InputHandler();
-        }
 
         #region Initialization
         internal void Init()

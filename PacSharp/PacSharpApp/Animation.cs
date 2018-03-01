@@ -9,12 +9,6 @@ namespace PacSharpApp
     abstract class Animation
     {
         private protected GraphicsHandler graphicsHandler;
-        private protected int CurrentFrame { get; set; } = 0;
-        private protected long UntilNextFrame { get; set; }
-        private protected abstract int FrameCount { get; }
-        private protected abstract bool Repeat { get; }
-        internal bool Finished { get; private set; } = false;
-
         private TimeSpan elapsedTimeThisFrame;
 
         private protected Animation(GraphicsHandler graphicsHandler, long untilNextFrame)
@@ -23,6 +17,11 @@ namespace PacSharpApp
             UntilNextFrame = untilNextFrame;
             elapsedTimeThisFrame = new TimeSpan();
         }
+        private protected int CurrentFrame { get; set; } = 0;
+        private protected long UntilNextFrame { get; set; }
+        private protected abstract int FrameCount { get; }
+        private protected abstract bool Repeat { get; }
+        internal bool Finished { get; private set; } = false;
 
         internal bool Update(TimeSpan elapsedTime, Tile[,] tiles, IDictionary<string, GameObject> gameObjects, GraphicsHandler graphicsHandler)
         {

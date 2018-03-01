@@ -12,7 +12,14 @@ namespace PacSharpApp
     {
         private Vector2 position;
         private Vector2 velocity;
-        
+
+        internal GameObject(Size size)
+        {
+            Size = size;
+            Position = Vector2.Zero;
+            Velocity = Vector2.Zero;
+        }
+
         internal ref Vector2 Position { get { return ref position; } }
         internal ref Vector2 Velocity { get { return ref velocity; } }
         internal Size Size { get; }
@@ -21,13 +28,6 @@ namespace PacSharpApp
         internal double Right => Position.X + Size.Width / 2d;
         internal double Top => Position.Y - Size.Height / 2d;
         internal double Bottom => Position.Y + Size.Height / 2d;
-
-        internal GameObject(Size size)
-        {
-            Size = size;
-            Position = Vector2.Zero;
-            Velocity = Vector2.Zero;
-        }
 
         internal bool OriginAbove(double v) => Position.Y < v;
         internal bool OriginBelow(double v) => Position.Y > v;

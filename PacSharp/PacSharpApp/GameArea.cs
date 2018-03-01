@@ -12,6 +12,8 @@ namespace PacSharpApp
     /// </summary>
     class GameArea
     {
+        internal GameArea(Control control, PaintEventHandler OnPaint) => Control = control;
+
         private Control Control { get; }
 
         internal double Left { get { return 0; } }
@@ -21,8 +23,6 @@ namespace PacSharpApp
         internal Vector2 Origin { get { return new Vector2(Control.Width / 2d, Control.Height / 2d); } }
         internal Size Size { get { return Control.Size; } }
         internal Point Location { get { return Control.Location; } }
-
-        internal GameArea(Control control, PaintEventHandler OnPaint) => Control = control;
 
         internal void Render(Image screenImage) =>
             Control.CreateGraphics().DrawImage(screenImage, new Rectangle(Control.Location, Control.Size));
