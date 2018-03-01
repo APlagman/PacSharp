@@ -8,7 +8,7 @@
         Inky = 5,
         Clyde = 7,
         Pacman = 9,
-        Pellet = 14,
+        Pellet = 31,
         Text = 31,
         Cherry = 20,
         Strawberry = 18,
