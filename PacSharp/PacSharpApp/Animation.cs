@@ -31,7 +31,7 @@ namespace PacSharpApp
                 return false;
             if (elapsedTimeThisFrame.TotalMilliseconds > UntilNextFrame[CurrentFrame])
             {
-                elapsedTimeThisFrame -= TimeSpan.FromMilliseconds(UntilNextFrame[CurrentFrame]);
+                elapsedTimeThisFrame = new TimeSpan();
                 CurrentFrame = (CurrentFrame + 1) % FrameCount;
                 if (CurrentFrame == 0)
                 {
