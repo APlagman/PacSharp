@@ -15,8 +15,6 @@ namespace PacSharpApp
         private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
 
-        private Animation animation;
-
         private protected override bool UseFixedTimeStep => true;
         private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
@@ -31,27 +29,19 @@ namespace PacSharpApp
 
         private protected override void UpdateImpl(TimeSpan elapsedTime)
         {
-            UpdateAnimation(elapsedTime);
             UpdateTiles();
             CheckCollisions();
         }
 
-        private void UpdateAnimation(TimeSpan elapsedTime)
-        {
-            if (animation == null)
-                StartAnimation();
-            animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
-        }
-
-        private void StartAnimation()
+        private protected override void StartAnimation()
         {
             switch (State)
             {
                 case GameState.Menu:
-                    animation = new MainMenuAnimation(GraphicsHandler);
+                    Animation = new MainMenuAnimation(GraphicsHandler);
                     break;
                 case GameState.Cutscene:
-                    animation = new CutsceneAnimation(GraphicsHandler);
+                    Animation = new CutsceneAnimation(GraphicsHandler);
                     break;
                 default:
                     break;

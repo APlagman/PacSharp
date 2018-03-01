@@ -21,6 +21,7 @@ namespace PacSharpApp
         protected internal InputHandler InputHandler { get; private set; }
         private protected GraphicsHandler GraphicsHandler { get; private set; }
         private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
+        private protected Animation Animation { get; set; }
 
         private const int UpMultiplier = -1;
         private const int DownMultiplier = 1;
@@ -85,7 +86,8 @@ namespace PacSharpApp
             DateTime currentTime = DateTime.Now;
             TimeSpan elapsedTime = currentTime - previousTime;
             previousTime = currentTime;
-
+            
+            UpdateAnimation(elapsedTime);
             bool updated = false;
             if (UseFixedTimeStep)
             {
@@ -106,11 +108,20 @@ namespace PacSharpApp
                 updated = true;
             }
 
-            updated &= TilesUpdated;
+            updated |= TilesUpdated;
             if (updated)
                 GraphicsHandler.CommitTiles(Tiles);
             GraphicsHandler.Draw(State);
         }
+
+        private void UpdateAnimation(TimeSpan elapsedTime)
+        {
+            if (Animation == null)
+                StartAnimation();
+            Animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
+        }
+
+        private protected abstract void StartAnimation();
 
         private void Update(TimeSpan elapsedTime)
         {
