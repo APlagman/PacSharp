@@ -28,7 +28,7 @@ namespace PacSharpApp
         };
 
         private protected override bool Repeat => false;
-        private protected override int FrameCount => 13;
+        private protected override int FrameCount => 14;
 
         public MainMenuAnimation(GraphicsHandler graphicsHandler)
             : base(graphicsHandler, 1500)
