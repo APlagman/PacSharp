@@ -7,13 +7,11 @@ using System.Windows.Forms;
 /// </summary>
 namespace PacSharpApp
 {
-    public partial class GameForm : Form
+    internal partial class PacSharpGameForm : GameUI
     {
-        private const int GridScale = 2;
-        private const int WindowBorderWidth = 16;
-        private const int WindowBorderHeight = 39;
+        private protected override int GridScale => 2;
 
-        public GameForm()
+        public PacSharpGameForm()
         {
             InitializeComponent();
             Size = new Size(
@@ -22,16 +20,6 @@ namespace PacSharpApp
             Game game = new PacSharpGame(this, gameArea);
             game.Init();
             game.Reset();
-        }
-
-        internal void UpdateControls(GameState state)
-        {
-            //throw new NotImplementedException();
-        }
-
-        internal void OnNewGame()
-        {
-            throw new NotImplementedException();
         }
     }
 }

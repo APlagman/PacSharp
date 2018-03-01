@@ -34,7 +34,7 @@ namespace PacSharpApp
         protected internal bool Paused { get; private protected set; } = true;
         protected internal int Score { get; set; } = 0;
 
-        private protected Game(GameForm owner, Control gameArea)
+        private protected Game(GameUI owner, Control gameArea)
         {
             GraphicsHandler = new GraphicsHandler(owner, gameArea);
             InputHandler = new InputHandler();

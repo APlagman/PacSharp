@@ -17,7 +17,7 @@ namespace PacSharpApp
 
         private Animation animation;
 
-        internal PacSharpGame(GameForm owner, Control gameArea)
+        internal PacSharpGame(GameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
 

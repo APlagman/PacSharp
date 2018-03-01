@@ -912,12 +912,12 @@ namespace PacSharpApp
 
         internal GameArea GameArea { get; }
 
-        private GameForm ui;
+        private GameUI ui;
         private IDictionary<GameObject, Image> gameObjectMap = new Dictionary<GameObject, Image>();
         private Image tileImage;
         private Image screenImage;
 
-        internal GraphicsHandler(GameForm ui, Control gameArea)
+        internal GraphicsHandler(GameUI ui, Control gameArea)
         {
             this.ui = ui;
             GameArea = new GameArea(gameArea, OnPaint);

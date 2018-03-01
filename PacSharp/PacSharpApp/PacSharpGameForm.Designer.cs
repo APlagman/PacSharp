@@ -1,6 +1,6 @@
 ﻿namespace PacSharpApp
 {
-    partial class GameForm
+    partial class PacSharpGameForm
     {
         /// <summary>
         /// Required designer variable.
