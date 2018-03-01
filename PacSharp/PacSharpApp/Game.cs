@@ -20,15 +20,29 @@ namespace PacSharpApp
         private protected Tile[,] Tiles { get; } = new Tile[36, 28];
         protected internal InputHandler InputHandler { get; private set; }
         private protected GraphicsHandler GraphicsHandler { get; private set; }
-
         private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
-        private protected bool TilesUpdated { get; set; }
 
         private const int UpMultiplier = -1;
         private const int DownMultiplier = 1;
         
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
+        private protected virtual int TargetFPS { get; } = 60;
+        private protected virtual TimeSpan MaxElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 10);
+        private protected virtual bool UseFixedTimeStep { get; } = false;
+        private TimeSpan TargetElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
+
+        private protected bool TilesUpdated
+        {
+            get
+            {
+                for (int r = 0; r < Tiles.GetLength(0); ++r)
+                    for (int c = 0; c < Tiles.GetLength(1); ++c)
+                        if (Tiles[r, c].Updated)
+                            return true;
+                return false;
+            }
+        }
 
         protected internal GameState State { get; private protected set; }
         protected internal bool Paused { get; private protected set; } = true;
@@ -71,8 +85,29 @@ namespace PacSharpApp
             DateTime currentTime = DateTime.Now;
             TimeSpan elapsedTime = currentTime - previousTime;
             previousTime = currentTime;
-            Update(elapsedTime);
-            if (TilesUpdated)
+
+            bool updated = false;
+            if (UseFixedTimeStep)
+            {
+                if (elapsedTime > MaxElapsedTime)
+                    elapsedTime = MaxElapsedTime;
+                accumulatedTime += elapsedTime;
+                
+                while (accumulatedTime >= TargetElapsedTime)
+                {
+                    Update(elapsedTime);
+                    accumulatedTime -= TargetElapsedTime;
+                    updated = true;
+                }
+            }
+            else
+            {
+                Update(elapsedTime);
+                updated = true;
+            }
+
+            updated &= TilesUpdated;
+            if (updated)
                 GraphicsHandler.CommitTiles(Tiles);
             GraphicsHandler.Draw(State);
         }

@@ -17,11 +17,12 @@ namespace PacSharpApp
 
         private Animation animation;
 
+        private protected override bool UseFixedTimeStep => true;
+        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
+
         internal PacSharpGame(GameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
-
-        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
         private protected override void HandleInput()
         {
@@ -30,7 +31,6 @@ namespace PacSharpApp
 
         private protected override void UpdateImpl(TimeSpan elapsedTime)
         {
-            TilesUpdated = false;
             UpdateAnimation(elapsedTime);
             UpdateTiles();
             CheckCollisions();
@@ -40,8 +40,7 @@ namespace PacSharpApp
         {
             if (animation == null)
                 StartAnimation();
-            if (animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler))
-                TilesUpdated = true;
+            animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
         }
 
         private void StartAnimation()
@@ -61,7 +60,6 @@ namespace PacSharpApp
 
         private void UpdateTiles()
         {
-            bool updated = false;
             switch (State)
             {   
                 case GameState.Highscores:
@@ -71,8 +69,6 @@ namespace PacSharpApp
                 default:
                     break;
             }
-            if (updated)
-                TilesUpdated = true;
         }
 
         private void CheckCollisions()

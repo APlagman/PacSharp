@@ -81,7 +81,6 @@ namespace PacSharpApp
             return results;
         }
 
-
         private static Rectangle GetGraphicLocation(GraphicsID id)
         {
             Point location = new Point();
@@ -939,6 +938,8 @@ namespace PacSharpApp
                 for (int row = 0; row < tiles.GetLength(0); ++row)
                     for (int col = 0; col < tiles.GetLength(1); ++col)
                     {
+                        if (!tiles[row, col].Updated)
+                            continue;
                         Bitmap source = Resources.Tiles.Clone(GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
                         if (tiles[row, col].Palette != PaletteID.Empty)
                             SwapColors(source, tiles[row, col].Palette);
