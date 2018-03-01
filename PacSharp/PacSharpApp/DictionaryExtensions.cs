@@ -7,7 +7,7 @@ namespace PacSharpApp
 {
     static class DictionaryExtensions
     {
-        public static void UpdatePair<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+        public static void Set<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
         {
             if (dict.ContainsKey(key))
                 dict[key] = value;
