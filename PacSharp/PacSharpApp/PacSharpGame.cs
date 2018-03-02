@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using PacSharpApp.Graphics.Animation;
+using PacSharpApp.Objects;
 
 /// <summary>
 /// Alex Plagman
@@ -16,6 +20,8 @@ namespace PacSharpApp
         private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
 
+        private List<(TimeSpan delay, Action action)> actionQueue = new List<(TimeSpan, Action)>();
+
         internal PacSharpGame(GameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
@@ -29,38 +35,48 @@ namespace PacSharpApp
 
         private protected override void UpdateImpl(TimeSpan elapsedTime)
         {
-            UpdateTiles();
-            CheckCollisions();
-        }
-
-        private protected override void StartAnimation()
-        {
+            UpdateActionQueue(elapsedTime);
             switch (State)
             {
                 case GameState.Menu:
-                    Animation = new MainMenuAnimation(GraphicsHandler);
+                    {
+
+                    }
+                    break;
+                case GameState.Highscores:
                     break;
                 case GameState.Cutscene:
-                    Animation = new CutsceneAnimation(GraphicsHandler);
+                    break;
+                case GameState.Playing:
+                    CheckCollisions();
                     break;
                 default:
                     break;
             }
         }
 
-        private void UpdateTiles()
+        private void UpdateActionQueue(TimeSpan elapsedTime)
         {
-            switch (State)
-            {   
-                case GameState.Highscores:
-                    break;
-                case GameState.Playing:
-                    break;
-                default:
-                    break;
-            }
+            var finished = new List<(TimeSpan delay, Action action)>(
+                actionQueue
+                .FindAll(delayedAction => delayedAction.delay <= elapsedTime));
+            foreach (var (delay, action) in finished)
+                action();
+            actionQueue = new List<(TimeSpan delay, Action action)>(
+                actionQueue
+                .FindAll(delayedAction => delayedAction.delay > elapsedTime)
+                .Select(delayedAction => (delayedAction.delay - elapsedTime, delayedAction.action)));
+        }
+
         private void BeginMainMenuChase()
         {
+            GameObjects["EatenPellet"] = new PowerPellet(GraphicsHandler);
+            GameObjects["EatenPellet"].Position = Vector2FromTilePosition(4.75, 20);
+            actionQueue.Add((TimeSpan.FromMilliseconds(500), () => { GraphicsHandler.PauseAnimations = false; }));
+            GameObjects["PacMan"] = new PacMan(GraphicsHandler);
+            GameObjects["PacMan"].Position = Vector2FromTilePosition(30, 19);
+            GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);
+            GameObjects["PacMan"].AddAI(new MenuPacManAI());
         }
 
         private void CheckCollisions()

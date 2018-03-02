@@ -50,7 +50,9 @@
     <Compile Include="Graphics\Animations\Animation.cs" />
     <Compile Include="Graphics\Animations\CutsceneAnimation.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Graphics\PacManSprite.cs" />
     <Compile Include="Graphics\PowerPelletSprite.cs" />
+    <Compile Include="Objects\PacMan.cs" />
     <Compile Include="Objects\PowerPellet.cs" />
     <Compile Include="GameUI.cs">
       <SubType>Form</SubType>
