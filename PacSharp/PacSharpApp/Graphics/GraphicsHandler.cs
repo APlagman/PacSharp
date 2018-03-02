@@ -669,75 +669,75 @@ namespace PacSharpApp.Graphics
                     location = new Point(14, 12);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowTopRight:
+                case GraphicsID.TileMazeOutsideWallElbowTopRight:
                     location = new Point(0, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowTopLeft:
+                case GraphicsID.TileMazeOutsideWallElbowTopLeft:
                     location = new Point(1, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeRight:
+                case GraphicsID.TileMazeOutsideWallRight:
                     location = new Point(2, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeLeft:
+                case GraphicsID.TileMazeOutsideWallLeft:
                     location = new Point(3, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowBottomRight:
+                case GraphicsID.TileMazeOutsideWallElbowBottomRight:
                     location = new Point(4, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowBottomLeft:
+                case GraphicsID.TileMazeOutsideWallElbowBottomLeft:
                     location = new Point(5, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowSquareBottomRight:
+                case GraphicsID.TileMazeOutsideWallSideElbowCornerBottomRight:
                     location = new Point(6, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowSquareBottomLeft:
+                case GraphicsID.TileMazeOutsideWallSideElbowCornerBottomLeft:
                     location = new Point(7, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowSquareTopRight:
+                case GraphicsID.TileMazeOutsideWallSideElbowCornerTopRight:
                     location = new Point(8, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeElbowSquareTopLeft:
+                case GraphicsID.TileMazeOutsideWallSideElbowCornerTopLeft:
                     location = new Point(9, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeTop:
+                case GraphicsID.TileMazeOutsideWallTop:
                     location = new Point(10, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeBottom:
+                case GraphicsID.TileMazeOutsideWallBottom:
                     location = new Point(12, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidBottom:
+                case GraphicsID.TileMazeInsideWallBottom:
                     location = new Point(14, 13);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeCurvedBottomRight:
+                case GraphicsID.TileMazeInsideWallCurvedBottomRight:
                     location = new Point(0, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeCurvedBottomLeft:
+                case GraphicsID.TileMazeInsideWallCurvedBottomLeft:
                     location = new Point(1, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeCurvedTopRight:
+                case GraphicsID.TileMazeInsideWallCurvedTopRight:
                     location = new Point(2, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeCurvedTopLeft:
+                case GraphicsID.TileMazeInsideWallCurvedTopLeft:
                     location = new Point(3, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidTop:
+                case GraphicsID.TileMazeInsideWallTop:
                     location = new Point(4, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
@@ -749,11 +749,11 @@ namespace PacSharpApp.Graphics
                     location = new Point(7, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidLeft:
+                case GraphicsID.TileMazeInsideWallLeft:
                     location = new Point(8, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidRight:
+                case GraphicsID.TileMazeInsideWallRight:
                     location = new Point(9, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
@@ -781,27 +781,35 @@ namespace PacSharpApp.Graphics
                     location = new Point(15, 14);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeBottomLeft:
+                case GraphicsID.TileMazeRectangleBottomLeft:
+                    location = new Point(0, 15);
+                    width = GraphicsConstants.TileWidth;
+                    break;
+                case GraphicsID.TileMazeRectangleBottomRight:
+                    location = new Point(1, 15);
+                    width = GraphicsConstants.TileWidth;
+                    break;
+                case GraphicsID.TileMazeInsideWallElbowCornerTopLeft:
                     location = new Point(2, 15);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeBottomRight:
+                case GraphicsID.TileMazeInsideWallElbowCornerTopRight:
                     location = new Point(3, 15);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidElbowSquareTopLeft:
+                case GraphicsID.TileMazeInsideWallElbowCornerBottomLeft:
                     location = new Point(4, 15);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidElbowSquareTopRight:
+                case GraphicsID.TileMazeInsideWallElbowCornerBottomRight:
                     location = new Point(5, 15);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidElbowSquareBottomLeft:
+                case GraphicsID.TileMazeOutsideWallTopElbowCornerTopLeft:
                     location = new Point(10, 15);
                     width = GraphicsConstants.TileWidth;
                     break;
-                case GraphicsID.TileMazeSolidElbowSquareBottomRight:
+                case GraphicsID.TileMazeOutsideWallTopElbowCornerTopRight:
                     location = new Point(11, 15);
                     width = GraphicsConstants.TileWidth;
                     break;
