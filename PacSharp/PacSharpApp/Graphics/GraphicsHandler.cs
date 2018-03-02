@@ -61,7 +61,7 @@ namespace PacSharpApp.Graphics
                 for (int row = 0; row < tiles.GetLength(0); ++row)
                     for (int col = 0; col < tiles.GetLength(1); ++col)
                     {
-                        if (!tiles[row, col].Updated)
+                        if (!tiles[row, col]?.Updated ?? true)
                             continue;
                         Bitmap source = Resources.Tiles.Clone(GraphicsUtils.GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
                         GraphicsUtils.SwapColors(source, tiles[row, col].Palette);

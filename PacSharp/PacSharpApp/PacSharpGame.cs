@@ -31,7 +31,8 @@ namespace PacSharpApp
 
         private protected override void HandleInput()
         {
-            //throw new NotImplementedException();
+            if (InputHandler.HeldKeys.Contains(Keys.R) && InputHandler.HeldKeys.Contains(Keys.ControlKey))
+                Reset();
         }
 
         private protected override void UpdateImpl(TimeSpan elapsedTime)
@@ -103,7 +104,7 @@ namespace PacSharpApp
             //throw new NotImplementedException();
         }
 
-        protected internal override void Reset()
+        private protected override void ResetImpl()
         {
             State = GameState.Menu;
             Paused = false;

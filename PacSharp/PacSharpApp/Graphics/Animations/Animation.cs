@@ -56,5 +56,10 @@ namespace PacSharpApp.Graphics.Animation
         }
 
         private protected abstract void NextFrame(Tile[,] tiles, IDictionary<string, GameObject> gameObjects);
+
+        internal void AddDelay(TimeSpan elapsedTime)
+        {
+            UntilNextFrame += (long)Math.Ceiling(elapsedTime.TotalMilliseconds);
+        }
     }
 }

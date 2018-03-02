@@ -11,7 +11,7 @@ namespace PacSharpApp.Graphics.Animation
     internal class MainMenuAnimation : Animation
     {
         public MainMenuAnimation(GraphicsHandler graphicsHandler, Action onCompletion)
-            : base(graphicsHandler, 1500, onCompletion)
+            : base(graphicsHandler, 500, onCompletion)
         { }
 
         private protected override bool Repeat => false;

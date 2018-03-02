@@ -33,6 +33,7 @@ namespace PacSharpApp
         private DateTime previousTime;
 
         private GameState state;
+        private bool resetScheduled = false;
 
         private protected Game(IGameUI owner, Control gameArea)
         {
@@ -56,7 +57,7 @@ namespace PacSharpApp
             {
                 for (int r = 0; r < Tiles.GetLength(0); ++r)
                     for (int c = 0; c < Tiles.GetLength(1); ++c)
-                        if (Tiles[r, c].Updated)
+                        if (Tiles[r, c]?.Updated ?? false)
                             return true;
                 return false;
             }
@@ -105,6 +106,16 @@ namespace PacSharpApp
             DateTime currentTime = DateTime.Now;
             TimeSpan elapsedTime = currentTime - previousTime;
             previousTime = currentTime;
+            if (resetScheduled)
+            {
+                resetScheduled = false;
+                ResetImpl();
+                UpdateAnimation(new TimeSpan());
+                GraphicsHandler.CommitTiles(Tiles);
+                GraphicsHandler.Draw(State);
+                previousTime = DateTime.Now;
+                return;
+            }
 
             bool updated = false;
             if (!UseFixedTimeStepForAnimations)
@@ -130,7 +141,6 @@ namespace PacSharpApp
                     updated = true;
                 }
             }
-
             updated |= TilesUpdated;
             if (updated)
                 GraphicsHandler.CommitTiles(Tiles);
@@ -140,16 +150,16 @@ namespace PacSharpApp
 
         private void UpdateAnimation(TimeSpan elapsedTime)
         {
-            Animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
+            Animation?.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
         }
 
         private void Update(TimeSpan elapsedTime)
         {
+            InputHandler.Update();
             HandleInput();
             if (PreventUpdate)
                 return;
             UpdateImpl(elapsedTime);
-            InputHandler.Update();
             LogPostUpdate();
         }
 
@@ -163,7 +173,7 @@ namespace PacSharpApp
         #region Game State
         internal void NewGame()
         {
-            Reset();
+            ResetImpl();
             Paused = false;
         }
 
@@ -190,10 +200,17 @@ namespace PacSharpApp
             ClearTiles(Tiles);
             GameObjects.Clear();
             GraphicsHandler.Clear();
+            Animation = null;
         }
 
         private protected abstract void UpdateHighScore();
-        protected internal abstract void Reset();
+
+        internal void Reset()
+        {
+            resetScheduled = true;
+        }
+
+        private protected abstract void ResetImpl();
         #endregion
     }
 }
