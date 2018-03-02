@@ -165,7 +165,6 @@ namespace PacSharpApp
 
         internal void Quit()
         {
-            UpdateHighScore();
             GraphicsHandler.Close();
         }
 
@@ -178,8 +177,6 @@ namespace PacSharpApp
         }
 
         private protected virtual void UpdateScore() { }
-
-        private protected abstract void UpdateHighScore();
 
         internal void ScheduleReset() => resetScheduled = true;
 

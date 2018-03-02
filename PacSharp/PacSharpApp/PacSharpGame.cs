@@ -160,11 +160,6 @@ $@"Game Area:
             Tiles.DrawInteger(1, 6, Score);
         }
 
-        private protected override void UpdateHighScore()
-        {
-            //throw new NotImplementedException();
-        }
-
         private void StartGame()
         {
             DrawMaze();
