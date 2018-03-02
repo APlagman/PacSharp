@@ -122,6 +122,7 @@ namespace PacSharpApp.Graphics
         TileGhostMiddleRight,
         TileGhostBottomLeft,
         TileGhostBottomRight,
+        TileMazeGateLeft,
         TileMazeElbowTopRight,
         TileMazeElbowTopLeft,
         TileMazeRight,

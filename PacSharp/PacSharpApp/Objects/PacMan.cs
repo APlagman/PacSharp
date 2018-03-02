@@ -5,9 +5,9 @@ namespace PacSharpApp.Objects
     class PacMan : GameObject
     {
         internal PacMan(GraphicsHandler handler)
-            : base(GraphicsHandler.SpriteSize)
+            : base(GraphicsConstants.SpriteSize)
         {
-            handler.RegisterAnimatedSprite(this, new PacManSprite());
+            handler.UpdateAnimatedSprite(this, new PacManSprite());
         }
     }
 }

@@ -9,7 +9,7 @@ namespace PacSharpApp.Graphics
 
         internal StaticSprite(Bitmap source, GraphicsID graphicsId)
         {
-            sourceImage = source.Clone(GraphicsHandler.GetGraphicLocation(graphicsId), source.PixelFormat);
+            sourceImage = source.Clone(GraphicsUtils.GetGraphicLocation(graphicsId), source.PixelFormat);
             currentImage = sourceImage;
         }
 
@@ -24,7 +24,7 @@ namespace PacSharpApp.Graphics
         private protected override void UpdatePalette()
         {
             currentImage = sourceImage;
-            GraphicsHandler.SwapColors(currentImage, Palette);
+            GraphicsUtils.SwapColors(currentImage, Palette);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace PacSharpApp.Graphics
             for (uint i = 0; i < images.Length; ++i)
             {
                 images[i] = sources[i].bitmap.Clone() as Bitmap;
-                GraphicsHandler.SwapColors(images[i], Palette);
+                GraphicsUtils.SwapColors(images[i], Palette);
             }
         }
 

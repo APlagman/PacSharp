@@ -72,7 +72,7 @@ namespace PacSharpApp
         {
             GameObjects["EatenPellet"] = new PowerPellet(GraphicsHandler);
             GameObjects["EatenPellet"].Position = Vector2FromTilePosition(4.75, 20);
-            actionQueue.Add((TimeSpan.FromMilliseconds(500), () => { GraphicsHandler.PauseAnimations = false; }));
+            actionQueue.Add((TimeSpan.FromMilliseconds(500), () => { GraphicsHandler.PreventAnimatedSpriteUpdates = false; }));
             GameObjects["PacMan"] = new PacMan(GraphicsHandler);
             GameObjects["PacMan"].Position = Vector2FromTilePosition(30, 19);
             GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);

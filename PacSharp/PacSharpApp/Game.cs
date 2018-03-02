@@ -23,7 +23,7 @@ namespace PacSharpApp
 
         internal static Vector2 Vector2FromTilePosition(double x, double y)
         {
-            return new Vector2(x * GraphicsHandler.TileWidth, y * GraphicsHandler.TileWidth);
+            return new Vector2(x * GraphicsConstants.TileWidth, y * GraphicsConstants.TileWidth);
         }
 
         private const int UpMultiplier = -1;
@@ -134,7 +134,7 @@ namespace PacSharpApp
             updated |= TilesUpdated;
             if (updated)
                 GraphicsHandler.CommitTiles(Tiles);
-            GraphicsHandler.Update(elapsedTime);
+            GraphicsHandler.UpdateAnimatedSprites(elapsedTime);
             GraphicsHandler.Draw(State);
         }
 
