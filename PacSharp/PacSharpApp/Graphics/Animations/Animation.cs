@@ -9,12 +9,14 @@ namespace PacSharpApp.Graphics.Animation
 {
     abstract class Animation
     {
-        private protected GraphicsHandler graphicsHandler;
+        private protected readonly GraphicsHandler graphicsHandler;
+        private readonly Action onCompletion;
         private TimeSpan elapsedTimeThisFrame;
 
-        private protected Animation(GraphicsHandler graphicsHandler, long untilNextFrame)
+        private protected Animation(GraphicsHandler graphicsHandler, long untilNextFrame, Action onCompletion = null)
         {
             this.graphicsHandler = graphicsHandler;
+            this.onCompletion = onCompletion;
             UntilNextFrame = untilNextFrame;
             elapsedTimeThisFrame = new TimeSpan();
         }
@@ -37,7 +39,10 @@ namespace PacSharpApp.Graphics.Animation
                 {
                     Finished = true;
                     if (!Repeat)
+                    {
+                        onCompletion();
                         return false;
+                    }
                 }
                 NextFrame(tiles, gameObjects);
                 return true;
