@@ -23,7 +23,7 @@ namespace PacSharpApp
 
         private List<(TimeSpan delay, Action action)> actionQueue = new List<(TimeSpan, Action)>();
 
-        internal PacSharpGame(GameUI owner, Control gameArea)
+        internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
         

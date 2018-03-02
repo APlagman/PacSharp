@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 using PacSharpApp.Graphics;
 
 /// <summary>
@@ -6,19 +7,22 @@ using PacSharpApp.Graphics;
 /// </summary>
 namespace PacSharpApp
 {
-    internal partial class PacSharpGameForm : GameUI
+    internal partial class PacSharpGameForm : Form, IGameUI
     {
-        private protected override int GridScale => 2;
-
         public PacSharpGameForm()
         {
             InitializeComponent();
             Size = new Size(
-                WindowBorderWidth + GraphicsConstants.GridWidth * GraphicsConstants.TileWidth * GridScale,
-                WindowBorderHeight + GraphicsConstants.GridHeight * GraphicsConstants.TileWidth * GridScale);
+                GameUIConstants.WindowBorderWidth + GraphicsConstants.GridWidth * GraphicsConstants.TileWidth * GameUIConstants.GridScale,
+                GameUIConstants.WindowBorderHeight + GraphicsConstants.GridHeight * GraphicsConstants.TileWidth * GameUIConstants.GridScale);
             Game game = new PacSharpGame(this, gameArea);
             game.Init();
             game.Reset();
+        }
+
+        public void OnNewGame()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

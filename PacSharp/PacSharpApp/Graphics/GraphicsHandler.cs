@@ -27,12 +27,12 @@ namespace PacSharpApp.Graphics
     /// </summary>
     class GraphicsHandler : IDisposable
     {
-        private GameUI ui;
+        private IGameUI ui;
         private IDictionary<GameObject, Sprite> gameObjectMap = new Dictionary<GameObject, Sprite>();
         private Image tileImage;
         private Image screenImage;
 
-        internal GraphicsHandler(GameUI ui, Control gameArea)
+        internal GraphicsHandler(IGameUI ui, Control gameArea)
         {
             this.ui = ui;
             GameArea = new GameArea(gameArea, OnPaint);

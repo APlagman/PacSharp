@@ -34,7 +34,7 @@ namespace PacSharpApp
 
         private GameState state;
 
-        private protected Game(GameUI owner, Control gameArea)
+        private protected Game(IGameUI owner, Control gameArea)
         {
             GraphicsHandler = new GraphicsHandler(owner, gameArea);
             InputHandler = new InputHandler();
