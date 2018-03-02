@@ -174,17 +174,20 @@ $@"Game Area:
 
         private void DrawMaze()
         {
-            throw new NotImplementedException();
+            Tiles.SetTile(3, 0, GraphicsID.TileMazeElbowTopLeft, PaletteID.Maze);
+            Tiles.DrawRange((3, 1), (3, 12), GraphicsID.TileMazeTop, PaletteID.Maze);
+            Tiles.DrawRange((3, 15), (3, 26), GraphicsID.TileMazeTop, PaletteID.Maze);
+            Tiles.SetTile(3, 27, GraphicsID.TileMazeElbowTopRight, PaletteID.Maze);
         }
 
         private void AddPellets()
         {
-            throw new NotImplementedException();
+
         }
 
         private void AddGhosts()
         {
-            throw new NotImplementedException();
+
         }
     }
 }

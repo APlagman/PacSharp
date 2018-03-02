@@ -54,14 +54,14 @@ namespace PacSharpApp.Graphics
             gameObjectMap.Clear();
         }
 
-        internal void CommitTiles(Tile[,] tiles)
+        internal void CommitTiles(TileCollection tiles)
         {
             using (var tileGraphics = System.Drawing.Graphics.FromImage(tileImage))
             {
-                for (int row = 0; row < tiles.GetLength(0); ++row)
-                    for (int col = 0; col < tiles.GetLength(1); ++col)
+                for (int row = 0; row < tiles.Height; ++row)
+                    for (int col = 0; col < tiles.Width; ++col)
                     {
-                        if (!tiles[row, col]?.Updated ?? true)
+                        if (!tiles[row, col].Updated)
                             continue;
                         Bitmap source = Resources.Tiles.Clone(GraphicsUtils.GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
                         GraphicsUtils.SwapColors(source, tiles[row, col].Palette);

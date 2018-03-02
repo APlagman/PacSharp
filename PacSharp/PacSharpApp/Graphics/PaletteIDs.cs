@@ -20,6 +20,8 @@ namespace PacSharpApp.Graphics
         Melon = 23,
         Galaxian = 7,
         Key = 22,
-        GhostAfraid = 1
+        GhostAfraid = 1,
+        Maze = 26,
+        MazeGate = 29
     }
 }

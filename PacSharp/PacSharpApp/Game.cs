@@ -29,7 +29,7 @@ namespace PacSharpApp
             InputHandler = new InputHandler();
         }
 
-        private protected Tile[,] Tiles { get; } = new Tile[36, 28];
+        private protected TileCollection Tiles { get; } = new TileCollection(28, 36);
         protected internal InputHandler InputHandler { get; private set; }
         private protected GraphicsHandler GraphicsHandler { get; private set; }
         private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
@@ -39,17 +39,7 @@ namespace PacSharpApp
         private protected virtual bool UseFixedTimeStepForUpdates { get; } = false;
         private protected virtual bool UseFixedTimeStepForAnimations { get; } = false;
         private TimeSpan TargetElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
-        private protected bool TilesUpdated
-        {
-            get
-            {
-                for (int r = 0; r < Tiles.GetLength(0); ++r)
-                    for (int c = 0; c < Tiles.GetLength(1); ++c)
-                        if (Tiles[r, c]?.Updated ?? false)
-                            return true;
-                return false;
-            }
-        }
+        private protected bool TilesUpdated => Tiles.HasBeenUpdated;
         protected internal GameState State
         {
             get => state;

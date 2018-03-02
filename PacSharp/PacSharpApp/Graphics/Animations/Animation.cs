@@ -26,7 +26,7 @@ namespace PacSharpApp.Graphics.Animation
         private protected abstract bool Repeat { get; }
         internal bool Finished { get; private set; } = false;
 
-        internal bool Update(TimeSpan elapsedTime, Tile[,] tiles, IDictionary<string, GameObject> gameObjects, GraphicsHandler graphicsHandler)
+        internal bool Update(TimeSpan elapsedTime, TileCollection tiles, IDictionary<string, GameObject> gameObjects, GraphicsHandler graphicsHandler)
         {
             elapsedTimeThisFrame += elapsedTime;
             if (Finished && !Repeat)
@@ -55,7 +55,7 @@ namespace PacSharpApp.Graphics.Animation
             return false;
         }
 
-        private protected abstract void NextFrame(Tile[,] tiles, IDictionary<string, GameObject> gameObjects);
+        private protected abstract void NextFrame(TileCollection tiles, IDictionary<string, GameObject> gameObjects);
 
         internal void AddDelay(TimeSpan elapsedTime)
         {

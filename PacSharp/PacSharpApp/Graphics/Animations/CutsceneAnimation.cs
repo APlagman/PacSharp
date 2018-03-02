@@ -16,7 +16,7 @@ namespace PacSharpApp.Graphics.Animation
         private protected override bool Repeat => false;
         private protected override int FrameCount => throw new NotImplementedException();
 
-        private protected override void NextFrame(Tile[,] tiles, IDictionary<string, GameObject> gameObjects)
+        private protected override void NextFrame(TileCollection tiles, IDictionary<string, GameObject> gameObjects)
         {
             throw new NotImplementedException();
         }

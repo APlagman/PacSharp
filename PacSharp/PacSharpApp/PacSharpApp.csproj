@@ -71,6 +71,7 @@
     <Compile Include="Objects\GameObject.cs" />
     <Compile Include="Graphics\GraphicsHandler.cs" />
     <Compile Include="InputHandler.cs" />
+    <Compile Include="Utils\Benchmark.cs" />
     <Compile Include="Utils\MathExtensions.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Graphics\PaletteIDs.cs" />
