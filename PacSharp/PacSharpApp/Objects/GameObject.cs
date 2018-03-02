@@ -4,7 +4,7 @@ using PacSharpApp.Utils;
 /// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Objects
 {
     /// <summary>
     /// Contains data representing a game object

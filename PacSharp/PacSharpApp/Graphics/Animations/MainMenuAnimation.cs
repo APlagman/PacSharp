@@ -1,4 +1,5 @@
-﻿using PacSharpApp.Properties;
+﻿using PacSharpApp.Objects;
+using PacSharpApp.Properties;
 using PacSharpApp.Utils;
 using System.Collections.Generic;
 
@@ -22,7 +23,7 @@ namespace PacSharpApp.Graphics.Animation
             {
                 case 0:
                     gameObjects.Clear();
-                    Game.EmptyTiles(tiles);
+                    Game.ClearTiles(tiles);
                     tiles[0, 3] = new Tile(GraphicsID.Tile1, PaletteID.Text);
                     tiles[0, 4] = new Tile(GraphicsID.TileU, PaletteID.Text);
                     tiles[0, 5] = new Tile(GraphicsID.TileP, PaletteID.Text);
@@ -186,9 +187,8 @@ namespace PacSharpApp.Graphics.Animation
                     tiles[23, 16] = new Tile(GraphicsID.TilePts1, PaletteID.Text);
                     tiles[23, 17] = new Tile(GraphicsID.TilePts2, PaletteID.Text);
 
-                    gameObjects.Set("powerPelletDemo", new GameObject(GraphicsHandler.TileSize));
+                    gameObjects.Set("powerPelletDemo", new PowerPellet(GraphicsHandler.TileSize, graphicsHandler));
                     gameObjects["powerPelletDemo"].Position = Game.Vector2FromTilePosition(10.5, 25.5);
-                    graphicsHandler.UpdateStaticSprite(gameObjects["powerPelletDemo"], GraphicsID.TilePelletLarge, PaletteID.Pellet, Resources.Tiles);
                     tiles[25, 12] = new Tile(GraphicsID.Tile5, PaletteID.Text);
                     tiles[25, 13] = new Tile(GraphicsID.Tile0, PaletteID.Text);
                     tiles[25, 15] = new Tile(GraphicsID.TilePts0, PaletteID.Text);

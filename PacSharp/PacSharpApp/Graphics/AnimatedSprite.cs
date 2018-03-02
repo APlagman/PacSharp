@@ -3,29 +3,28 @@ using System.Drawing;
 
 namespace PacSharpApp.Graphics
 {
-    abstract class AnimatedSprite : Sprite
+    class AnimatedSprite : Sprite
     {
-        private TimeSpan elapsedTimeThisFrame;
-        private protected readonly Bitmap[] sourceImages;
+        private readonly (Bitmap bitmap, TimeSpan untilUpdate)[] sources;
         private Bitmap[] images;
         private uint currentImage;
+        private TimeSpan elapsedTimeThisFrame;
 
-        internal AnimatedSprite(Bitmap source, Bitmap[] sourceImages)
-            : base(source)
+        internal AnimatedSprite((Bitmap bitmap, TimeSpan untilUpdate)[] sources)
         {
-            this.sourceImages = sourceImages;
-            images = new Bitmap[sourceImages.Length];
-            sourceImages.CopyTo(images, 0);
+            this.sources = sources;
+            images = new Bitmap[sources.Length];
+            for (int i = 0; i < images.Length; ++i)
+                images[i] = sources[i].bitmap;
         }
 
-        internal override Image Image => images[currentImage];
-        private protected abstract TimeSpan UntilUpdate { get; }
+        internal sealed override Image Image => images[currentImage];
 
-        private protected override void UpdatePalette()
+        private protected sealed override void UpdatePalette()
         {
             for (uint i = 0; i < images.Length; ++i)
             {
-                images[i] = sourceImages[i];
+                images[i] = sources[i].bitmap;
                 GraphicsHandler.SwapColors(images[i], Palette);
             }
         }
@@ -33,7 +32,7 @@ namespace PacSharpApp.Graphics
         protected internal sealed override void Update(TimeSpan elapsedTime)
         {
             elapsedTimeThisFrame += elapsedTime;
-            if (elapsedTimeThisFrame > UntilUpdate)
+            if (elapsedTimeThisFrame > sources[currentImage].untilUpdate)
             {
                 elapsedTimeThisFrame = new TimeSpan();
                 ++currentImage;

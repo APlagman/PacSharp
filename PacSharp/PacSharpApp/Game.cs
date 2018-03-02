@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using PacSharpApp.Graphics;
 using PacSharpApp.Graphics.Animation;
+using PacSharpApp.Objects;
 using PacSharpApp.Utils;
 
 /// <summary>
@@ -13,7 +14,7 @@ namespace PacSharpApp
 {
     abstract class Game
     {
-        internal static void EmptyTiles(Tile[,] tiles)
+        internal static void ClearTiles(Tile[,] tiles)
         {
             for (int row = 0; row < tiles.GetLength(0); ++row)
                 for (int col = 0; col < tiles.GetLength(1); ++col)
@@ -31,6 +32,8 @@ namespace PacSharpApp
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
 
+        private GameState state;
+
         private protected Game(GameUI owner, Control gameArea)
         {
             GraphicsHandler = new GraphicsHandler(owner, gameArea);
@@ -44,7 +47,8 @@ namespace PacSharpApp
         private protected Animation Animation { get; set; }
         private protected virtual int TargetFPS { get; } = 60;
         private protected virtual TimeSpan MaxElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 10);
-        private protected virtual bool UseFixedTimeStep { get; } = false;
+        private protected virtual bool UseFixedTimeStepForUpdates { get; } = false;
+        private protected virtual bool UseFixedTimeStepForAnimations { get; } = false;
         private TimeSpan TargetElapsedTime => TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFPS);
         private protected bool TilesUpdated
         {
@@ -57,7 +61,16 @@ namespace PacSharpApp
                 return false;
             }
         }
-        protected internal GameState State { get; private protected set; }
+        protected internal GameState State
+        {
+            get => state;
+            private protected set
+            {
+                state = value;
+                OnGameStateChanged();
+            }
+        }
+
         protected internal bool Paused { get; private protected set; } = true;
         protected internal int Score { get; set; } = 0;
 
@@ -92,10 +105,16 @@ namespace PacSharpApp
             DateTime currentTime = DateTime.Now;
             TimeSpan elapsedTime = currentTime - previousTime;
             previousTime = currentTime;
-            
-            UpdateAnimation(elapsedTime);
+
             bool updated = false;
-            if (UseFixedTimeStep)
+            if (!UseFixedTimeStepForAnimations)
+                UpdateAnimation(elapsedTime);
+            if (!UseFixedTimeStepForUpdates)
+            {
+                Update(elapsedTime);
+                updated = true;
+            }
+            if (UseFixedTimeStepForUpdates || UseFixedTimeStepForAnimations)
             {
                 if (elapsedTime > MaxElapsedTime)
                     elapsedTime = MaxElapsedTime;
@@ -103,20 +122,19 @@ namespace PacSharpApp
                 
                 while (accumulatedTime >= TargetElapsedTime)
                 {
-                    Update(elapsedTime);
+                    if (UseFixedTimeStepForUpdates)
+                        Update(TargetElapsedTime);
+                    if (UseFixedTimeStepForAnimations)
+                        UpdateAnimation(TargetElapsedTime);
                     accumulatedTime -= TargetElapsedTime;
                     updated = true;
                 }
-            }
-            else
-            {
-                Update(elapsedTime);
-                updated = true;
             }
 
             updated |= TilesUpdated;
             if (updated)
                 GraphicsHandler.CommitTiles(Tiles);
+            GraphicsHandler.Update(elapsedTime);
             GraphicsHandler.Draw(State);
         }
 
@@ -146,7 +164,7 @@ namespace PacSharpApp
         private protected abstract void LogPostUpdate();
         #endregion
 
-        #region Game State / Initialization
+        #region Game State
         internal void NewGame()
         {
             Reset();
@@ -169,6 +187,14 @@ namespace PacSharpApp
         {
             UpdateHighScore();
             GraphicsHandler.Close();
+        }
+
+        private void OnGameStateChanged()
+        {
+            ClearTiles(Tiles);
+            GameObjects.Clear();
+            GraphicsHandler.Clear();
+            Animation = null;
         }
 
         private protected abstract void UpdateHighScore();

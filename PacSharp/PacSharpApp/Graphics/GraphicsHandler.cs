@@ -1,4 +1,5 @@
-﻿using PacSharpApp.Properties;
+﻿using PacSharpApp.Objects;
+using PacSharpApp.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -924,6 +925,11 @@ namespace PacSharpApp.Graphics
                 e.Graphics.DrawImage(screenImage, new Rectangle(control.Location, control.Size));
         }
 
+        internal void Clear()
+        {
+            gameObjectMap.Clear();
+        }
+
         internal void CommitTiles(Tile[,] tiles)
         {
             using (var tileGraphics = System.Drawing.Graphics.FromImage(tileImage))
@@ -952,6 +958,14 @@ namespace PacSharpApp.Graphics
             {
                 Palette = palette
             };
+        }
+
+        internal void RegisterAnimatedSprite(GameObject obj, AnimatedSprite sprite) => gameObjectMap[obj] = sprite;
+
+        internal void Update(TimeSpan elapsedTime)
+        {
+            foreach (var sprite in gameObjectMap.Values)
+                sprite.Update(elapsedTime);
         }
 
         internal void Draw(GameState state)

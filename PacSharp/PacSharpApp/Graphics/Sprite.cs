@@ -5,13 +5,7 @@ namespace PacSharpApp.Graphics
 {
     abstract class Sprite
     {
-        private protected PaletteID palette = PaletteID.Blinky;
-        private protected readonly Bitmap source;
-
-        private protected Sprite(Bitmap source)
-        {
-            this.source = source;
-        }
+        private PaletteID palette = PaletteID.Blinky;
 
         internal abstract Image Image { get; }
         internal PaletteID Palette { private protected get => palette; set { palette = value; UpdatePalette(); } }

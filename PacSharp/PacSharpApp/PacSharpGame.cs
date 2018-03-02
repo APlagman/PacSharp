@@ -19,8 +19,7 @@ namespace PacSharpApp
         internal PacSharpGame(GameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
-
-        private protected override bool UseFixedTimeStep => true;
+        
         private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
         private protected override void HandleInput()
