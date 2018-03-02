@@ -1,5 +1,8 @@
 ﻿using System.Drawing;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp.Graphics
 {
     class StaticSprite : Sprite

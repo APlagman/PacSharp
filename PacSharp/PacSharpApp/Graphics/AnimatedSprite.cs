@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Drawing;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp.Graphics
 {
     class AnimatedSprite : Sprite

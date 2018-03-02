@@ -1,5 +1,8 @@
 ﻿using PacSharpApp.Graphics;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp.Objects
 {
     class PacmanObject : GameObject

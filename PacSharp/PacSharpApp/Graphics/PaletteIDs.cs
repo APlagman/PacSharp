@@ -1,4 +1,7 @@
-﻿namespace PacSharpApp.Graphics
+﻿/// <summary>
+/// Alex Plagman
+/// </summary>
+namespace PacSharpApp.Graphics
 {
     enum PaletteID
     {

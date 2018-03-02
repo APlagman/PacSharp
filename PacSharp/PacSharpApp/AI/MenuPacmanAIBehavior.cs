@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using PacSharpApp.Objects;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp.AI
 {
     class MenuPacmanAIBehavior : AIBehavior

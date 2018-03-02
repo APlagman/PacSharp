@@ -2,6 +2,9 @@
 using System.Drawing;
 using PacSharpApp.Properties;
 
+/// <summary>
+/// Alex Plagman
+/// </summary>
 namespace PacSharpApp.Graphics
 {
     class PowerPelletSprite : AnimatedSprite
