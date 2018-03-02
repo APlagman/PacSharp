@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using PacSharpApp.Graphics;
 using PacSharpApp.Graphics.Animation;
@@ -14,18 +13,6 @@ namespace PacSharpApp
 {
     abstract class Game
     {
-        internal static void ClearTiles(Tile[,] tiles)
-        {
-            for (int row = 0; row < tiles.GetLength(0); ++row)
-                for (int col = 0; col < tiles.GetLength(1); ++col)
-                    tiles[row, col] = new Tile(GraphicsID.TileEmpty, PaletteID.Empty);
-        }
-
-        internal static Vector2 Vector2FromTilePosition(double x, double y)
-        {
-            return new Vector2(x * GraphicsConstants.TileWidth, y * GraphicsConstants.TileWidth);
-        }
-
         private const int UpMultiplier = -1;
         private const int DownMultiplier = 1;
         
@@ -34,6 +21,7 @@ namespace PacSharpApp
 
         private GameState state;
         private bool resetScheduled = false;
+        private int score = 0;
 
         private protected Game(IGameUI owner, Control gameArea)
         {
@@ -73,7 +61,15 @@ namespace PacSharpApp
         }
 
         protected internal bool Paused { get; private protected set; } = true;
-        protected internal int Score { get; set; } = 0;
+        protected internal int Score
+        {
+            get => score;
+            set
+            {
+                score = value;
+                UpdateScore();
+            }
+        }
 
         #region Initialization
         internal void Init()
@@ -108,12 +104,7 @@ namespace PacSharpApp
             previousTime = currentTime;
             if (resetScheduled)
             {
-                resetScheduled = false;
-                ResetImpl();
-                UpdateAnimation(new TimeSpan());
-                GraphicsHandler.CommitTiles(Tiles);
-                GraphicsHandler.Draw(State);
-                previousTime = DateTime.Now;
+                Reset();
                 return;
             }
 
@@ -177,13 +168,6 @@ namespace PacSharpApp
             Paused = false;
         }
 
-        private void Start()
-        {
-            GraphicsHandler.OnNewGame();
-            accumulatedTime = TimeSpan.Zero;
-            previousTime = DateTime.Now;
-        }
-
         internal void TogglePause()
         {
             Paused = !Paused;
@@ -197,20 +181,34 @@ namespace PacSharpApp
 
         private protected virtual void OnGameStateChanged()
         {
-            ClearTiles(Tiles);
+            Tiles.Clear();
             GameObjects.Clear();
             GraphicsHandler.Clear();
             Animation = null;
         }
 
+        private protected virtual void UpdateScore() { }
+
         private protected abstract void UpdateHighScore();
 
-        internal void Reset()
+        internal void ScheduleReset() => resetScheduled = true;
+
+        private void Reset()
         {
-            resetScheduled = true;
+            resetScheduled = false;
+            ResetImpl();
+            UpdateAnimation(new TimeSpan());
+            GraphicsHandler.CommitTiles(Tiles);
+            GraphicsHandler.Draw(State);
+            previousTime = DateTime.Now;
         }
 
         private protected abstract void ResetImpl();
         #endregion
+
+        internal static Vector2 Vector2FromTilePosition(double x, double y)
+        {
+            return new Vector2(x * GraphicsConstants.TileWidth, y * GraphicsConstants.TileWidth);
+        }
     }
 }

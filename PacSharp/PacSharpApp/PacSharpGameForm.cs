@@ -19,7 +19,7 @@ namespace PacSharpApp
             game.Init();
             KeyDown += game.InputHandler.OnKeyDown;
             KeyUp += game.InputHandler.OnKeyUp;
-            game.Reset();
+            game.ScheduleReset();
         }
 
         public void OnNewGame()

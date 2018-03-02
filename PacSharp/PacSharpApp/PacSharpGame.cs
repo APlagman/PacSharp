@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PacSharpApp.AI;
+using PacSharpApp.Graphics;
 using PacSharpApp.Graphics.Animation;
 using PacSharpApp.Objects;
 
@@ -32,7 +33,24 @@ namespace PacSharpApp
         private protected override void HandleInput()
         {
             if (InputHandler.HeldKeys.Contains(Keys.R) && InputHandler.HeldKeys.Contains(Keys.ControlKey))
-                Reset();
+            {
+                ScheduleReset();
+                return;
+            }
+            switch (State)
+            {
+                case GameState.Menu:
+                    {
+                        if (InputHandler.HeldKeys.Contains(Keys.Enter))
+                        {
+                            StartGame();
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         private protected override void UpdateImpl(TimeSpan elapsedTime)
@@ -72,21 +90,6 @@ namespace PacSharpApp
                 .Select(delayedAction => (delayedAction.delay - elapsedTime, delayedAction.action)));
         }
 
-        private void BeginMainMenuChase()
-        {
-            GameObjects["EatenPellet"] = new PowerPelletObject(GraphicsHandler)
-            {
-                Position = Vector2FromTilePosition(4.75, 20)
-            };
-            actionQueue.Add((TimeSpan.FromMilliseconds(500), () => { GraphicsHandler.PreventAnimatedSpriteUpdates = false; }));
-            GameObjects["PacMan"] = new PacmanObject(GraphicsHandler)
-            {
-                Position = Vector2FromTilePosition(30, 19)
-            };
-            GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);
-            GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
-        }
-
         private void CheckCollisions()
         {
             //throw new NotImplementedException();
@@ -96,16 +99,19 @@ namespace PacSharpApp
         {
             base.OnGameStateChanged();
             if (State == GameState.Menu)
+            {
+                Score = 0;
                 Animation = new MainMenuAnimation(GraphicsHandler, () => BeginMainMenuChase());
-        }
-
-        private protected override void UpdateHighScore()
-        {
-            //throw new NotImplementedException();
+            }
+            if (State == GameState.Menu || State == GameState.Playing)
+            {
+                AddScoreAndCredit();
+            }
         }
 
         private protected override void ResetImpl()
         {
+            Score = 0;
             State = GameState.Menu;
             Paused = false;
         }
@@ -124,6 +130,61 @@ $@"Game Area:
     Size: {GraphicsHandler.GameArea.Size}");
             Debug.WriteLine("");
 #pragma warning restore CS0162 // Unreachable code detected
+        }
+
+        private void BeginMainMenuChase()
+        {
+            GameObjects["EatenPellet"] = new PowerPelletObject(GraphicsHandler)
+            {
+                Position = Vector2FromTilePosition(4.75, 20)
+            };
+            actionQueue.Add((TimeSpan.FromMilliseconds(500), () => { GraphicsHandler.PreventAnimatedSpriteUpdates = false; }));
+            GameObjects["PacMan"] = new PacmanObject(GraphicsHandler)
+            {
+                Position = Vector2FromTilePosition(30, 19)
+            };
+            GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);
+            GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
+        }
+
+        private void AddScoreAndCredit()
+        {
+            Tiles.DrawText(0, 3, "1UP");
+            Tiles.DrawText(0, 9, "HIGHSCORE");
+            Tiles.DrawText(0, 21, "2UP");
+            Tiles.DrawText(35, 2, "CREDIT  0");
+        }
+
+        private protected override void UpdateScore()
+        {
+            Tiles.DrawInteger(1, 6, Score);
+        }
+
+        private protected override void UpdateHighScore()
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void StartGame()
+        {
+            DrawMaze();
+            AddPellets();
+            AddGhosts();
+        }
+
+        private void DrawMaze()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddPellets()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddGhosts()
+        {
+            throw new NotImplementedException();
         }
     }
 }
