@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using PacSharpApp.AI;
 using PacSharpApp.Graphics.Animation;
 using PacSharpApp.Objects;
 
@@ -36,6 +37,8 @@ namespace PacSharpApp
         private protected override void UpdateImpl(TimeSpan elapsedTime)
         {
             UpdateActionQueue(elapsedTime);
+            foreach (var obj in GameObjects)
+                obj.Value.Update(elapsedTime);
             switch (State)
             {
                 case GameState.Menu:
@@ -76,7 +79,7 @@ namespace PacSharpApp
             GameObjects["PacMan"] = new PacmanObject(GraphicsHandler);
             GameObjects["PacMan"].Position = Vector2FromTilePosition(30, 19);
             GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);
-            GameObjects["PacMan"].AddAI(new MenuPacManAI());
+            GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
         }
 
         private void CheckCollisions()

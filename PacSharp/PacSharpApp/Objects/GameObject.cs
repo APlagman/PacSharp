@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using PacSharpApp.AI;
 using PacSharpApp.Utils;
 
 /// <summary>
@@ -11,6 +13,7 @@ namespace PacSharpApp.Objects
     /// </summary>
     class GameObject
     {
+        private AIBehavior behavior;
         private Vector2 position;
         private Vector2 velocity;
 
@@ -21,6 +24,15 @@ namespace PacSharpApp.Objects
             Velocity = Vector2.Zero;
         }
 
+        internal AIBehavior Behavior
+        {
+            get => behavior;
+            set
+            {
+                if (behavior == null)
+                    behavior = value;
+            }
+        }
         internal ref Vector2 Position { get { return ref position; } }
         internal ref Vector2 Velocity { get { return ref velocity; } }
         internal Size Size { get; }
@@ -29,6 +41,12 @@ namespace PacSharpApp.Objects
         internal double Right => Position.X + Size.Width / 2d;
         internal double Top => Position.Y - Size.Height / 2d;
         internal double Bottom => Position.Y + Size.Height / 2d;
+
+        internal void Update(TimeSpan elapsedTime)
+        {
+            if (Behavior != null)
+                Behavior.Update(elapsedTime);
+        }
 
         internal bool OriginAbove(double v) => Position.Y < v;
         internal bool OriginBelow(double v) => Position.Y > v;
