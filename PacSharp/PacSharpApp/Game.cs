@@ -140,8 +140,6 @@ namespace PacSharpApp
 
         private void UpdateAnimation(TimeSpan elapsedTime)
         {
-            if (Animation == null)
-                StartAnimation();
             Animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
         }
 
@@ -194,7 +192,7 @@ namespace PacSharpApp
             ClearTiles(Tiles);
             GameObjects.Clear();
             GraphicsHandler.Clear();
-            Animation = null;
+            StartAnimation();
         }
 
         private protected abstract void UpdateHighScore();
