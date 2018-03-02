@@ -204,8 +204,8 @@ namespace PacSharpApp.Graphics
 
         internal void DrawRange((int row, int col) start, (int row, int col) end, GraphicsID graphics, PaletteID palette)
         {
-            for (int row = start.row; row < end.row; ++row)
-                for (int col = start.col; col < end.col; ++col)
+            for (int row = start.row; row <= end.row; ++row)
+                for (int col = start.col; col <= end.col; ++col)
                     SetTile(row, col, graphics, palette);
         }
     }
