@@ -52,7 +52,6 @@
     <Compile Include="Game.cs" />
     <Compile Include="Graphics\PowerPelletSprite.cs" />
     <Compile Include="Objects\PowerPellet.cs" />
-    <Compile Include="Utils\DictionaryExtensions.cs" />
     <Compile Include="GameUI.cs">
       <SubType>Form</SubType>
     </Compile>
