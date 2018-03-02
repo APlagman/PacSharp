@@ -15,7 +15,7 @@ namespace PacSharpApp.Graphics
             this.sources = sources;
             images = new Bitmap[sources.Length];
             for (int i = 0; i < images.Length; ++i)
-                images[i] = sources[i].bitmap;
+                images[i] = sources[i].bitmap.Clone() as Bitmap;
         }
 
         internal sealed override Image Image => images[currentImage];
@@ -24,7 +24,7 @@ namespace PacSharpApp.Graphics
         {
             for (uint i = 0; i < images.Length; ++i)
             {
-                images[i] = sources[i].bitmap;
+                images[i] = sources[i].bitmap.Clone() as Bitmap;
                 GraphicsHandler.SwapColors(images[i], Palette);
             }
         }
@@ -38,6 +38,14 @@ namespace PacSharpApp.Graphics
                 ++currentImage;
                 currentImage %= (uint)images.Length;
             }
+        }
+
+        internal override void RotateFlip(RotateFlipType rfType)
+        {
+            foreach (var (bitmap, untilUpdate) in sources)
+                bitmap.RotateFlip(rfType);
+            foreach (var image in images)
+                image.RotateFlip(rfType);
         }
     }
 }

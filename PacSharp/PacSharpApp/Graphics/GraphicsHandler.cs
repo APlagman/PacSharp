@@ -963,6 +963,8 @@ namespace PacSharpApp.Graphics
 
         internal void RegisterAnimatedSprite(GameObject obj, AnimatedSprite sprite) => gameObjectMap[obj] = sprite;
 
+        internal void RotateFlip(GameObject gameObject, RotateFlipType rfType) => gameObjectMap[gameObject].RotateFlip(rfType);
+
         internal void Update(TimeSpan elapsedTime)
         {
             if (PauseAnimations)

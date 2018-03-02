@@ -15,6 +15,12 @@ namespace PacSharpApp.Graphics
 
         internal override Image Image => currentImage;
 
+        internal override void RotateFlip(RotateFlipType rfType)
+        {
+            sourceImage.RotateFlip(rfType);
+            currentImage.RotateFlip(rfType);
+        }
+
         private protected override void UpdatePalette()
         {
             currentImage = sourceImage;
