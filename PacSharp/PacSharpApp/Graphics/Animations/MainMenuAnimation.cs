@@ -76,8 +76,10 @@ namespace PacSharpApp.Graphics.Animation
                     break;
                 case 1:
                     UntilNextFrame = 1000;
-                    gameObjects["staticBlinky"] = new GameObject(GraphicsConstants.SpriteSize);
-                    gameObjects["staticBlinky"].Position = Game.Vector2FromTilePosition(5, 6.5);
+                    gameObjects["staticBlinky"] = new GameObject(GraphicsConstants.SpriteSize)
+                    {
+                        Position = Game.Vector2FromTilePosition(5, 6.5)
+                    };
                     graphicsHandler.UpdateStaticSprite(gameObjects["staticBlinky"], GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
                     break;
                 case 2:
@@ -103,8 +105,10 @@ namespace PacSharpApp.Graphics.Animation
                     break;
                 case 4:
                     UntilNextFrame = 1000;
-                    gameObjects["staticPinky"] = new GameObject(GraphicsConstants.SpriteSize);
-                    gameObjects["staticPinky"].Position = Game.Vector2FromTilePosition(5, 9.5);
+                    gameObjects["staticPinky"] = new GameObject(GraphicsConstants.SpriteSize)
+                    {
+                        Position = Game.Vector2FromTilePosition(5, 9.5)
+                    };
                     graphicsHandler.UpdateStaticSprite(gameObjects["staticPinky"], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
                     break;
                 case 5:
@@ -129,8 +133,10 @@ namespace PacSharpApp.Graphics.Animation
                     break;
                 case 7:
                     UntilNextFrame = 1000;
-                    gameObjects["staticInky"] = new GameObject(GraphicsConstants.SpriteSize);
-                    gameObjects["staticInky"].Position = Game.Vector2FromTilePosition(5, 12.5);
+                    gameObjects["staticInky"] = new GameObject(GraphicsConstants.SpriteSize)
+                    {
+                        Position = Game.Vector2FromTilePosition(5, 12.5)
+                    };
                     graphicsHandler.UpdateStaticSprite(gameObjects["staticInky"], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
                     break;
                 case 8:
@@ -155,8 +161,10 @@ namespace PacSharpApp.Graphics.Animation
                     break;
                 case 10:
                     UntilNextFrame = 1000;
-                    gameObjects["staticClyde"] = new GameObject(GraphicsConstants.SpriteSize);
-                    gameObjects["staticClyde"].Position = Game.Vector2FromTilePosition(5, 15.5);
+                    gameObjects["staticClyde"] = new GameObject(GraphicsConstants.SpriteSize)
+                    {
+                        Position = Game.Vector2FromTilePosition(5, 15.5)
+                    };
                     graphicsHandler.UpdateStaticSprite(gameObjects["staticClyde"], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
                     break;
                 case 11:
@@ -180,8 +188,10 @@ namespace PacSharpApp.Graphics.Animation
                     break;
                 case 13:
                     UntilNextFrame = 1000;
-                    gameObjects["pelletDemo"] = new GameObject(GraphicsConstants.TileSize);
-                    gameObjects["pelletDemo"].Position = Game.Vector2FromTilePosition(10.5, 23.5);
+                    gameObjects["pelletDemo"] = new GameObject(GraphicsConstants.TileSize)
+                    {
+                        Position = Game.Vector2FromTilePosition(10.5, 23.5)
+                    };
                     graphicsHandler.UpdateStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles);
                     tiles[23, 12] = new Tile(GraphicsID.Tile1, PaletteID.Text);
                     tiles[23, 13] = new Tile(GraphicsID.Tile0, PaletteID.Text);
@@ -189,8 +199,10 @@ namespace PacSharpApp.Graphics.Animation
                     tiles[23, 16] = new Tile(GraphicsID.TilePts1, PaletteID.Text);
                     tiles[23, 17] = new Tile(GraphicsID.TilePts2, PaletteID.Text);
 
-                    gameObjects["powerPelletDemo"] = new PowerPelletObject(graphicsHandler);
-                    gameObjects["powerPelletDemo"].Position = Game.Vector2FromTilePosition(10.5, 25.5);
+                    gameObjects["powerPelletDemo"] = new PowerPelletObject(graphicsHandler)
+                    {
+                        Position = Game.Vector2FromTilePosition(10.5, 25.5)
+                    };
                     tiles[25, 12] = new Tile(GraphicsID.Tile5, PaletteID.Text);
                     tiles[25, 13] = new Tile(GraphicsID.Tile0, PaletteID.Text);
                     tiles[25, 15] = new Tile(GraphicsID.TilePts0, PaletteID.Text);

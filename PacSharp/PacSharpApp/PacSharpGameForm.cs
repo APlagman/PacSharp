@@ -14,8 +14,8 @@ namespace PacSharpApp
         {
             InitializeComponent();
             Size = new Size(
-                WindowBorderWidth + GraphicsHandler.GridWidth * GraphicsHandler.TileWidth * GridScale,
-                WindowBorderHeight + GraphicsHandler.GridHeight * GraphicsHandler.TileWidth * GridScale);
+                WindowBorderWidth + GraphicsConstants.GridWidth * GraphicsConstants.TileWidth * GridScale,
+                WindowBorderHeight + GraphicsConstants.GridHeight * GraphicsConstants.TileWidth * GridScale);
             Game game = new PacSharpGame(this, gameArea);
             game.Init();
             game.Reset();

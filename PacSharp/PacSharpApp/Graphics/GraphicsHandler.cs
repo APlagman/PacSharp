@@ -25,7 +25,7 @@ namespace PacSharpApp.Graphics
     /// <summary>
     /// Handles drawing logic before delegating to the actual control
     /// </summary>
-    class GraphicsHandler
+    class GraphicsHandler : IDisposable
     {
         private GameUI ui;
         private IDictionary<GameObject, Sprite> gameObjectMap = new Dictionary<GameObject, Sprite>();
@@ -128,6 +128,12 @@ namespace PacSharpApp.Graphics
         internal void OnNewGame()
         {
             ui.OnNewGame();
+        }
+
+        public void Dispose()
+        {
+            tileImage.Dispose();
+            screenImage.Dispose();
         }
     }
 

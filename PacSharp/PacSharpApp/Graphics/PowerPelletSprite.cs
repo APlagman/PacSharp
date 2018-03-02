@@ -9,8 +9,8 @@ namespace PacSharpApp.Graphics
         private static readonly Bitmap sourceSheet = Resources.Tiles;
         private static readonly (Bitmap, TimeSpan)[] sourceImages = new (Bitmap, TimeSpan)[]
         {
-            (sourceSheet.Clone(GraphicsHandler.GetGraphicLocation(GraphicsID.TilePelletLarge), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150)),
-            (sourceSheet.Clone(GraphicsHandler.GetGraphicLocation(GraphicsID.TileEmpty), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150))
+            (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.TilePelletLarge), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150)),
+            (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.TileEmpty), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150))
         };
 
         internal PowerPelletSprite()
