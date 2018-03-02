@@ -17,6 +17,8 @@ namespace PacSharpApp
                 GameUIConstants.WindowBorderHeight + GraphicsConstants.GridHeight * GraphicsConstants.TileWidth * GameUIConstants.GridScale);
             Game game = new PacSharpGame(this, gameArea);
             game.Init();
+            KeyDown += game.InputHandler.OnKeyDown;
+            KeyUp += game.InputHandler.OnKeyUp;
             game.Reset();
         }
 
