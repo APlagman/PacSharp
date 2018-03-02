@@ -976,9 +976,12 @@ namespace PacSharpApp.Graphics
                 screenGraphics.DrawImage(tileImage, Point.Empty);
                 foreach (var pair in gameObjectMap)
                 {
-                    GameObject obj = pair.Key;
-                    Point location = obj.ScreenPosition(GameArea);
-                    screenGraphics.DrawImage(pair.Value.Image, location);
+                    if (pair.Value.Visible)
+                    {
+                        GameObject obj = pair.Key;
+                        Point location = obj.ScreenPosition(GameArea);
+                        screenGraphics.DrawImage(pair.Value.Image, location);
+                    }
                 }
             }
             GameArea.Render(screenImage);

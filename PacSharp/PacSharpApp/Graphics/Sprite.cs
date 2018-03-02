@@ -13,5 +13,6 @@ namespace PacSharpApp.Graphics
 
         private protected abstract void UpdatePalette();
         protected internal virtual void Update(TimeSpan elapsedTime) {}
+        internal bool Visible { get; set; } = true;
     }
 }
