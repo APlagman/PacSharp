@@ -918,6 +918,7 @@ namespace PacSharpApp.Graphics
         }
 
         internal GameArea GameArea { get; }
+        internal bool PauseAnimations { get; set; } = false;
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
@@ -964,6 +965,8 @@ namespace PacSharpApp.Graphics
 
         internal void Update(TimeSpan elapsedTime)
         {
+            if (PauseAnimations)
+                return;
             foreach (var sprite in gameObjectMap.Values)
                 sprite.Update(elapsedTime);
         }

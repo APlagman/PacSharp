@@ -11,8 +11,8 @@ namespace PacSharpApp.Graphics.Animation
 {
     internal class MainMenuAnimation : Animation
     {
-        public MainMenuAnimation(GraphicsHandler graphicsHandler)
-            : base(graphicsHandler, 1500)
+        public MainMenuAnimation(GraphicsHandler graphicsHandler, Action onCompletion)
+            : base(graphicsHandler, 1500, onCompletion)
         { }
 
         private protected override bool Repeat => false;
@@ -23,6 +23,7 @@ namespace PacSharpApp.Graphics.Animation
             switch (CurrentFrame)
             {
                 case 0:
+                    graphicsHandler.PauseAnimations = true;
                     gameObjects.Clear();
                     Game.ClearTiles(tiles);
                     tiles[0, 3] = new Tile(GraphicsID.Tile1, PaletteID.Text);
