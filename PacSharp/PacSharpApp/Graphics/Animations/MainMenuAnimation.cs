@@ -189,7 +189,7 @@ namespace PacSharpApp.Graphics.Animation
                     tiles[23, 16] = new Tile(GraphicsID.TilePts1, PaletteID.Text);
                     tiles[23, 17] = new Tile(GraphicsID.TilePts2, PaletteID.Text);
 
-                    gameObjects["powerPelletDemo"] = new PowerPellet(graphicsHandler);
+                    gameObjects["powerPelletDemo"] = new PowerPelletObject(graphicsHandler);
                     gameObjects["powerPelletDemo"].Position = Game.Vector2FromTilePosition(10.5, 25.5);
                     tiles[25, 12] = new Tile(GraphicsID.Tile5, PaletteID.Text);
                     tiles[25, 13] = new Tile(GraphicsID.Tile0, PaletteID.Text);

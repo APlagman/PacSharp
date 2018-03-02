@@ -2,9 +2,9 @@
 
 namespace PacSharpApp.Objects
 {
-    class PowerPellet : GameObject
+    class PowerPelletObject : GameObject
     {
-        internal PowerPellet(GraphicsHandler handler)
+        internal PowerPelletObject(GraphicsHandler handler)
             : base(GraphicsConstants.TileSize)
         {
             handler.UpdateAnimatedSprite(this, new PowerPelletSprite() { Palette = PaletteID.Pellet });

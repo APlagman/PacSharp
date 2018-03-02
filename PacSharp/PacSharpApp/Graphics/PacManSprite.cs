@@ -4,7 +4,7 @@ using PacSharpApp.Properties;
 
 namespace PacSharpApp.Graphics
 {
-    class PacManSprite : AnimatedSprite
+    class PacmanSprite : AnimatedSprite
     {
         private static readonly Bitmap sourceSheet = Resources.Sprites;
         private static readonly (Bitmap, TimeSpan)[] sourceImages = new(Bitmap, TimeSpan)[]
@@ -15,7 +15,7 @@ namespace PacSharpApp.Graphics
             (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.SpritePacmanMiddleRight), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50))
         };
 
-        internal PacManSprite()
+        internal PacmanSprite()
             : base(sourceImages)
         {
             Palette = PaletteID.Pacman;
