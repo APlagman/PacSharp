@@ -9,7 +9,7 @@ using System.Windows.Forms;
 /// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Graphics
 {
     /// <summary>
     /// Handles drawing logic before delegating to the actual form
@@ -39,7 +39,7 @@ namespace PacSharpApp
 
         internal static Bitmap GetPalette(PaletteID id) => Resources.Palettes.Clone(new Rectangle(new Point((int)id, 0), new Size(1, 4)), Resources.Palettes.PixelFormat);
         
-        private static void SwapColors(Bitmap source, PaletteID palette)
+        internal static void SwapColors(Bitmap source, PaletteID palette)
         {
             DateTime temp = DateTime.Now;
             if ((int)palette == (int)PaletteID.Blinky || palette == (int)PaletteID.Empty)
@@ -65,7 +65,7 @@ namespace PacSharpApp
             source.UnlockBits(bmpData);
         }
 
-        private static IDictionary<Color, Color> GetColorMap(PaletteID id)
+        internal static IDictionary<Color, Color> GetColorMap(PaletteID id)
         {
             var results = new Dictionary<Color, Color>();
             var destMap = GetPaletteMap(id);
@@ -75,7 +75,7 @@ namespace PacSharpApp
             return results;
         }
 
-        private static Rectangle GetGraphicLocation(GraphicsID id)
+        internal static Rectangle GetGraphicLocation(GraphicsID id)
         {
             Point location = new Point();
             int width;
@@ -904,7 +904,7 @@ namespace PacSharpApp
         }
 
         private GameUI ui;
-        private IDictionary<GameObject, Image> gameObjectMap = new Dictionary<GameObject, Image>();
+        private IDictionary<GameObject, Sprite> gameObjectMap = new Dictionary<GameObject, Sprite>();
         private Image tileImage;
         private Image screenImage;
 
@@ -926,7 +926,7 @@ namespace PacSharpApp
 
         internal void CommitTiles(Tile[,] tiles)
         {
-            using (var tileGraphics = Graphics.FromImage(tileImage))
+            using (var tileGraphics = System.Drawing.Graphics.FromImage(tileImage))
             {
                 for (int row = 0; row < tiles.GetLength(0); ++row)
                     for (int col = 0; col < tiles.GetLength(1); ++col)
@@ -941,21 +941,22 @@ namespace PacSharpApp
             }
         }
 
-        internal void UpdateGraphic(GameObject obj, GraphicsID id, PaletteID palette)
+        internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette)
         {
-            UpdateGraphic(obj, id, palette, Resources.Sprites);
+            UpdateStaticSprite(obj, id, palette, Resources.Sprites);
         }
 
-        internal void UpdateGraphic(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source)
+        internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source)
         {
-            Bitmap sprite = source.Clone(GetGraphicLocation(id), source.PixelFormat);
-            SwapColors(sprite, palette);
-            gameObjectMap[obj] = sprite;
+            gameObjectMap[obj] = new StaticSprite(source, id)
+            {
+                Palette = palette
+            };
         }
 
         internal void Draw(GameState state)
         {
-            using (var screenGraphics = Graphics.FromImage(screenImage))
+            using (var screenGraphics = System.Drawing.Graphics.FromImage(screenImage))
             {
                 screenGraphics.Clear(Color.Black);
                 screenGraphics.DrawImage(tileImage, Point.Empty);
@@ -963,15 +964,15 @@ namespace PacSharpApp
                 {
                     GameObject obj = pair.Key;
                     Point location = obj.ScreenPosition(GameArea);
-                    screenGraphics.DrawImage(pair.Value, location);
+                    screenGraphics.DrawImage(pair.Value.Image, location);
                 }
             }
             GameArea.Render(screenImage);
         }
 
-        internal void Register(GameObject obj, Image graphics)
+        internal void Register(GameObject obj, Sprite sprite)
         {
-            gameObjectMap.Add(obj, graphics);
+            gameObjectMap.Add(obj, sprite);
         }
         
         internal void Close()

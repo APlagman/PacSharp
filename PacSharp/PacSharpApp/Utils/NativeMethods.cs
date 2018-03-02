@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace PacSharpApp
+namespace PacSharpApp.Utils
 {
     /// <summary>
     /// See: https://blogs.msdn.microsoft.com/shawnhar/2010/12/06/when-winforms-met-game-loop/

@@ -1,10 +1,11 @@
 ﻿using PacSharpApp.Properties;
+using PacSharpApp.Utils;
 using System.Collections.Generic;
 
 /// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Graphics.Animation
 {
     internal class MainMenuAnimation : Animation
     {
@@ -73,9 +74,8 @@ namespace PacSharpApp
                 case 1:
                     UntilNextFrame = 1000;
                     gameObjects.Set("staticBlinky", new GameObject(GraphicsHandler.SpriteSize));
-                    var blinky = gameObjects["staticBlinky"];
-                    blinky.Position = Vector2.FromTilePosition(5, 6.5);
-                    graphicsHandler.UpdateGraphic(blinky, GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
+                    gameObjects["staticBlinky"].Position = Game.Vector2FromTilePosition(5, 6.5);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["staticBlinky"], GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
                     break;
                 case 2:
                     UntilNextFrame = 500;
@@ -101,8 +101,8 @@ namespace PacSharpApp
                 case 4:
                     UntilNextFrame = 1000;
                     gameObjects.Set("staticPinky", new GameObject(GraphicsHandler.SpriteSize));
-                    gameObjects["staticPinky"].Position = Vector2.FromTilePosition(5, 9.5);
-                    graphicsHandler.UpdateGraphic(gameObjects["staticPinky"], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
+                    gameObjects["staticPinky"].Position = Game.Vector2FromTilePosition(5, 9.5);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["staticPinky"], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
                     break;
                 case 5:
                     UntilNextFrame = 500;
@@ -127,8 +127,8 @@ namespace PacSharpApp
                 case 7:
                     UntilNextFrame = 1000;
                     gameObjects.Set("staticInky", new GameObject(GraphicsHandler.SpriteSize));
-                    gameObjects["staticInky"].Position = Vector2.FromTilePosition(5, 12.5);
-                    graphicsHandler.UpdateGraphic(gameObjects["staticInky"], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
+                    gameObjects["staticInky"].Position = Game.Vector2FromTilePosition(5, 12.5);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["staticInky"], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
                     break;
                 case 8:
                     UntilNextFrame = 500;
@@ -153,8 +153,8 @@ namespace PacSharpApp
                 case 10:
                     UntilNextFrame = 1000;
                     gameObjects.Set("staticClyde", new GameObject(GraphicsHandler.SpriteSize));
-                    gameObjects["staticClyde"].Position = Vector2.FromTilePosition(5, 15.5);
-                    graphicsHandler.UpdateGraphic(gameObjects["staticClyde"], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
+                    gameObjects["staticClyde"].Position = Game.Vector2FromTilePosition(5, 15.5);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["staticClyde"], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
                     break;
                 case 11:
                     UntilNextFrame = 500;
@@ -178,8 +178,8 @@ namespace PacSharpApp
                 case 13:
                     UntilNextFrame = 1000;
                     gameObjects.Set("pelletDemo", new GameObject(GraphicsHandler.TileSize));
-                    gameObjects["pelletDemo"].Position = Vector2.FromTilePosition(10.5, 23.5);
-                    graphicsHandler.UpdateGraphic(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles);
+                    gameObjects["pelletDemo"].Position = Game.Vector2FromTilePosition(10.5, 23.5);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles);
                     tiles[23, 12] = new Tile(GraphicsID.Tile1, PaletteID.Text);
                     tiles[23, 13] = new Tile(GraphicsID.Tile0, PaletteID.Text);
                     tiles[23, 15] = new Tile(GraphicsID.TilePts0, PaletteID.Text);
@@ -187,8 +187,8 @@ namespace PacSharpApp
                     tiles[23, 17] = new Tile(GraphicsID.TilePts2, PaletteID.Text);
 
                     gameObjects.Set("powerPelletDemo", new GameObject(GraphicsHandler.TileSize));
-                    gameObjects["powerPelletDemo"].Position = Vector2.FromTilePosition(10.5, 25.5);
-                    graphicsHandler.UpdateGraphic(gameObjects["powerPelletDemo"], GraphicsID.TilePelletLarge, PaletteID.Pellet, Resources.Tiles);
+                    gameObjects["powerPelletDemo"].Position = Game.Vector2FromTilePosition(10.5, 25.5);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["powerPelletDemo"], GraphicsID.TilePelletLarge, PaletteID.Pellet, Resources.Tiles);
                     tiles[25, 12] = new Tile(GraphicsID.Tile5, PaletteID.Text);
                     tiles[25, 13] = new Tile(GraphicsID.Tile0, PaletteID.Text);
                     tiles[25, 15] = new Tile(GraphicsID.TilePts0, PaletteID.Text);

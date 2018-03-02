@@ -4,7 +4,7 @@ using System.Drawing;
 /// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Utils
 {
     /// <summary>
     /// Utility class for common math operations and converting between screen-space and game-space

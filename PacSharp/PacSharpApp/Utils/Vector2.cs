@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Utils
 {
     /// <summary>
     /// Utility class for 2D floating-point arithmetic
@@ -45,11 +45,6 @@ namespace PacSharpApp
         public static Vector2 operator -(Vector2 lhs, Vector2 right)
         {
             return lhs + (right * -1);
-        }
-
-        internal static Vector2 FromTilePosition(double x, double y)
-        {
-            return new Vector2(x * GraphicsHandler.TileWidth, y * GraphicsHandler.TileWidth);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PacSharpApp
+namespace PacSharpApp.Graphics.Animation
 {
     internal class CutsceneAnimation : Animation
     {

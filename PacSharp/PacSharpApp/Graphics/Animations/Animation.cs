@@ -4,7 +4,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Graphics.Animation
 {
     abstract class Animation
     {

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using PacSharpApp.Graphics;
+using PacSharpApp.Graphics.Animation;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -15,6 +18,11 @@ namespace PacSharpApp
             for (int row = 0; row < tiles.GetLength(0); ++row)
                 for (int col = 0; col < tiles.GetLength(1); ++col)
                     tiles[row, col] = new Tile(GraphicsID.TileEmpty, PaletteID.Empty);
+        }
+
+        internal static Vector2 Vector2FromTilePosition(double x, double y)
+        {
+            return new Vector2(x * GraphicsHandler.TileWidth, y * GraphicsHandler.TileWidth);
         }
 
         private const int UpMultiplier = -1;
@@ -63,7 +71,7 @@ namespace PacSharpApp
             Application.Idle += TickWhileIdle;
         }
 
-        private protected void InitGameObject(string name, Image source)
+        private protected void InitGameObject(string name, Sprite source)
         {
             GameObjects.Add(name, new GameObject(source.Size));
             GraphicsHandler.Register(GameObjects[name], source);

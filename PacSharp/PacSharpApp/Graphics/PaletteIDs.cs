@@ -1,4 +1,4 @@
-﻿namespace PacSharpApp
+﻿namespace PacSharpApp.Graphics
 {
     enum PaletteID
     {

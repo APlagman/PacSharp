@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Alex Plagman
 /// </summary>
-namespace PacSharpApp
+namespace PacSharpApp.Graphics
 {
     class Tile
     {
