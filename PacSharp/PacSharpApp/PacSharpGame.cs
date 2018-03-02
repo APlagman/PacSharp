@@ -59,11 +59,20 @@ namespace PacSharpApp
                 default:
                     break;
             }
+        private void BeginMainMenuChase()
+        {
         }
 
         private void CheckCollisions()
         {
             //throw new NotImplementedException();
+        }
+
+        private protected override void OnGameStateChanged()
+        {
+            base.OnGameStateChanged();
+            if (State == GameState.Menu)
+                Animation = new MainMenuAnimation(GraphicsHandler, () => BeginMainMenuChase());
         }
 
         private protected override void UpdateHighScore()

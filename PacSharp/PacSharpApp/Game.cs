@@ -143,8 +143,6 @@ namespace PacSharpApp
             Animation.Update(elapsedTime, Tiles, GameObjects, GraphicsHandler);
         }
 
-        private protected abstract void StartAnimation();
-
         private void Update(TimeSpan elapsedTime)
         {
             HandleInput();
@@ -187,12 +185,11 @@ namespace PacSharpApp
             GraphicsHandler.Close();
         }
 
-        private void OnGameStateChanged()
+        private protected virtual void OnGameStateChanged()
         {
             ClearTiles(Tiles);
             GameObjects.Clear();
             GraphicsHandler.Clear();
-            StartAnimation();
         }
 
         private protected abstract void UpdateHighScore();
