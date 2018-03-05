@@ -13,8 +13,8 @@ namespace PacSharpApp
 {
     abstract class Game
     {
-        private const int UpMultiplier = -1;
-        private const int DownMultiplier = 1;
+        internal const int UpMultiplier = -1;
+        internal const int DownMultiplier = 1;
         
         private TimeSpan accumulatedTime;
         private DateTime previousTime;
@@ -136,11 +136,11 @@ namespace PacSharpApp
 
         private void Update(TimeSpan elapsedTime)
         {
-            InputHandler.Update();
             HandleInput();
             if (PreventUpdate)
                 return;
             UpdateImpl(elapsedTime);
+            InputHandler.Update();
             LogPostUpdate();
         }
 

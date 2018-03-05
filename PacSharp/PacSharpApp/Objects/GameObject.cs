@@ -37,6 +37,8 @@ namespace PacSharpApp.Objects
         internal ref Vector2 Velocity { get { return ref velocity; } }
         internal Size Size { get; }
 
+        internal RectangleF Bounds => new RectangleF(new PointF((float)Position.X - Size.Width / 2, (float)Position.Y - Size.Height / 2), Size);
+
         internal double Left => Position.X - Size.Width / 2d;
         internal double Right => Position.X + Size.Width / 2d;
         internal double Top => Position.Y - Size.Height / 2d;
@@ -46,6 +48,8 @@ namespace PacSharpApp.Objects
         {
             if (Behavior != null)
                 Behavior.Update(elapsedTime);
+            Position.X += elapsedTime.TotalMilliseconds * Velocity.X;
+            Position.Y += elapsedTime.TotalMilliseconds * Velocity.Y;
         }
 
         internal bool OriginAbove(double v) => Position.Y < v;
@@ -64,6 +68,38 @@ namespace PacSharpApp.Objects
         {
             Position.X = Position.X.Clamp(boundingBox.Location.X + Size.Width / 2d, boundingBox.Location.X + boundingBox.Size.Width - Size.Width / 2d);
             Position.Y = Position.Y.Clamp(boundingBox.Location.Y + Size.Height / 2d, boundingBox.Location.Y + boundingBox.Size.Height - Size.Height / 2d);
+        }
+
+        internal bool CollidingFromBelow(RectangleF rect)
+        {
+            return OriginBelow(rect.Bottom)
+                && TopAbove(rect.Bottom)
+                && LeftSideLeftOf(rect.Right)
+                && RightSideRightOf(rect.Left);
+        }
+
+        internal bool CollidingFromAbove(RectangleF rect)
+        {
+            return OriginAbove(rect.Top)
+                && BottomBelow(rect.Top)
+                && LeftSideLeftOf(rect.Right)
+                && RightSideRightOf(rect.Left);
+        }
+
+        internal bool CollidingFromLeft(RectangleF rect)
+        {
+            return OriginLeftOf(rect.Left)
+                && RightSideRightOf(rect.Left)
+                && BottomBelow(rect.Top)
+                && TopAbove(rect.Bottom);
+        }
+
+        internal bool CollidingFromRight(RectangleF rect)
+        {
+            return OriginRightOf(rect.Right)
+                && LeftSideLeftOf(rect.Right)
+                && BottomBelow(rect.Top)
+                && TopAbove(rect.Bottom);
         }
     }
 }

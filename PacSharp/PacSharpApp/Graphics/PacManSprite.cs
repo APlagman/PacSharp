@@ -30,5 +30,7 @@ namespace PacSharpApp.Graphics
         {
             Palette = PaletteID.Pacman;
         }
+
+        internal override int ZIndex => 9;
     }
 }

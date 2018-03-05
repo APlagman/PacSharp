@@ -28,14 +28,14 @@ namespace PacSharpApp.Utils
 
         public static Point ToScreenLocation(this Vector2 value, GameArea screenArea, Size objectSize)
         {
-            return ToScreenLocation(value, new Point(), screenArea.Size, objectSize);
+            return ToScreenLocation(value, new Point(), screenArea.ScreenSize, objectSize);
         }
 
         public static Point ToScreenLocation(this Vector2 value, Point screenOrigin, Size screenSize, Size objectSize)
         {
             return new Point(
-                ((int)Math.Round(value.X) - objectSize.Width / 2).Clamp(0, screenSize.Width - objectSize.Width) + screenOrigin.X,
-                ((int)Math.Round(value.Y) - objectSize.Height / 2).Clamp(0, screenSize.Height - objectSize.Height) + screenOrigin.Y
+                ((int)Math.Round(value.X) - objectSize.Width / 2) + screenOrigin.X,
+                ((int)Math.Round(value.Y) - objectSize.Height / 2) + screenOrigin.Y
             );
         }
     }

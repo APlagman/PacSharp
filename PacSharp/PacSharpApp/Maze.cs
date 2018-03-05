@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using PacSharpApp.AI;
 using PacSharpApp.Graphics;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -16,21 +17,25 @@ namespace PacSharpApp
     {
         private readonly TileCollection tiles;
 
-        private Maze(TileCollection tiles, List<Rectangle> walls, (List<Point> pellets, List<Point> powerPellets) pelletInfo, Point playerSpawn, IDictionary<GhostAIType, Point> ghostSpawns)
+        private Maze(TileCollection tiles,
+            List<RectangleF> walls,
+            (List<Vector2> pellets, List<Vector2> powerPellets) pelletInfo, 
+            Vector2 playerSpawn,
+            IDictionary<GhostAIType, Vector2> ghostSpawns)
         {
             this.tiles = tiles;
             Walls = walls;
             Pellets = pelletInfo.pellets;
             PowerPellets = pelletInfo.powerPellets;
             PlayerSpawn = playerSpawn;
-            GhostSpawns = new ReadOnlyDictionary<GhostAIType, Point>(ghostSpawns);
+            GhostSpawns = new ReadOnlyDictionary<GhostAIType, Vector2>(ghostSpawns);
         }
 
-        internal IReadOnlyCollection<Rectangle> Walls { get; }
-        internal IReadOnlyCollection<Point> Pellets { get; }
-        internal IReadOnlyCollection<Point> PowerPellets { get; }
-        internal Point PlayerSpawn { get; }
-        internal IReadOnlyDictionary<GhostAIType, Point> GhostSpawns { get; }
+        internal IReadOnlyCollection<RectangleF> Walls { get; }
+        internal IReadOnlyCollection<Vector2> Pellets { get; }
+        internal IReadOnlyCollection<Vector2> PowerPellets { get; }
+        internal Vector2 PlayerSpawn { get; }
+        internal IReadOnlyDictionary<GhostAIType, Vector2> GhostSpawns { get; }
 
         internal void Draw(TileCollection dest)
         {
@@ -78,9 +83,9 @@ namespace PacSharpApp
                 ReadGhostSpawns(mazeXml));
         }
 
-        private static IDictionary<GhostAIType, Point> ReadGhostSpawns(XDocument mazeXml)
+        private static IDictionary<GhostAIType, Vector2> ReadGhostSpawns(XDocument mazeXml)
         {
-            var ghostSpawns = new Dictionary<GhostAIType, Point>();
+            var ghostSpawns = new Dictionary<GhostAIType, Vector2>();
             var spawnInfo = 
                 mazeXml.Root.Descendants(ObjectElementName)
                 .Where(obj => obj.Attribute(TypeAttribute).Value == GhostObjectType)
@@ -89,24 +94,24 @@ namespace PacSharpApp
                     (GhostAIType)Enum.Parse(
                         typeof(GhostAIType),
                         ghost.Attribute(NameAttribute).Value),
-                    new Point(
-                        int.Parse(ghost.Attribute(XAttribute).Value),
-                        int.Parse(ghost.Attribute(YAttribute).Value))
+                    new Vector2(
+                        float.Parse(ghost.Attribute(XAttribute).Value),
+                        float.Parse(ghost.Attribute(YAttribute).Value))
                 ));
-            foreach ((GhostAIType type, Point location) in spawnInfo)
+            foreach ((GhostAIType type, Vector2 location) in spawnInfo)
                 ghostSpawns.Add(type, location);
             return ghostSpawns;
         }
 
-        private static Point ReadPlayerSpawn(XDocument mazeXml)
+        private static Vector2 ReadPlayerSpawn(XDocument mazeXml)
         {
             return mazeXml.Root.Descendants(ObjectElementName)
                 .Where(obj => obj.Attribute(TypeAttribute).Value == PlayerObjectType)
-                .Select(player => new Point(int.Parse(player.Attribute(XAttribute).Value), int.Parse(player.Attribute(YAttribute).Value)))
+                .Select(player => new Vector2(float.Parse(player.Attribute(XAttribute).Value), float.Parse(player.Attribute(YAttribute).Value)))
                 .First();
         }
 
-        private static (List<Point> pellets, List<Point> powerPellets) ReadPellets(XDocument mazeXml, int mapWidth, int mapHeight)
+        private static (List<Vector2> pellets, List<Vector2> powerPellets) ReadPellets(XDocument mazeXml, int mapWidth, int mapHeight)
         {
             int[] pelletData =
                 mazeXml.Root.Descendants(LayerElementName)
@@ -117,32 +122,32 @@ namespace PacSharpApp
                 .Select(tile => int.Parse(tile))
                 .ToArray();
 
-            List<Point> pellets = new List<Point>();
-            List<Point> powerPellets = new List<Point>();
+            List<Vector2> pellets = new List<Vector2>();
+            List<Vector2> powerPellets = new List<Vector2>();
 
             for (int r = 0; r < mapHeight; ++r)
                 for (int c = 0; c < mapWidth; ++c)
                 {
                     int tileID = pelletData[r * mapWidth + c];
                     if (tileID == PelletTileGraphicsID)
-                        pellets.Add(new Point(c * GraphicsConstants.TileWidth, r * GraphicsConstants.TileWidth));
+                        pellets.Add(new Vector2(c * GraphicsConstants.TileWidth, r * GraphicsConstants.TileWidth));
                     else if (tileID == PowerPelletTileGraphicsID)
-                        powerPellets.Add(new Point(c * GraphicsConstants.TileWidth, r * GraphicsConstants.TileWidth));
+                        powerPellets.Add(new Vector2(c * GraphicsConstants.TileWidth, r * GraphicsConstants.TileWidth));
                 }
 
             return (pellets, powerPellets);
         }
 
-        private static List<Rectangle> ReadWalls(XDocument mazeXml)
+        private static List<RectangleF> ReadWalls(XDocument mazeXml)
         {
-            return new List<Rectangle>(
+            return new List<RectangleF>(
                 mazeXml.Root.Descendants(ObjectElementName)
                 .Where(obj => obj.Attribute(TypeAttribute).Value == WallObjectType)
-                .Select(wall => new Rectangle(
-                    int.Parse(wall.Attribute(XAttribute).Value),
-                    int.Parse(wall.Attribute(YAttribute).Value),
-                    int.Parse(wall.Attribute(WidthAttribute).Value),
-                    int.Parse(wall.Attribute(HeightAttribute).Value)
+                .Select(wall => new RectangleF(
+                    float.Parse(wall.Attribute(XAttribute).Value),
+                    float.Parse(wall.Attribute(YAttribute).Value),
+                    float.Parse(wall.Attribute(WidthAttribute).Value),
+                    float.Parse(wall.Attribute(HeightAttribute).Value)
                     )));
         }
 

@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using System;
+/// <summary>
 /// Alex Plagman
 /// </summary>
 namespace PacSharpApp.Utils
@@ -45,6 +46,12 @@ namespace PacSharpApp.Utils
         public static Vector2 operator -(Vector2 lhs, Vector2 right)
         {
             return lhs + (right * -1);
+        }
+
+        internal void Round()
+        {
+            X = Math.Round(X);
+            Y = Math.Round(Y);
         }
     }
 }

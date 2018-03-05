@@ -7,7 +7,7 @@ using System.Drawing;
 /// </summary>
 namespace PacSharpApp.Graphics
 {
-    class AnimatedSprite : Sprite
+    abstract class AnimatedSprite : Sprite
     {
         private readonly IDictionary<string, (Bitmap bitmap, TimeSpan untilUpdate)[]> sources;
         private Bitmap[] images;
@@ -23,7 +23,7 @@ namespace PacSharpApp.Graphics
                 images[i] = sources[currentAnimationSet][i].bitmap.Clone() as Bitmap;
         }
 
-        internal string CurrentAnimationSet { private get; set; }
+        private protected string CurrentAnimationSet { private get; set; }
         internal sealed override Image Image => images[currentImage];
 
         private protected sealed override void UpdatePalette()
