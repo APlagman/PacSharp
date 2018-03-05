@@ -22,12 +22,23 @@ namespace PacSharpApp
         private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
 
+        private int displayedHighScore = 0;
         private List<(TimeSpan delay, Action action)> actionQueue = new List<(TimeSpan, Action)>();
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
         { }
         
+        private int DisplayedHighScore
+        {
+            get => displayedHighScore;
+            set
+            {
+                displayedHighScore = value;
+                Tiles.DrawInteger(1, 16, displayedHighScore);
+            }
+        }
+
         private protected override bool PreventUpdate => GameState.Playing == State && Paused;
 
         private protected override void HandleInput()
@@ -162,6 +173,9 @@ $@"Game Area:
 
         private void StartGame()
         {
+            State = GameState.Playing;
+            Score = 0;
+            DisplayedHighScore = 0;
             DrawMaze();
             AddPellets();
             AddGhosts();
