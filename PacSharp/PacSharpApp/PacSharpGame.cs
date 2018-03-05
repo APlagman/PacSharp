@@ -45,7 +45,7 @@ namespace PacSharpApp
             }
         }
 
-        private protected override bool PreventUpdate => GameState.Playing == State && Paused;
+        private protected override bool PreventUpdate => false;
 
         private protected override void HandleInput()
         {
@@ -199,7 +199,6 @@ $@"Game Area:
 
         private void StartGame()
         {
-            GraphicsHandler.PreventAnimatedSpriteUpdates = false;
             State = GameState.Playing;
             Score = 0;
             DisplayedHighScore = 0;
@@ -207,8 +206,17 @@ $@"Game Area:
             Maze level = Maze.Load(Resources.OriginalMaze);
 
             CreateLevelObjects(level);
-            Tiles.DrawRange((3, 0), (33, 0), GraphicsID.TileEmpty, PaletteID.Empty);
+            Tiles.DrawRange((4, 0), (33, 27), GraphicsID.TileEmpty, PaletteID.Empty);
+            GraphicsHandler.CommitTiles(Tiles);
             level.Draw(Tiles);
+            Tiles.DrawText(20, 11, "READY!", PaletteID.Pacman);
+            Paused = true;
+            actionQueue.Add((TimeSpan.FromSeconds(3), () =>
+            {
+                GraphicsHandler.PreventAnimatedSpriteUpdates = false;
+                Paused = false;
+                Tiles.DrawRange((20, 11), (20, 16), GraphicsID.TileEmpty, PaletteID.Empty);
+            }));
         }
 
         private void CreateLevelObjects(Maze level)
