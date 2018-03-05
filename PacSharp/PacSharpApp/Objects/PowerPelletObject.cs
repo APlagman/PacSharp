@@ -7,6 +7,8 @@ namespace PacSharpApp.Objects
 {
     class PowerPelletObject : GameObject
     {
+        internal const int Worth = 50;
+
         internal PowerPelletObject(GraphicsHandler handler)
             : base(GraphicsConstants.TileSize)
         {

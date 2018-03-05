@@ -61,6 +61,23 @@ namespace PacSharpApp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;map version=&quot;1.0&quot; tiledversion=&quot;1.0.3&quot; orientation=&quot;orthogonal&quot; renderorder=&quot;right-down&quot; width=&quot;28&quot; height=&quot;36&quot; tilewidth=&quot;8&quot; tileheight=&quot;8&quot; nextobjectid=&quot;58&quot;&gt;
+        /// &lt;tileset firstgid=&quot;1&quot; name=&quot;Tiles&quot; tilewidth=&quot;8&quot; tileheight=&quot;8&quot; tilecount=&quot;256&quot; columns=&quot;16&quot;&gt;
+        ///  &lt;image source=&quot;../Tiles.png&quot; width=&quot;128&quot; height=&quot;128&quot;/&gt;
+        /// &lt;/tileset&gt;
+        /// &lt;layer name=&quot;Maze&quot; width=&quot;28&quot; height=&quot;36&quot; opacity=&quot;0.9&quot;&gt;
+        ///  &lt;data encoding=&quot;csv&quot;&gt;
+        ///0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string OriginalMaze {
+            get {
+                return ResourceManager.GetString("OriginalMaze", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Palettes {

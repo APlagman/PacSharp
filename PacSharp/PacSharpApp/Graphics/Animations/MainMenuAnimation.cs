@@ -96,14 +96,14 @@ namespace PacSharpApp.Graphics.Animation
                         Position = Game.Vector2FromTilePosition(10.5, 23.5)
                     };
                     graphicsHandler.UpdateStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles);
-                    tiles.DrawText(23, 12, "10");
+                    tiles.DrawText(23, 12, PelletObject.Worth.ToString());
                     tiles.DrawPts(23, 15);
 
                     gameObjects["powerPelletDemo"] = new PowerPelletObject(graphicsHandler)
                     {
                         Position = Game.Vector2FromTilePosition(10.5, 25.5)
                     };
-                    tiles.DrawText(25, 12, "50");
+                    tiles.DrawText(25, 12, PowerPelletObject.Worth.ToString());
                     tiles.DrawPts(25, 15);
                     break;
             }

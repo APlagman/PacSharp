@@ -47,6 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AIBehavior.cs" />
+    <Compile Include="AI\GhostAIBehavior.cs" />
+    <Compile Include="AI\GhostAIType.cs" />
     <Compile Include="AI\MenuPacmanAIBehavior.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
     <Compile Include="Graphics\Animations\Animation.cs" />
@@ -54,7 +56,10 @@
     <Compile Include="Game.cs" />
     <Compile Include="Graphics\PacmanSprite.cs" />
     <Compile Include="Graphics\PowerPelletSprite.cs" />
+    <Compile Include="Maze.cs" />
+    <Compile Include="Objects\GhostObject.cs" />
     <Compile Include="Objects\PacmanObject.cs" />
+    <Compile Include="Objects\PelletObject.cs" />
     <Compile Include="Objects\PowerPelletObject.cs" />
     <Compile Include="IGameUI.cs" />
     <Compile Include="GameState.cs" />
@@ -79,7 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Graphics\StaticSprite.cs" />
-    <Compile Include="Graphics\Tile.cs" />
+    <Compile Include="Graphics\TileCollection.cs" />
     <Compile Include="Utils\Vector2.cs" />
     <EmbeddedResource Include="PacSharpGameForm.resx">
       <DependentUpon>PacSharpGameForm.cs</DependentUpon>
@@ -94,6 +99,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Content\Mazes\Original.tmx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

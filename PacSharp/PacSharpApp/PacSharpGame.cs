@@ -8,6 +8,8 @@ using PacSharpApp.AI;
 using PacSharpApp.Graphics;
 using PacSharpApp.Graphics.Animation;
 using PacSharpApp.Objects;
+using PacSharpApp.Properties;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -24,6 +26,10 @@ namespace PacSharpApp
 
         private int displayedHighScore = 0;
         private List<(TimeSpan delay, Action action)> actionQueue = new List<(TimeSpan, Action)>();
+        private List<PelletObject> pellets;
+        private List<PowerPelletObject> powerPellets;
+        private List<GhostObject> ghosts;
+        private PacmanObject player;
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
@@ -67,8 +73,7 @@ namespace PacSharpApp
         private protected override void UpdateImpl(TimeSpan elapsedTime)
         {
             UpdateActionQueue(elapsedTime);
-            foreach (var obj in GameObjects)
-                obj.Value.Update(elapsedTime);
+            UpdateObjects(elapsedTime);
             switch (State)
             {
                 case GameState.Menu:
@@ -85,6 +90,22 @@ namespace PacSharpApp
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void UpdateObjects(TimeSpan elapsedTime)
+        {
+            foreach (var obj in GameObjects)
+                obj.Value.Update(elapsedTime);
+            if (State == GameState.Playing)
+            {
+                player?.Update(elapsedTime);
+                foreach (var ghosts in ghosts)
+                    ghosts.Update(elapsedTime);
+                foreach (var pellet in pellets)
+                    pellet.Update(elapsedTime);
+                foreach (var pellet in powerPellets)
+                    pellet.Update(elapsedTime);
             }
         }
 
@@ -113,10 +134,11 @@ namespace PacSharpApp
             {
                 Score = 0;
                 Animation = new MainMenuAnimation(GraphicsHandler, () => BeginMainMenuChase());
+                AddCredit();
             }
             if (State == GameState.Menu || State == GameState.Playing)
             {
-                AddScoreAndCredit();
+                AddScore();
             }
         }
 
@@ -158,11 +180,15 @@ $@"Game Area:
             GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
         }
 
-        private void AddScoreAndCredit()
+        private void AddScore()
         {
             Tiles.DrawText(0, 3, "1UP");
             Tiles.DrawText(0, 9, "HIGHSCORE");
             Tiles.DrawText(0, 21, "2UP");
+        }
+
+        private void AddCredit()
+        {
             Tiles.DrawText(35, 2, "CREDIT  0");
         }
 
@@ -173,16 +199,39 @@ $@"Game Area:
 
         private void StartGame()
         {
+            GraphicsHandler.PreventAnimatedSpriteUpdates = false;
             State = GameState.Playing;
             Score = 0;
             DisplayedHighScore = 0;
-            DrawMaze();
-            AddPellets();
-            AddGhosts();
+
+            Maze level = Maze.Load(Resources.OriginalMaze);
+
+            CreateLevelObjects(level);
+            Tiles.DrawRange((3, 0), (33, 0), GraphicsID.TileEmpty, PaletteID.Empty);
+            level.Draw(Tiles);
         }
 
-        private void DrawMaze()
+        private void CreateLevelObjects(Maze level)
         {
+            player = new PacmanObject(GraphicsHandler)
+            {
+                Position = new Vector2(level.PlayerSpawn.X + GraphicsConstants.TileWidth / 2, level.PlayerSpawn.Y + GraphicsConstants.TileWidth / 2)
+            };
+            pellets = new List<PelletObject>
+                (level.Pellets.Select(position => new PelletObject(GraphicsHandler)
+                {
+                    Position = new Vector2(position.X + GraphicsConstants.TileWidth / 2, position.Y + GraphicsConstants.TileWidth / 2)
+                }));
+            powerPellets = new List<PowerPelletObject>
+                (level.PowerPellets.Select(position => new PowerPelletObject(GraphicsHandler)
+                {
+                    Position = new Vector2(position.X + GraphicsConstants.TileWidth / 2, position.Y + GraphicsConstants.TileWidth / 2)
+                }));
+            ghosts = new List<GhostObject>
+                (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler)
+                {
+                    Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2)
+                }));
         }
 
         private void AddPellets()

@@ -63,7 +63,7 @@ namespace PacSharpApp.Graphics
                     {
                         if (!tiles[row, col].Updated)
                             continue;
-                        Bitmap source = Resources.Tiles.Clone(GraphicsUtils.GetGraphicLocation(tiles[row, col].GraphicsId), Resources.Tiles.PixelFormat);
+                        Bitmap source = Resources.Tiles.Clone(GraphicsUtils.GetGraphicLocation(tiles[row, col].GraphicsID), Resources.Tiles.PixelFormat);
                         GraphicsUtils.SwapColors(source, tiles[row, col].Palette);
                         tileGraphics.DrawImage(source, new Point(col * GraphicsConstants.TileWidth, row * GraphicsConstants.TileWidth));
                         tiles[row, col].Updated = false;
@@ -170,7 +170,7 @@ namespace PacSharpApp.Graphics
 
             for (int i = 0; i < bytes; i += 4)
             {
-                Color src = Color.FromArgb(values[i + 2], values[i + 1], values[i]);
+                Color src = Color.FromArgb(values[i + 3], values[i + 2], values[i + 1], values[i]);
                 Color dest = paletteMap[src];
                 values[i + 2] = dest.R;
                 values[i + 1] = dest.G;
@@ -187,6 +187,7 @@ namespace PacSharpApp.Graphics
             var destMap = GetPaletteMap(id);
             for (int i = 0; i < ColorsPerPalette; ++i)
                 results.Add(BasePaletteMap[i], destMap[i]);
+            results.Add(Color.FromArgb(0, 255, 255, 255), Color.FromArgb(0, 255, 255, 255));
 
             return results;
         }
@@ -1029,6 +1030,14 @@ namespace PacSharpApp.Graphics
                     throw new Exception("Unhandled GraphicsId");
             }
             return new Rectangle(new Point(location.X * width, location.Y * width), new Size(width, width));
+        }
+
+        internal static GraphicsID IDFromLocation(int row, int column)
+        {
+            foreach (GraphicsID id in Enum.GetValues(typeof(GraphicsID)))
+                if (GetGraphicLocation(id).Location.Equals(new Point(column * GraphicsConstants.TileWidth, row * GraphicsConstants.TileWidth)))
+                    return id;
+            return GraphicsID.TileEmpty;
         }
     }
 }

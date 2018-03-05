@@ -10,11 +10,11 @@ namespace PacSharpApp.Graphics
         {
             public Tile(GraphicsID graphicsId, PaletteID palette)
             {
-                GraphicsId = graphicsId;
+                GraphicsID = graphicsId;
                 Palette = palette;
             }
 
-            internal GraphicsID GraphicsId { get; }
+            internal GraphicsID GraphicsID { get; }
             internal PaletteID Palette { get; }
             internal bool Updated { get; set; } = true;
         }
@@ -33,7 +33,7 @@ namespace PacSharpApp.Graphics
 
         internal void SetTile(int row, int column, GraphicsID graphics, PaletteID palette)
         {
-            if (tiles[row, column] != null && tiles[row, column].GraphicsId == graphics && tiles[row, column].Palette == palette)
+            if (tiles[row, column] != null && tiles[row, column].GraphicsID == graphics && tiles[row, column].Palette == palette)
                 return;
             tiles[row, column] = new Tile(graphics, palette);
         }
