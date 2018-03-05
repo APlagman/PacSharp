@@ -170,7 +170,7 @@ namespace PacSharpApp
                     int tileID = tileData[r * mapWidth + c] - 1; // 0 is no tile
                     if (tileID < 0)
                         continue;
-                    tiles.SetTile(r, c, GraphicsUtils.IDFromLocation(tileID / 16, tileID % 16), PaletteID.Maze);
+                    tiles.SetTile(r, c, GraphicsUtils.TileIDFromLocation(tileID / 16, tileID % 16), PaletteID.Maze);
                 }
 
             return tiles;

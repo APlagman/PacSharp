@@ -17,10 +17,10 @@ namespace PacSharpApp.Graphics
                 "moving",
                 new (Bitmap, TimeSpan)[]
                 {
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.SpritePacmanSolid), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50)),
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.SpritePacmanMiddleRight), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50)),
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.SpritePacmanOpenRight), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50)),
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.SpritePacmanMiddleRight), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50))
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanSolid, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50)),
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanMiddleRight, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50)),
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanOpenRight, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50)),
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanMiddleRight, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(50))
                 }
             }
         };

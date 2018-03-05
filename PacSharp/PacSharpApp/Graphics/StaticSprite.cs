@@ -10,9 +10,9 @@ namespace PacSharpApp.Graphics
         private readonly Bitmap sourceImage;
         private Bitmap currentImage;
 
-        internal StaticSprite(Bitmap source, GraphicsID graphicsId)
+        internal StaticSprite(Bitmap source, GraphicsID graphicsId, int width, int sourceTilesPerRow)
         {
-            sourceImage = source.Clone(GraphicsUtils.GetGraphicLocation(graphicsId), source.PixelFormat);
+            sourceImage = source.Clone(GraphicsUtils.GetGraphicSourceRectangle(graphicsId, width, sourceTilesPerRow), source.PixelFormat);
             currentImage = sourceImage;
         }
 

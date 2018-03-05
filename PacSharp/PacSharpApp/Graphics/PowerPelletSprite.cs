@@ -17,8 +17,8 @@ namespace PacSharpApp.Graphics
                 "flashing",
                 new (Bitmap bitmap, TimeSpan untilUpdate)[]
                 {
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.TilePelletLarge), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150)),
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicLocation(GraphicsID.TileEmpty), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150))
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.TilePelletLarge, GraphicsConstants.TileWidth, sourceSheet.Width / GraphicsConstants.TileWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150)),
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.TileEmpty, GraphicsConstants.TileWidth, sourceSheet.Width / GraphicsConstants.TileWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(150))
                 }
             }
         };

@@ -52,7 +52,7 @@ namespace PacSharpApp.Graphics
                     {
                         if (!tiles[row, col].Updated)
                             continue;
-                        Bitmap source = Resources.Tiles.Clone(GraphicsUtils.GetGraphicLocation(tiles[row, col].GraphicsID), Resources.Tiles.PixelFormat);
+                        Bitmap source = Resources.Tiles.Clone(GraphicsUtils.GetGraphicSourceRectangle(tiles[row, col].GraphicsID, GraphicsConstants.TileWidth, Resources.Tiles.Width / GraphicsConstants.TileWidth), Resources.Tiles.PixelFormat);
                         GraphicsUtils.SwapColors(source, tiles[row, col].Palette);
                         tileGraphics.DrawImage(source, new Point(col * GraphicsConstants.TileWidth, row * GraphicsConstants.TileWidth));
                         tiles[row, col].Updated = false;
@@ -62,12 +62,12 @@ namespace PacSharpApp.Graphics
 
         internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette)
         {
-            UpdateStaticSprite(obj, id, palette, Resources.Sprites);
+            UpdateStaticSprite(obj, id, palette, Resources.Sprites, GraphicsConstants.SpriteWidth);
         }
 
-        internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source)
+        internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source, int width)
         {
-            gameObjectMap[obj] = new StaticSprite(source, id)
+            gameObjectMap[obj] = new StaticSprite(source, id, width, source.Width / width)
             {
                 Palette = palette
             };

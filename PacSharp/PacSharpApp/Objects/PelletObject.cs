@@ -13,7 +13,7 @@ namespace PacSharpApp.Objects
         internal PelletObject(GraphicsHandler handler)
             : base(GraphicsConstants.TileSize)
         {
-            handler.UpdateStaticSprite(this, GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles);
+            handler.UpdateStaticSprite(this, GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
         }
     }
 }

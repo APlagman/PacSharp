@@ -95,7 +95,7 @@ namespace PacSharpApp.Graphics.Animation
                     {
                         Position = Game.Vector2FromTilePosition(10.5, 23.5)
                     };
-                    graphicsHandler.UpdateStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles);
+                    graphicsHandler.UpdateStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
                     tiles.DrawText(23, 12, PelletObject.Worth.ToString());
                     tiles.DrawPts(23, 15);
 

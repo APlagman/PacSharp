@@ -54,6 +54,8 @@
     <Compile Include="Graphics\Animations\Animation.cs" />
     <Compile Include="Graphics\Animations\CutsceneAnimation.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Graphics\GraphicsConstants.cs" />
+    <Compile Include="Graphics\GraphicsUtils.cs" />
     <Compile Include="Graphics\IMultiAnimationSprite.cs" />
     <Compile Include="Graphics\PacmanSprite.cs" />
     <Compile Include="Graphics\PowerPelletSprite.cs" />
