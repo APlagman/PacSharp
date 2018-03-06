@@ -21,21 +21,21 @@ namespace PacSharpApp
             List<RectangleF> walls,
             (List<Vector2> pellets, List<Vector2> powerPellets) pelletInfo, 
             Vector2 playerSpawn,
-            IDictionary<GhostAIType, Vector2> ghostSpawns)
+            IDictionary<GhostType, Vector2> ghostSpawns)
         {
             this.tiles = tiles;
             Walls = walls;
             Pellets = pelletInfo.pellets;
             PowerPellets = pelletInfo.powerPellets;
             PlayerSpawn = playerSpawn;
-            GhostSpawns = new ReadOnlyDictionary<GhostAIType, Vector2>(ghostSpawns);
+            GhostSpawns = new ReadOnlyDictionary<GhostType, Vector2>(ghostSpawns);
         }
 
         internal IReadOnlyCollection<RectangleF> Walls { get; }
         internal IReadOnlyCollection<Vector2> Pellets { get; }
         internal IReadOnlyCollection<Vector2> PowerPellets { get; }
         internal Vector2 PlayerSpawn { get; }
-        internal IReadOnlyDictionary<GhostAIType, Vector2> GhostSpawns { get; }
+        internal IReadOnlyDictionary<GhostType, Vector2> GhostSpawns { get; }
 
         internal void Draw(TileCollection dest)
         {
@@ -83,22 +83,22 @@ namespace PacSharpApp
                 ReadGhostSpawns(mazeXml));
         }
 
-        private static IDictionary<GhostAIType, Vector2> ReadGhostSpawns(XDocument mazeXml)
+        private static IDictionary<GhostType, Vector2> ReadGhostSpawns(XDocument mazeXml)
         {
-            var ghostSpawns = new Dictionary<GhostAIType, Vector2>();
+            var ghostSpawns = new Dictionary<GhostType, Vector2>();
             var spawnInfo = 
                 mazeXml.Root.Descendants(ObjectElementName)
                 .Where(obj => obj.Attribute(TypeAttribute).Value == GhostObjectType)
                 .Select(ghost =>
                 (
-                    (GhostAIType)Enum.Parse(
-                        typeof(GhostAIType),
+                    (GhostType)Enum.Parse(
+                        typeof(GhostType),
                         ghost.Attribute(NameAttribute).Value),
                     new Vector2(
                         float.Parse(ghost.Attribute(XAttribute).Value),
                         float.Parse(ghost.Attribute(YAttribute).Value))
                 ));
-            foreach ((GhostAIType type, Vector2 location) in spawnInfo)
+            foreach ((GhostType type, Vector2 location) in spawnInfo)
                 ghostSpawns.Add(type, location);
             return ghostSpawns;
         }

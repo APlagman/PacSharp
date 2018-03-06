@@ -47,13 +47,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AIBehavior.cs" />
+    <Compile Include="AI\BlinkyAIBehavior.cs" />
+    <Compile Include="AI\ClydeAIBehavior.cs" />
     <Compile Include="AI\GhostAIBehavior.cs" />
     <Compile Include="AI\GhostAIType.cs" />
+    <Compile Include="AI\InkyAIBehavior.cs" />
     <Compile Include="AI\MenuPacmanAIBehavior.cs" />
+    <Compile Include="AI\PinkyAIBehavior.cs" />
     <Compile Include="Graphics\AnimatedSprite.cs" />
     <Compile Include="Graphics\Animations\Animation.cs" />
     <Compile Include="Graphics\Animations\CutsceneAnimation.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Graphics\GhostSprite.cs" />
     <Compile Include="Graphics\GraphicsConstants.cs" />
     <Compile Include="Graphics\GraphicsUtils.cs" />
     <Compile Include="Graphics\IMultiAnimationSprite.cs" />

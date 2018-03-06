@@ -1,4 +1,5 @@
-﻿using PacSharpApp.Objects;
+﻿using System;
+using PacSharpApp.Objects;
 
 /// <summary>
 /// Alex Plagman
@@ -14,6 +15,23 @@ namespace PacSharpApp.AI
         {
             this.pacman = pacman;
             this.owner = owner;
+        }
+
+        internal static AIBehavior FromGhostType(GhostType ghostAI, PacmanObject target, GhostObject owner)
+        {
+            switch (ghostAI)
+            {
+                case GhostType.Blinky:
+                    return new BlinkyAIBehavior(target, owner);
+                case GhostType.Pinky:
+                    return new PinkyAIBehavior(target, owner);
+                case GhostType.Inky:
+                    return new InkyAIBehavior(target, owner);
+                case GhostType.Clyde:
+                    return new ClydeAIBehavior(target, owner);
+                default:
+                    throw new Exception("Unhandled ghost AI.");
+            }
         }
     }
 }

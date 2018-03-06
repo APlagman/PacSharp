@@ -3,8 +3,8 @@
 /// </summary>
 namespace PacSharpApp.Graphics
 {
-    interface IMultiAnimationSprite
+    internal interface IMultiAnimationSprite
     {
-        void UpdateAnimationSet(int setID);
+        void UpdateAnimationSet(string setID);
     }
 }

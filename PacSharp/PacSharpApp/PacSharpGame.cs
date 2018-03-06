@@ -361,28 +361,28 @@ namespace PacSharpApp
         private void SpawnGhosts(Maze level)
         {
             ghosts = new HashSet<GhostObject>
-                            (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler)
-                            {
-                                Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2)
-                            }));
+                (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player)
+                {
+                    Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2)
+                }));
         }
 
         private void CreatePowerPellets(Maze level)
         {
             powerPellets = new List<PowerPelletObject>
-                            (level.PowerPellets.Select(position => new PowerPelletObject(GraphicsHandler)
-                            {
-                                Position = new Vector2(position.X + GraphicsConstants.TileWidth / 2, position.Y + GraphicsConstants.TileWidth / 2)
-                            }));
+                (level.PowerPellets.Select(position => new PowerPelletObject(GraphicsHandler)
+                {
+                    Position = new Vector2(position.X + GraphicsConstants.TileWidth / 2, position.Y + GraphicsConstants.TileWidth / 2)
+                }));
         }
 
         private void CreatePellets(Maze level)
         {
             pellets = new List<PelletObject>
-                            (level.Pellets.Select(position => new PelletObject(GraphicsHandler)
-                            {
-                                Position = new Vector2(position.X + GraphicsConstants.TileWidth / 2, position.Y + GraphicsConstants.TileWidth / 2)
-                            }));
+                (level.Pellets.Select(position => new PelletObject(GraphicsHandler)
+                {
+                    Position = new Vector2(position.X + GraphicsConstants.TileWidth / 2, position.Y + GraphicsConstants.TileWidth / 2)
+                }));
         }
 
         private void SpawnPlayer(Maze level)
