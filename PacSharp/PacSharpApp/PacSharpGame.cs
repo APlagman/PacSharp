@@ -23,6 +23,7 @@ namespace PacSharpApp
         private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
 
+        private int levelNumber = 0;
         private int displayedHighScore = 0;
         private List<(TimeSpan delay, Action action)> actionQueue = new List<(TimeSpan, Action)>();
 
@@ -31,6 +32,8 @@ namespace PacSharpApp
         private ISet<GhostObject> ghosts;
         private PacmanObject player;
         private IReadOnlyCollection<RectangleF> walls;
+
+        private bool victoryAlreadyReached = false;
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
@@ -92,12 +95,34 @@ namespace PacSharpApp
                 case GameState.Cutscene:
                     break;
                 case GameState.Playing:
-                    CheckCollisions();
+                    HandleCollisions();
+                    if (VictoryConditionReached() && !victoryAlreadyReached)
+                    {
+                        victoryAlreadyReached = true;
+                        actionQueue.Add((TimeSpan.FromMilliseconds(300), () => StartNextLevel()));
+                    }
                     break;
                 default:
                     break;
             }
         }
+
+        private void StartNextLevel()
+        {
+            ++levelNumber;
+            Paused = true;
+            foreach (var ghost in ghosts)
+                GraphicsHandler.Unregister(ghost);
+            ghosts.Clear();
+            GraphicsHandler.Unregister(player);
+            player.PerformTurn(Direction.Right);
+            player = null;
+            InitLevel();
+            DelayStart();
+            victoryAlreadyReached = false;
+        }
+
+        private bool VictoryConditionReached() => pellets.Count == 0 && powerPellets.Count == 0;
 
         private void UpdateObjects(TimeSpan elapsedTime)
         {
@@ -129,21 +154,22 @@ namespace PacSharpApp
                 .Select(delayedAction => (delayedAction.delay - elapsedTime, delayedAction.action)));
         }
 
-        private void CheckCollisions()
+        private void HandleCollisions()
         {
-            CheckForWarp(player);
+            if (ShouldBeginWarping(player))
+                HandleWarpBeginning(player);
             WarpIfOffScreen(player);
             PushOutOfWalls(player);
-            CheckForEatingPellet(player);
+            HandleEatingPellets(player);
         }
 
-        private void CheckForEatingPellet(PacmanObject pacman)
+        private void HandleEatingPellets(PacmanObject pacman)
         {
-            CheckForNormalPellets(pacman);
-            CheckForPowerPellets(pacman);
+            HandleEatingNormalPellets(pacman);
+            HandleEatingPowerPellets(pacman);
         }
 
-        private void CheckForPowerPellets(PacmanObject pacman)
+        private void HandleEatingPowerPellets(PacmanObject pacman)
         {
             List<PowerPelletObject> eaten =
                 powerPellets.Where(pellet => pacman.MouthBounds.IntersectsWith(pellet.EdibleBounds))
@@ -157,7 +183,7 @@ namespace PacSharpApp
             }
         }
 
-        private void CheckForNormalPellets(PacmanObject pacman)
+        private void HandleEatingNormalPellets(PacmanObject pacman)
         {
             List<PelletObject> eaten =
                 pellets.Where(pellet => pacman.MouthBounds.IntersectsWith(pellet.EdibleBounds))
@@ -170,14 +196,13 @@ namespace PacSharpApp
             }
         }
 
-        private void CheckForWarp(PacmanObject pacman)
+        private void HandleWarpBeginning(PacmanObject obj)
         {
-            if (OutsideGameArea(pacman) && pacman.State is PacmanMovingState)
-            {
-                pacman.State = new PacmanWarpingState(pacman);
-                actionQueue.Add((TimeSpan.FromMilliseconds(300), () => pacman.State = new PacmanMovingState(pacman)));
-            }
+            obj.State = new PacmanWarpingState(obj);
+            actionQueue.Add((TimeSpan.FromMilliseconds(300), () => obj.State = new PacmanMovingState(obj)));
         }
+
+        private bool ShouldBeginWarping(PacmanObject obj) => OutsideGameArea(obj) && obj.State is PacmanMovingState;
 
         private bool OutsideGameArea(GameObject obj)
         {
@@ -252,17 +277,6 @@ namespace PacSharpApp
             State = GameState.Menu;
             Paused = false;
         }
-        
-        private protected override void LogPostUpdate()
-        {
-#pragma warning disable CS0162 // Unreachable code detected
-#if !DEBUG
-            return;
-#endif
-            if (!LoggingEnabled)
-                return;
-#pragma warning restore CS0162 // Unreachable code detected
-        }
 
         private void BeginMainMenuChase()
         {
@@ -308,6 +322,8 @@ namespace PacSharpApp
 
         private void StartGame()
         {
+            victoryAlreadyReached = false;
+            levelNumber = 0;
             State = GameState.Playing;
             Score = 0;
             DisplayedHighScore = 0;

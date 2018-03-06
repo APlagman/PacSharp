@@ -141,14 +141,12 @@ namespace PacSharpApp
                 return;
             UpdateImpl(elapsedTime);
             InputHandler.Update();
-            LogPostUpdate();
         }
 
         private protected abstract bool PreventUpdate { get; }
 
         private protected abstract void HandleInput();
         private protected abstract void UpdateImpl(TimeSpan elapsedTime);
-        private protected abstract void LogPostUpdate();
         #endregion
 
         #region Game State
