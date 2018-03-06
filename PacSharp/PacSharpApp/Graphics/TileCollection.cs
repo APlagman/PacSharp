@@ -69,6 +69,7 @@ namespace PacSharpApp.Graphics
                     int digit = toDraw % 10;
                     toDraw /= 10;
                     tiles[row, col] = new Tile(DigitTile(digit), palette);
+                    --col;
                 }
                 while (col >= 0)
                     tiles[row, col--] = new Tile(GraphicsID.TileEmpty, PaletteID.Empty);

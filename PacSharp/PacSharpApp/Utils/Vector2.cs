@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 /// <summary>
 /// Alex Plagman
 /// </summary>
@@ -48,10 +49,18 @@ namespace PacSharpApp.Utils
             return lhs + (right * -1);
         }
 
-        internal void Round()
+        public void Round()
         {
             X = Math.Round(X);
             Y = Math.Round(Y);
+        }
+    }
+
+    static class Vector2Extensions
+    {
+        public static PointF ToPointF(this Vector2 vec)
+        {
+            return new PointF((float)vec.X, (float)vec.Y);
         }
     }
 }

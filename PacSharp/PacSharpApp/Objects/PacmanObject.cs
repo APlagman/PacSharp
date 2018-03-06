@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using PacSharpApp.Graphics;
 using PacSharpApp.Utils;
 
@@ -25,6 +26,7 @@ namespace PacSharpApp.Objects
         }
 
         internal PacmanState State { get; set; }
+        public RectangleF MouthBounds => new RectangleF(new PointF((float)Position.X - 1.5f, (float)Position.Y - 1.5f), new Size(3, 3));
 
         internal void HandleInput(InputHandler input)
         {

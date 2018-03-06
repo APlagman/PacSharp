@@ -67,8 +67,12 @@ namespace PacSharpApp
                     }
                     break;
                 case GameState.Playing:
-                    if (!Paused)
-                        player.HandleInput(InputHandler);
+                    {
+                        if (InputHandler.PressedKeys.Contains(Keys.P))
+                            Paused = !Paused;
+                        if (!Paused)
+                            player.HandleInput(InputHandler);
+                    }
                     break;
                 default:
                     break;
@@ -130,6 +134,40 @@ namespace PacSharpApp
             CheckForWarp(player);
             WarpIfOffScreen(player);
             PushOutOfWalls(player);
+            CheckForEatingPellet(player);
+        }
+
+        private void CheckForEatingPellet(PacmanObject pacman)
+        {
+            CheckForNormalPellets(pacman);
+            CheckForPowerPellets(pacman);
+        }
+
+        private void CheckForPowerPellets(PacmanObject pacman)
+        {
+            List<PowerPelletObject> eaten =
+                powerPellets.Where(pellet => pacman.MouthBounds.IntersectsWith(pellet.EdibleBounds))
+                .ToList();
+            foreach (var pellet in eaten)
+            {
+                Score += PowerPelletObject.Worth;
+                // TODO Power Pellet effects
+                GraphicsHandler.Unregister(pellet);
+                powerPellets.Remove(pellet);
+            }
+        }
+
+        private void CheckForNormalPellets(PacmanObject pacman)
+        {
+            List<PelletObject> eaten =
+                pellets.Where(pellet => pacman.MouthBounds.IntersectsWith(pellet.EdibleBounds))
+                .ToList();
+            foreach (var pellet in eaten)
+            {
+                Score += PelletObject.Worth;
+                GraphicsHandler.Unregister(pellet);
+                pellets.Remove(pellet);
+            }
         }
 
         private void CheckForWarp(PacmanObject pacman)

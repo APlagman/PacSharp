@@ -124,5 +124,7 @@ namespace PacSharpApp.Graphics
             tileImage.Dispose();
             screenImage.Dispose();
         }
+
+        internal void Unregister(GameObject obj) => gameObjectMap.Remove(obj);
     }
 }
