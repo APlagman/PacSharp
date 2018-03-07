@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using PacSharpApp.Objects;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -8,27 +11,31 @@ namespace PacSharpApp.AI
 {
     abstract class GhostAIBehavior : AIBehavior
     {
-        private protected PacmanObject pacman;
         private protected GhostObject owner;
+        private protected PacmanObject target;
+        private protected IReadOnlyCollection<RectangleF> walls;
+        private protected Vector2 respawnPoint;
 
-        protected GhostAIBehavior(PacmanObject pacman, GhostObject owner)
+        protected GhostAIBehavior(GhostObject owner, PacmanObject target, IReadOnlyCollection<RectangleF> walls, Vector2 respawnPoint)
         {
-            this.pacman = pacman;
             this.owner = owner;
+            this.target = target;
+            this.walls = walls;
+            this.respawnPoint = respawnPoint;
         }
 
-        internal static AIBehavior FromGhostType(GhostType ghostAI, PacmanObject target, GhostObject owner)
+        internal static AIBehavior FromGhostType(GhostType type, GhostObject owner, PacmanObject target, IReadOnlyCollection<RectangleF> walls, Vector2 respawnPoint)
         {
-            switch (ghostAI)
+            switch (type)
             {
                 case GhostType.Blinky:
-                    return new BlinkyAIBehavior(target, owner);
+                    return new BlinkyAIBehavior(owner, target, walls, respawnPoint);
                 case GhostType.Pinky:
-                    return new PinkyAIBehavior(target, owner);
+                    return new PinkyAIBehavior(owner, target, walls, respawnPoint);
                 case GhostType.Inky:
-                    return new InkyAIBehavior(target, owner);
+                    return new InkyAIBehavior(owner, target, walls, respawnPoint);
                 case GhostType.Clyde:
-                    return new ClydeAIBehavior(target, owner);
+                    return new ClydeAIBehavior(owner, target, walls, respawnPoint);
                 default:
                     throw new Exception("Unhandled ghost AI.");
             }

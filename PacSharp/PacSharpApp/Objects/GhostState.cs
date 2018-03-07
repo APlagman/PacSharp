@@ -16,16 +16,13 @@ namespace PacSharpApp.Objects
             this.owner = owner;
         }
 
-        internal abstract void Update(TimeSpan elapsedTime);
+        internal virtual void Update(TimeSpan elapsedTime) { }
     }
 
     class GhostNormalState : GhostState
     {
         internal GhostNormalState(GhostObject owner)
             : base(owner)
-        { }
-
-        internal override void Update(TimeSpan elapsedTime)
         { }
     }
 
@@ -66,8 +63,12 @@ namespace PacSharpApp.Objects
         internal GhostRespawningState(GhostObject owner)
             : base(owner)
         { }
+    }
 
-        internal override void Update(TimeSpan elapsedTime)
+    class GhostWarpingState : GhostState
+    {
+        internal GhostWarpingState(GhostObject owner)
+            : base(owner)
         { }
     }
 }

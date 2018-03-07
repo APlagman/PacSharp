@@ -160,12 +160,23 @@ namespace PacSharpApp
         {
             if (player == null)
                 return;
-            if (ShouldBeginWarping(player))
-                HandleWarpBeginning(player);
-            WarpIfOffScreen(player);
+            HandleWarpCollisions();
             PushOutOfWalls(player);
             HandleEatingPellets(player);
             HandleTouchingGhosts(player);
+        }
+
+        private void HandleWarpCollisions()
+        {
+            if (ShouldBeginWarping(player))
+                HandleWarpBeginning(player);
+            WarpIfOffScreen(player);
+            foreach (var ghost in ghosts)
+            {
+                if (ShouldBeginWarping(ghost))
+                    HandleWarpBeginning(ghost);
+                WarpIfOffScreen(ghost);
+            }
         }
 
         private void HandleTouchingGhosts(PacmanObject obj)
@@ -263,6 +274,14 @@ namespace PacSharpApp
         }
 
         private bool ShouldBeginWarping(PacmanObject obj) => OutsideGameArea(obj) && obj.State is PacmanMovingState;
+
+        private void HandleWarpBeginning(GhostObject obj)
+        {
+            obj.State = new GhostWarpingState(obj);
+            actionQueue.Add((WarpMovementDisabledDuration, () => obj.State = new GhostNormalState(obj)));
+        }
+
+        private bool ShouldBeginWarping(GhostObject obj) => OutsideGameArea(obj) && obj.State is GhostNormalState;
 
         private bool OutsideGameArea(GameObject obj)
         {
@@ -504,7 +523,7 @@ namespace PacSharpApp
         private void SpawnGhosts(Maze level)
         {
             ghosts = new HashSet<GhostObject>
-                (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player)
+                (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player, walls, spawn.Value)
                 {
                     Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2)
                 }));

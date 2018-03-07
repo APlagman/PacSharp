@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using PacSharpApp.AI;
 using PacSharpApp.Graphics;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -13,13 +16,13 @@ namespace PacSharpApp.Objects
         private readonly GhostSprite sprite;
         private readonly PaletteID normalPalette;
 
-        internal GhostObject(GraphicsHandler handler, GhostType type, PacmanObject target)
+        internal GhostObject(GraphicsHandler handler, GhostType type, PacmanObject target, IReadOnlyCollection<RectangleF> walls, Vector2 respawnPoint)
             : base(GraphicsConstants.SpriteSize)
         {
             normalPalette = type.ToPalette();
             sprite = new GhostSprite() { Palette = normalPalette };
             handler.Register(this, sprite);
-            Behavior = GhostAIBehavior.FromGhostType(type, target, this);
+            Behavior = GhostAIBehavior.FromGhostType(type, this, target, walls, respawnPoint);
             State = new GhostNormalState(this);
         }
 
