@@ -10,6 +10,22 @@ namespace PacSharpApp.Graphics.Animation
 {
     internal class MainMenuAnimation : Animation
     {
+        private const string CharacterNicknameString = "CHARACTER / NICKNAME";
+        private const string StaticBlinkyObjName = "staticBlinky";
+        private const string BlinkyName = "SHADOW";
+        private const string BlinkyNickname = "BLINKY";
+        private const string StaticPinkyObjName = "staticPinky";
+        private const string PinkyName = "SPEEDY";
+        private const string PinkyNickname = "PINKY";
+        private const string StaticInkyObjName = "staticInky";
+        private const string InkyName = "BASHFUL";
+        private const string InkyNickname = "INKY";
+        private const string StaticClydeObjName = "staticClyde";
+        private const string ClydeName = "POKEY";
+        private const string ClydeNickname = "\"CLYDE\"";
+        private const string PelletDemoObjName = "pelletDemo";
+        private const string PowerPelletDemoObjName = "powerPelletDemo";
+
         public MainMenuAnimation(GraphicsHandler graphicsHandler, Action onCompletion)
             : base(graphicsHandler, 500, onCompletion)
         { }
@@ -23,83 +39,83 @@ namespace PacSharpApp.Graphics.Animation
             {
                 case 0:
                     graphicsHandler.PreventAnimatedSpriteUpdates = true;
-                    tiles.DrawText(4, 7, "CHARACTER / NICKNAME");
+                    tiles.DrawText(4, 7, CharacterNicknameString);
                     break;
                 case 1:
                     UntilNextFrame = 1000;
-                    gameObjects["staticBlinky"] = new GameObject(GraphicsConstants.SpriteSize)
+                    gameObjects[StaticBlinkyObjName] = new GameObject(GraphicsConstants.SpriteSize)
                     {
                         Position = Game.Vector2FromTilePosition(5, 6.5)
                     };
-                    graphicsHandler.SetStaticSprite(gameObjects["staticBlinky"], GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
+                    graphicsHandler.SetStaticSprite(gameObjects[StaticBlinkyObjName], GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
                     break;
                 case 2:
                     UntilNextFrame = 500;
-                    tiles.DrawText(6, 7, "-SHADOW", PaletteID.Blinky);
+                    tiles.DrawText(6, 7, $"-{BlinkyName}", PaletteID.Blinky);
                     break;
                 case 3:
                     UntilNextFrame = 500;
-                    tiles.DrawText(6, 18, "\"BLINKY\"", PaletteID.Blinky);
+                    tiles.DrawText(6, 18, $"\"{BlinkyNickname}\"", PaletteID.Blinky);
                     break;
                 case 4:
                     UntilNextFrame = 1000;
-                    gameObjects["staticPinky"] = new GameObject(GraphicsConstants.SpriteSize)
+                    gameObjects[StaticPinkyObjName] = new GameObject(GraphicsConstants.SpriteSize)
                     {
                         Position = Game.Vector2FromTilePosition(5, 9.5)
                     };
-                    graphicsHandler.SetStaticSprite(gameObjects["staticPinky"], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
+                    graphicsHandler.SetStaticSprite(gameObjects[StaticPinkyObjName], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
                     break;
                 case 5:
                     UntilNextFrame = 500;
-                    tiles.DrawText(9, 7, "-SPEEDY", PaletteID.Pinky);
+                    tiles.DrawText(9, 7, $"-{PinkyName}", PaletteID.Pinky);
                     break;
                 case 6:
                     UntilNextFrame = 500;
-                    tiles.DrawText(9, 18, "\"PINKY\"", PaletteID.Pinky);
+                    tiles.DrawText(9, 18, $"\"{PinkyNickname}\"", PaletteID.Pinky);
                     break;
                 case 7:
                     UntilNextFrame = 1000;
-                    gameObjects["staticInky"] = new GameObject(GraphicsConstants.SpriteSize)
+                    gameObjects[StaticInkyObjName] = new GameObject(GraphicsConstants.SpriteSize)
                     {
                         Position = Game.Vector2FromTilePosition(5, 12.5)
                     };
-                    graphicsHandler.SetStaticSprite(gameObjects["staticInky"], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
+                    graphicsHandler.SetStaticSprite(gameObjects[StaticInkyObjName], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
                     break;
                 case 8:
                     UntilNextFrame = 500;
-                    tiles.DrawText(12, 7, "-BASHFUL", PaletteID.Inky);
+                    tiles.DrawText(12, 7, $"-{InkyName}", PaletteID.Inky);
                     break;
                 case 9:
                     UntilNextFrame = 500;
-                    tiles.DrawText(12, 18, "\"INKY\"", PaletteID.Inky);
+                    tiles.DrawText(12, 18, $"\"{InkyNickname}\"", PaletteID.Inky);
                     break;
                 case 10:
                     UntilNextFrame = 1000;
-                    gameObjects["staticClyde"] = new GameObject(GraphicsConstants.SpriteSize)
+                    gameObjects[StaticClydeObjName] = new GameObject(GraphicsConstants.SpriteSize)
                     {
                         Position = Game.Vector2FromTilePosition(5, 15.5)
                     };
-                    graphicsHandler.SetStaticSprite(gameObjects["staticClyde"], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
+                    graphicsHandler.SetStaticSprite(gameObjects[StaticClydeObjName], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
                     break;
                 case 11:
                     UntilNextFrame = 500;
-                    tiles.DrawText(15, 7, "-POKEY", PaletteID.Clyde);
+                    tiles.DrawText(15, 7, $"-{ClydeName}", PaletteID.Clyde);
                     break;
                 case 12:
                     UntilNextFrame = 500;
-                    tiles.DrawText(15, 18, "\"CLYDE\"", PaletteID.Clyde);
+                    tiles.DrawText(15, 18, $"\"{ClydeNickname}\"", PaletteID.Clyde);
                     break;
                 case 13:
                     UntilNextFrame = 1000;
-                    gameObjects["pelletDemo"] = new GameObject(GraphicsConstants.TileSize)
+                    gameObjects[PelletDemoObjName] = new GameObject(GraphicsConstants.TileSize)
                     {
                         Position = Game.Vector2FromTilePosition(10.5, 23.5)
                     };
-                    graphicsHandler.SetStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
+                    graphicsHandler.SetStaticSprite(gameObjects[PelletDemoObjName], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
                     tiles.DrawText(23, 12, PelletObject.Worth.ToString());
                     tiles.DrawPts(23, 15);
 
-                    gameObjects["powerPelletDemo"] = new PowerPelletObject(graphicsHandler)
+                    gameObjects[PowerPelletDemoObjName] = new PowerPelletObject(graphicsHandler)
                     {
                         Position = Game.Vector2FromTilePosition(10.5, 25.5)
                     };

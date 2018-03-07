@@ -20,15 +20,23 @@ namespace PacSharpApp
     /// </summary>
     sealed class PacSharpGame : Game
     {
-        private const bool LoggingEnabled = false;
         private const double PlayerMovementSpeed = 1.0;
+        private const int StartingLives = 3;
+        private const string ReadyText = "READY!";
+        private const string OneUpText = "1UP";
+        private const string HighscoreText = "HIGHSCORE";
+        private const string TwoUpText = "2UP";
+        private const string CreditText = "CREDIT";
+        private const int BaseGhostScore = 200;
+
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan WarpMovementDisabledDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan MainMenuAnimationsDisabledDuration = TimeSpan.FromMilliseconds(500);
-        private static readonly TimeSpan InitialLevelPauseDuration = TimeSpan.FromSeconds(3);
+        private static readonly TimeSpan InitialLevelPauseDuration = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan RespawnPlayerDelay = TimeSpan.FromMilliseconds(300);
 
+        private int creditsRemaining = 0;
         private int livesRemaining = 0;
         private int ghostsEaten = 0;
         private int levelNumber = 0;
@@ -55,7 +63,7 @@ namespace PacSharpApp
         }
         private protected override bool PreventUpdate => false;
         private bool VictoryConditionReached => pellets.Count == 0 && powerPellets.Count == 0;
-        private int GhostScore => 200 << ghostsEaten;
+        private int GhostScore => BaseGhostScore << ghostsEaten;
         private protected override bool UseFixedTimeStepForUpdates => true;
         private protected override bool UseFixedTimeStepForAnimations => true;
 
@@ -411,14 +419,14 @@ namespace PacSharpApp
         #region Tile Updates
         private void AddTopScreenInfo()
         {
-            Tiles.DrawText(0, 3, "1UP");
-            Tiles.DrawText(0, 9, "HIGHSCORE");
-            Tiles.DrawText(0, 21, "2UP");
+            Tiles.DrawText(0, 3, OneUpText);
+            Tiles.DrawText(0, 9, HighscoreText);
+            Tiles.DrawText(0, 21, TwoUpText);
         }
 
         private void AddCredit()
         {
-            Tiles.DrawText(35, 2, "CREDIT  0");
+            Tiles.DrawText(35, 2, $"{CreditText}  {creditsRemaining}");
         }
 
         private protected override void UpdateScore()
@@ -435,7 +443,7 @@ namespace PacSharpApp
         #region Game Start
         private void StartGame()
         {
-            livesRemaining = 3;
+            livesRemaining = StartingLives;
             victoryAlreadyReached = false;
             levelNumber = 0;
             State = GameState.Playing;
@@ -448,7 +456,7 @@ namespace PacSharpApp
 
         private void DelayStart()
         {
-            Tiles.DrawText(20, 11, "READY!", PaletteID.Pacman);
+            Tiles.DrawText(20, 11, ReadyText, PaletteID.Pacman);
             actionQueue.Add((InitialLevelPauseDuration, () =>
             {
                 player.PreventMovement = false;
