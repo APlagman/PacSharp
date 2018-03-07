@@ -31,7 +31,7 @@ namespace PacSharpApp.Graphics.Animation
                     {
                         Position = Game.Vector2FromTilePosition(5, 6.5)
                     };
-                    graphicsHandler.UpdateStaticSprite(gameObjects["staticBlinky"], GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
+                    graphicsHandler.SetStaticSprite(gameObjects["staticBlinky"], GraphicsID.SpriteGhostRight0, PaletteID.Blinky);
                     break;
                 case 2:
                     UntilNextFrame = 500;
@@ -47,7 +47,7 @@ namespace PacSharpApp.Graphics.Animation
                     {
                         Position = Game.Vector2FromTilePosition(5, 9.5)
                     };
-                    graphicsHandler.UpdateStaticSprite(gameObjects["staticPinky"], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
+                    graphicsHandler.SetStaticSprite(gameObjects["staticPinky"], GraphicsID.SpriteGhostRight0, PaletteID.Pinky);
                     break;
                 case 5:
                     UntilNextFrame = 500;
@@ -63,7 +63,7 @@ namespace PacSharpApp.Graphics.Animation
                     {
                         Position = Game.Vector2FromTilePosition(5, 12.5)
                     };
-                    graphicsHandler.UpdateStaticSprite(gameObjects["staticInky"], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
+                    graphicsHandler.SetStaticSprite(gameObjects["staticInky"], GraphicsID.SpriteGhostRight0, PaletteID.Inky);
                     break;
                 case 8:
                     UntilNextFrame = 500;
@@ -79,7 +79,7 @@ namespace PacSharpApp.Graphics.Animation
                     {
                         Position = Game.Vector2FromTilePosition(5, 15.5)
                     };
-                    graphicsHandler.UpdateStaticSprite(gameObjects["staticClyde"], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
+                    graphicsHandler.SetStaticSprite(gameObjects["staticClyde"], GraphicsID.SpriteGhostRight0, PaletteID.Clyde);
                     break;
                 case 11:
                     UntilNextFrame = 500;
@@ -95,7 +95,7 @@ namespace PacSharpApp.Graphics.Animation
                     {
                         Position = Game.Vector2FromTilePosition(10.5, 23.5)
                     };
-                    graphicsHandler.UpdateStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
+                    graphicsHandler.SetStaticSprite(gameObjects["pelletDemo"], GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
                     tiles.DrawText(23, 12, PelletObject.Worth.ToString());
                     tiles.DrawPts(23, 15);
 

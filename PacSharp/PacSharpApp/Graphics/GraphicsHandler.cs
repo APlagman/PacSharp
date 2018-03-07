@@ -32,15 +32,10 @@ namespace PacSharpApp.Graphics
         internal GameArea GameArea { get; }
         internal bool PreventAnimatedSpriteUpdates { get; set; } = false;
 
-        private void OnPaint(object sender, PaintEventArgs e)
+        public void Dispose()
         {
-            if (sender is Control control)
-                e.Graphics.DrawImage(screenImage, new Rectangle(control.Location, control.Size));
-        }
-
-        internal void Clear()
-        {
-            gameObjectMap.Clear();
+            tileImage.Dispose();
+            screenImage.Dispose();
         }
 
         internal void CommitTiles(TileCollection tiles)
@@ -60,12 +55,14 @@ namespace PacSharpApp.Graphics
             }
         }
 
-        internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette)
-        {
-            UpdateStaticSprite(obj, id, palette, Resources.Sprites, GraphicsConstants.SpriteWidth);
-        }
+        #region GameObject Sprites
+        internal void Register(GameObject obj, Sprite sprite) => gameObjectMap.Add(obj, sprite);
+        internal void Unregister(GameObject obj) => gameObjectMap.Remove(obj);
 
-        internal void UpdateStaticSprite(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source, int width)
+        internal void SetStaticSprite(GameObject obj, GraphicsID id, PaletteID palette)
+            => SetStaticSprite(obj, id, palette, Resources.Sprites, GraphicsConstants.SpriteWidth);
+
+        internal void SetStaticSprite(GameObject obj, GraphicsID id, PaletteID palette, Bitmap source, int width)
         {
             gameObjectMap[obj] = new StaticSprite(source, id, width, source.Width / width)
             {
@@ -73,9 +70,15 @@ namespace PacSharpApp.Graphics
             };
         }
 
-        internal void UpdateAnimatedSprite(GameObject obj, AnimatedSprite sprite) => gameObjectMap[obj] = sprite;
+        internal void SetAnimatedSprite(GameObject obj, AnimatedSprite sprite) => gameObjectMap[obj] = sprite;
 
         internal void RotateFlip(GameObject gameObject, RotateFlipType rfType) => gameObjectMap[gameObject].RotateFlip(rfType);
+
+        internal void ClearMappings() => gameObjectMap.Clear();
+
+        internal void Show(GameObject obj) => gameObjectMap[obj].Visible = true;
+        internal void Hide(GameObject obj) => gameObjectMap[obj].Visible = false;
+        #endregion
 
         internal void UpdateAnimatedSprites(TimeSpan elapsedTime)
         {
@@ -104,11 +107,12 @@ namespace PacSharpApp.Graphics
             GameArea.Render(screenImage);
         }
 
-        internal void Register(GameObject obj, Sprite sprite)
+        private void OnPaint(object sender, PaintEventArgs e)
         {
-            gameObjectMap.Add(obj, sprite);
+            if (sender is Control control)
+                e.Graphics.DrawImage(screenImage, new Rectangle(control.Location, control.Size));
         }
-        
+
         internal void Close()
         {
             ui.Close();
@@ -118,13 +122,5 @@ namespace PacSharpApp.Graphics
         {
             ui.OnNewGame();
         }
-
-        public void Dispose()
-        {
-            tileImage.Dispose();
-            screenImage.Dispose();
-        }
-
-        internal void Unregister(GameObject obj) => gameObjectMap.Remove(obj);
     }
 }

@@ -170,7 +170,7 @@ namespace PacSharpApp
         {
             Tiles.Clear();
             GameObjects.Clear();
-            GraphicsHandler.Clear();
+            GraphicsHandler.ClearMappings();
             Animation = null;
         }
 

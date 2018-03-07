@@ -53,12 +53,11 @@ namespace PacSharpApp
             get => displayedHighScore;
             set { displayedHighScore = value; UpdateHighScore(); }
         }
-
         private protected override bool PreventUpdate => false;
-
         private bool VictoryConditionReached => pellets.Count == 0 && powerPellets.Count == 0;
-
         private int GhostScore => 200 << ghostsEaten;
+        private protected override bool UseFixedTimeStepForUpdates => true;
+        private protected override bool UseFixedTimeStepForAnimations => true;
 
         private protected override void HandleInput()
         {
@@ -169,7 +168,7 @@ namespace PacSharpApp
             foreach (var touchedGhost in ghosts.Where(ghost => ghost.Bounds.IntersectsWith(obj.MouthBounds)))
             {
                 if (touchedGhost.IsAfraid)
-                    HandleGhostEaten(touchedGhost);
+                    HandleGhostEaten(obj, touchedGhost);
                 else if (touchedGhost.IsNormal)
                 {
                     if (livesRemaining > 0)
@@ -194,14 +193,23 @@ namespace PacSharpApp
             }
         }
 
-        private void HandleGhostEaten(GhostObject eaten)
+        private void HandleGhostEaten(PacmanObject eater, GhostObject eaten)
         {
             Score += GhostScore;
-            eaten.State = new RespawningGhostState(eaten);
+            ScoreObject scoreObj = new ScoreObject(GraphicsHandler, GhostScore)
+            {
+                Position = eater.Position
+            };
+            eaten.State = new GhostRespawningState(eaten);
+            GraphicsHandler.Hide(eater);
+            GraphicsHandler.Hide(eaten);
             DisableMovement();
             ++ghostsEaten;
             actionQueue.Add((EatGhostPauseDuration, () =>
             {
+                GraphicsHandler.Unregister(scoreObj);
+                GraphicsHandler.Show(player);
+                GraphicsHandler.Show(eaten);
                 EnableMovement();
             }
             ));
@@ -342,7 +350,7 @@ namespace PacSharpApp
         {
             foreach (var ghost in ghosts)
                 if (!ghost.IsRespawning)
-                    ghost.State = new AfraidGhostState(ghost);
+                    ghost.State = new GhostAfraidState(ghost);
             ghostsEaten = 0;
         }
 

@@ -77,6 +77,7 @@
     <Compile Include="GameState.cs" />
     <Compile Include="Graphics\GraphicsIDs.cs" />
     <Compile Include="Graphics\Animations\MainMenuAnimation.cs" />
+    <Compile Include="Objects\ScoreObject.cs" />
     <Compile Include="PacSharpGame.cs" />
     <Compile Include="GameArea.cs" />
     <Compile Include="PacSharpGameForm.cs">

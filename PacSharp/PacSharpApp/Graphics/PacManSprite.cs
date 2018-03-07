@@ -77,6 +77,11 @@ namespace PacSharpApp.Graphics
             }
         };
 
+        internal void UpdateAnimationSet(object p)
+        {
+            throw new NotImplementedException();
+        }
+
         internal PacmanSprite()
             : base(sourceImages, AnimationID.MovingRight.ToString())
         {

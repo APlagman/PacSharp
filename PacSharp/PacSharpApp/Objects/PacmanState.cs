@@ -16,6 +16,8 @@ namespace PacSharpApp.Objects
             this.owner = owner;
         }
 
+        public PacmanEatingState Score { get; internal set; }
+
         internal virtual void HandleInput(InputHandler input) { }
         internal virtual void Update(bool animationFinished) { }
     }
@@ -84,5 +86,12 @@ namespace PacSharpApp.Objects
         {
             owner.PreventMovement = true;
         }
+    }
+
+    internal class PacmanEatingState : PacmanState
+    {
+        private protected PacmanEatingState(PacmanObject owner)
+            : base(owner)
+        { }
     }
 }

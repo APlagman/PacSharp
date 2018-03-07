@@ -13,7 +13,7 @@ namespace PacSharpApp.Objects
         internal PowerPelletObject(GraphicsHandler handler)
             : base(GraphicsConstants.TileSize)
         {
-            handler.UpdateAnimatedSprite(this, new PowerPelletSprite() { Palette = PaletteID.Pellet });
+            handler.SetAnimatedSprite(this, new PowerPelletSprite() { Palette = PaletteID.Pellet });
         }
 
         public RectangleF EdibleBounds => new Rectangle(new Point((int)Position.X - 3, (int)Position.Y - 3), new Size(6, 6));

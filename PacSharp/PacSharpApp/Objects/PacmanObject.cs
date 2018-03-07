@@ -38,7 +38,7 @@ namespace PacSharpApp.Objects
         {
             if (State is PacmanDyingState || State is PacmanRespawningState)
                 sprite.UpdateAnimationSet(PacmanSprite.AnimationID.Dying.ToString());
-            else
+            else if (State is PacmanMovingState)
                 sprite.UpdateAnimationSet(sprite.Orientation.ToPacmanSpriteAnimationID().ToString());
         }
 

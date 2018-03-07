@@ -20,12 +20,12 @@ namespace PacSharpApp.Objects
             sprite = new GhostSprite() { Palette = normalPalette };
             handler.Register(this, sprite);
             Behavior = GhostAIBehavior.FromGhostType(type, target, this);
-            State = new NormalGhostState(this);
+            State = new GhostNormalState(this);
         }
 
-        internal bool IsAfraid => State is AfraidGhostState;
-        internal bool IsNormal => State is NormalGhostState;
-        internal bool IsRespawning => State is RespawningGhostState;
+        internal bool IsAfraid => State is GhostAfraidState;
+        internal bool IsNormal => State is GhostNormalState;
+        internal bool IsRespawning => State is GhostRespawningState;
         
         internal GhostState State { get => state; set { state = value; OnStateChanged(); } }
 

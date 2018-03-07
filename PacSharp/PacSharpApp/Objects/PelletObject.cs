@@ -14,7 +14,7 @@ namespace PacSharpApp.Objects
         internal PelletObject(GraphicsHandler handler)
             : base(GraphicsConstants.TileSize)
         {
-            handler.UpdateStaticSprite(this, GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
+            handler.SetStaticSprite(this, GraphicsID.TilePelletSmall, PaletteID.Pellet, Resources.Tiles, GraphicsConstants.TileWidth);
         }
 
         public RectangleF EdibleBounds => new RectangleF(new PointF((float)Position.X - 1, (float)Position.Y - 1), new Size(2, 2));
