@@ -13,14 +13,18 @@ namespace PacSharpApp.Graphics
         private Direction orientation = Direction.Right;
 
         internal abstract Image Image { get; }
-        internal PaletteID Palette { private protected get => palette; set { palette = value; UpdatePalette(); } }
+        internal PaletteID Palette { get => palette; set { palette = value; UpdatePalette(); } }
         internal Size Size => Image.Size;
 
         private protected abstract void UpdatePalette();
         protected internal virtual void Update(TimeSpan elapsedTime) {}
         internal bool Visible { get; set; } = true;
         internal virtual int ZIndex => 0;
-        internal Direction Orientation { get => orientation; set { Turn(value); orientation = value; } }
+        internal Direction Orientation
+        {
+            get => orientation;
+            set { Turn(value); orientation = value; }
+        }
 
         private protected virtual void Turn(Direction value) => RotateFlip(GetRFType(orientation, value));
 

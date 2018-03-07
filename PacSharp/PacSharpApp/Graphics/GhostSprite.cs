@@ -11,12 +11,13 @@ namespace PacSharpApp.Graphics
 {
     class GhostSprite : AnimatedSprite, IMultiAnimationSprite
     {
-        private const int MillisPerAnimationFrame = 100;
+        private const int MillisPerAnimationFrame = 200;
+
         private static readonly Bitmap sourceSheet = Resources.Sprites;
         private static readonly IDictionary<string, (Bitmap bitmap, TimeSpan untilUpdate)[]> sourceImages = new Dictionary<string, (Bitmap, TimeSpan)[]>()
         {
             {
-                GhostSpriteAnimationSet.NormalRight.ToString(),
+                AnimationID.NormalRight.ToString(),
                 new (Bitmap, TimeSpan)[]
                 {
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpriteGhostRight0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerAnimationFrame)),
@@ -24,7 +25,7 @@ namespace PacSharpApp.Graphics
                 }
             },
             {
-                GhostSpriteAnimationSet.NormalLeft.ToString(),
+                AnimationID.NormalLeft.ToString(),
                 new (Bitmap, TimeSpan)[]
                 {
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpriteGhostLeft0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerAnimationFrame)),
@@ -32,7 +33,7 @@ namespace PacSharpApp.Graphics
                 }
             },
             {
-                GhostSpriteAnimationSet.NormalUp.ToString(),
+                AnimationID.NormalUp.ToString(),
                 new (Bitmap, TimeSpan)[]
                 {
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpriteGhostUp0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerAnimationFrame)),
@@ -40,7 +41,7 @@ namespace PacSharpApp.Graphics
                 }
             },
             {
-                GhostSpriteAnimationSet.NormalDown.ToString(),
+                AnimationID.NormalDown.ToString(),
                 new (Bitmap, TimeSpan)[]
                 {
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpriteGhostDown0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerAnimationFrame)),
@@ -48,7 +49,7 @@ namespace PacSharpApp.Graphics
                 }
             },
             {
-                GhostSpriteAnimationSet.Afraid.ToString(),
+                AnimationID.Afraid.ToString(),
                 new (Bitmap, TimeSpan)[]
                 {
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpriteGhostAfraid0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerAnimationFrame)),
@@ -58,47 +59,47 @@ namespace PacSharpApp.Graphics
         };
 
         internal GhostSprite()
-            : base(sourceImages, GhostSpriteAnimationSet.NormalRight.ToString())
+            : base(sourceImages, AnimationID.NormalRight.ToString())
         {
         }
 
-        internal override int ZIndex => 1;
+        internal override int ZIndex => 10;
 
         public void UpdateAnimationSet(string setID)
         {
-            CurrentAnimationSet = setID;
+            CurrentAnimationSetID = setID;
         }
 
         private protected override void Turn(Direction value)
         {
-            if (CurrentAnimationSet == GhostSpriteAnimationSet.Afraid.ToString())
+            if (CurrentAnimationSetID == AnimationID.Afraid.ToString())
                 return;
             switch (value)
             {
                 case Direction.Up:
-                    UpdateAnimationSet(GhostSpriteAnimationSet.NormalUp.ToString());
+                    UpdateAnimationSet(AnimationID.NormalUp.ToString());
                     break;
                 case Direction.Down:
-                    UpdateAnimationSet(GhostSpriteAnimationSet.NormalDown.ToString());
+                    UpdateAnimationSet(AnimationID.NormalDown.ToString());
                     break;
                 case Direction.Left:
-                    UpdateAnimationSet(GhostSpriteAnimationSet.NormalLeft.ToString());
+                    UpdateAnimationSet(AnimationID.NormalLeft.ToString());
                     break;
                 case Direction.Right:
-                    UpdateAnimationSet(GhostSpriteAnimationSet.NormalRight.ToString());
+                    UpdateAnimationSet(AnimationID.NormalRight.ToString());
                     break;
                 default:
                     throw new Exception("Unhandled direction.");
             }
         }
-    }
 
-    enum GhostSpriteAnimationSet
-    {
-        NormalUp,
-        NormalDown,
-        NormalLeft,
-        NormalRight,
-        Afraid
+        internal enum AnimationID
+        {
+            NormalUp,
+            NormalDown,
+            NormalLeft,
+            NormalRight,
+            Afraid
+        }
     }
 }

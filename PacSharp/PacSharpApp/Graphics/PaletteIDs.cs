@@ -22,6 +22,7 @@ namespace PacSharpApp.Graphics
         Key = 22,
         GhostAfraid = 1,
         Maze = 26,
-        MazeGate = 29
+        MazeGate = 29,
+        GhostWhite = 18
     }
 }

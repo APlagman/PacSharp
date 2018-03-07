@@ -35,6 +35,7 @@ namespace PacSharpApp.Objects
         }
         internal ref Vector2 Position { get { return ref position; } }
         internal ref Vector2 Velocity { get { return ref velocity; } }
+        internal bool PreventMovement { get; set; } = false;
         internal Size Size { get; }
 
         internal RectangleF Bounds => new RectangleF(new PointF((float)Position.X - Size.Width / 2, (float)Position.Y - Size.Height / 2), Size);
@@ -44,12 +45,15 @@ namespace PacSharpApp.Objects
         internal double Top => Position.Y - Size.Height / 2d;
         internal double Bottom => Position.Y + Size.Height / 2d;
 
-        internal void Update(TimeSpan elapsedTime)
+        internal virtual void Update(TimeSpan elapsedTime)
         {
             if (Behavior != null)
                 Behavior.Update(elapsedTime);
-            Position.X += elapsedTime.TotalMilliseconds * Velocity.X;
-            Position.Y += elapsedTime.TotalMilliseconds * Velocity.Y;
+            if (!PreventMovement)
+            {
+                Position.X += elapsedTime.TotalMilliseconds * Velocity.X;
+                Position.Y += elapsedTime.TotalMilliseconds * Velocity.Y;
+            }
         }
 
         internal bool OriginAbove(double v) => Position.Y < v;

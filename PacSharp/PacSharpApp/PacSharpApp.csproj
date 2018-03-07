@@ -59,13 +59,16 @@
     <Compile Include="Graphics\Animations\CutsceneAnimation.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Graphics\GhostSprite.cs" />
+    <Compile Include="Graphics\GhostSpriteAnimationExtensions.cs" />
     <Compile Include="Graphics\GraphicsConstants.cs" />
     <Compile Include="Graphics\GraphicsUtils.cs" />
     <Compile Include="Graphics\IMultiAnimationSprite.cs" />
     <Compile Include="Graphics\PacmanSprite.cs" />
+    <Compile Include="Graphics\PacmanSpriteAnimationExtensions.cs" />
     <Compile Include="Graphics\PowerPelletSprite.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="Objects\GhostObject.cs" />
+    <Compile Include="Objects\GhostState.cs" />
     <Compile Include="Objects\PacmanObject.cs" />
     <Compile Include="Objects\PacmanState.cs" />
     <Compile Include="Objects\PelletObject.cs" />
@@ -86,6 +89,7 @@
     <Compile Include="Graphics\GraphicsHandler.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Utils\Benchmark.cs" />
+    <Compile Include="Utils\BitmapExtensions.cs" />
     <Compile Include="Utils\Direction.cs" />
     <Compile Include="Utils\MathExtensions.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
