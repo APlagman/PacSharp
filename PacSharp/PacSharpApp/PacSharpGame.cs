@@ -21,7 +21,7 @@ namespace PacSharpApp
     sealed class PacSharpGame : Game
     {
         private const double PlayerMovementSpeed = 1.0;
-        private const int StartingLives = 3;
+        private const int StartingLives = 2;
         private const string ReadyText = "READY!";
         private const string OneUpText = "1UP";
         private const string HighscoreText = "HIGHSCORE";
@@ -33,11 +33,14 @@ namespace PacSharpApp
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan WarpMovementDisabledDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan MainMenuAnimationsDisabledDuration = TimeSpan.FromMilliseconds(500);
-        private static readonly TimeSpan InitialLevelPauseDuration = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan LevelStartDelay = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan RespawnPlayerDelay = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan HighscoreScreenDelay = TimeSpan.FromSeconds(1);
 
         private int creditsRemaining = 0;
-        private int livesRemaining = 0;
+        private int livesRemaining;
+        private int LivesRemaining { get => livesRemaining; set { livesRemaining = value; UpdateLives(); } }
+
         private int ghostsEaten = 0;
         private int levelNumber = 0;
         private int displayedHighScore = 0;
@@ -190,10 +193,10 @@ namespace PacSharpApp
                     HandleGhostEaten(obj, touchedGhost);
                 else if (touchedGhost.IsNormal)
                 {
-                    if (livesRemaining > 0)
+                    if (LivesRemaining > 0)
                     {
                         obj.State = new PacmanRespawningState(obj, RespawnPlayer);
-                        --livesRemaining;
+                        --LivesRemaining;
                     }
                     else
                     {
@@ -230,8 +233,7 @@ namespace PacSharpApp
                 GraphicsHandler.Show(player);
                 GraphicsHandler.Show(eaten);
                 EnableMovement();
-            }
-            ));
+            }));
         }
 
         private void HandleEatingPellets(PacmanObject obj)
@@ -459,12 +461,22 @@ namespace PacSharpApp
         {
             Tiles.DrawInteger(1, 16, displayedHighScore);
         }
+
+        private void UpdateLives()
+        {
+            throw new NotImplementedException();
+            // Remove life sprites
+            if (LivesRemaining > 0)
+            {
+                // Add life sprites
+            }
+        }
         #endregion
 
         #region Game Start
         private void StartGame()
         {
-            livesRemaining = StartingLives;
+            LivesRemaining = StartingLives;
             victoryAlreadyReached = false;
             levelNumber = 0;
             State = GameState.Playing;
@@ -478,7 +490,7 @@ namespace PacSharpApp
         private void DelayStart()
         {
             Tiles.DrawText(20, 11, ReadyText, PaletteID.Pacman);
-            actionQueue.Add((InitialLevelPauseDuration, () =>
+            actionQueue.Add((LevelStartDelay, () =>
             {
                 player.PreventMovement = false;
                 foreach (var ghost in ghosts)
