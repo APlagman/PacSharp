@@ -39,7 +39,12 @@ namespace PacSharpApp.Objects
                 sprite.UpdateAnimationSet(GhostSprite.AnimationID.Afraid.ToString());
                 sprite.Palette = PaletteID.GhostAfraid;
             }
-            else
+            else if (IsRespawning)
+            {
+                sprite.UpdateAnimationSet(sprite.Orientation.ToGhostSpriteAnimationID().ToString());
+                sprite.Palette = PaletteID.GhostRespawning;
+            }
+            else if (IsNormal)
             {
                 sprite.UpdateAnimationSet(sprite.Orientation.ToGhostSpriteAnimationID().ToString());
                 sprite.Palette = normalPalette;

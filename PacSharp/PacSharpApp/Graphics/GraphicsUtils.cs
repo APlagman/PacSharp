@@ -45,6 +45,7 @@ namespace PacSharpApp.Graphics
             {
                 Color src = Color.FromArgb(values[i + 3], values[i + 2], values[i + 1], values[i]);
                 Color dest = paletteMap[src];
+                values[i + 3] = dest.A;
                 values[i + 2] = dest.R;
                 values[i + 1] = dest.G;
                 values[i] = dest.B;

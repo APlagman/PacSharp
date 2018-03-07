@@ -23,6 +23,7 @@ namespace PacSharpApp.Graphics
         GhostAfraid = 1,
         Maze = 26,
         MazeGate = 29,
-        GhostWhite = 18
+        GhostWhite = 18,
+        GhostRespawning = 25
     }
 }
