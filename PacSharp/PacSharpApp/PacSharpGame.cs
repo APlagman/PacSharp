@@ -27,6 +27,7 @@ namespace PacSharpApp
         private static readonly TimeSpan WarpMovementDisabledDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan MainMenuAnimationsDisabledDuration = TimeSpan.FromMilliseconds(500);
         private static readonly TimeSpan InitialLevelPauseDuration = TimeSpan.FromSeconds(3);
+        private static readonly TimeSpan RespawnPlayerDelay = TimeSpan.FromMilliseconds(300);
 
         private int livesRemaining = 0;
         private int ghostsEaten = 0;
@@ -82,7 +83,7 @@ namespace PacSharpApp
                         if (InputHandler.PressedKeys.Contains(Keys.P))
                             Paused = !Paused;
                         if (!Paused)
-                            player.HandleInput(InputHandler);
+                            player?.HandleInput(InputHandler);
                     }
                     break;
                 default:
@@ -150,6 +151,8 @@ namespace PacSharpApp
         #region Collision
         private void HandleCollisions()
         {
+            if (player == null)
+                return;
             if (ShouldBeginWarping(player))
                 HandleWarpBeginning(player);
             WarpIfOffScreen(player);
@@ -322,10 +325,17 @@ namespace PacSharpApp
         private void RespawnPlayer()
         {
             GraphicsHandler.Unregister(player);
-            SpawnPlayer(level);
-            SpawnGhosts(level);
-            DisableMovement();
-            DelayStart();
+            foreach (var ghost in ghosts)
+                GraphicsHandler.Unregister(ghost);
+            player = null;
+            ghosts.Clear();
+            actionQueue.Add((RespawnPlayerDelay, () =>
+            {
+                SpawnPlayer(level);
+                SpawnGhosts(level);
+                DisableMovement();
+                DelayStart();
+            }));
         }
 
         private void BeginPowerPelletEffects()

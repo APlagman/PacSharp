@@ -88,8 +88,8 @@ namespace PacSharpApp.Objects
         internal override void Update(TimeSpan elapsedTime)
         {
             base.Update(elapsedTime);
-            if ((state is PacmanRespawningState || state is PacmanDyingState) && sprite.AnimationFinished)
-                sprite.Visible = false;
+            if ((state is PacmanRespawningState || state is PacmanDyingState))
+                sprite.RepeatAnimation = false;
             state.Update(sprite.AnimationFinished);
         }
 
