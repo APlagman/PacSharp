@@ -49,6 +49,7 @@ namespace PacSharpApp
         private Maze level;
         private ICollection<PelletObject> pellets;
         private ICollection<PowerPelletObject> powerPellets;
+        private ICollection<GameObject> lives = new List<GameObject>();
         private ISet<GhostObject> ghosts;
         private PacmanObject player;
         private IReadOnlyCollection<RectangleF> walls;
@@ -464,11 +465,17 @@ namespace PacSharpApp
 
         private void UpdateLives()
         {
-            throw new NotImplementedException();
             // Remove life sprites
-            if (LivesRemaining > 0)
+            foreach (var life in lives)
+                GraphicsHandler.Unregister(life);
+            lives.Clear();
+            for (int i = 0; i < LivesRemaining; ++i)
             {
-                // Add life sprites
+                lives.Add(new GameObject(GraphicsConstants.SpriteSize)
+                {
+                    Position = Vector2FromTilePosition(1 + 2 * i, 35)
+                });
+                GraphicsHandler.SetStaticSprite(lives.Last(), GraphicsID.SpritePacmanMiddleRight, PaletteID.Pacman);
             }
         }
         #endregion
@@ -476,7 +483,6 @@ namespace PacSharpApp
         #region Game Start
         private void StartGame()
         {
-            LivesRemaining = StartingLives;
             victoryAlreadyReached = false;
             levelNumber = 0;
             State = GameState.Playing;
@@ -485,6 +491,7 @@ namespace PacSharpApp
 
             InitLevel();
             DelayStart();
+            LivesRemaining = StartingLives;
         }
 
         private void DelayStart()
