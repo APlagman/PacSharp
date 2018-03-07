@@ -81,10 +81,19 @@ namespace PacSharpApp.Objects
 
     internal class PacmanDyingState : PacmanState
     {
-        internal PacmanDyingState(PacmanObject owner)
+        private readonly Action onDeath;
+
+        internal PacmanDyingState(PacmanObject owner, Action onDeath)
             : base(owner)
         {
             owner.PreventMovement = true;
+            this.onDeath = onDeath;
+        }
+
+        internal override void Update(bool animationFinished)
+        {
+            if (animationFinished)
+                onDeath();
         }
     }
 

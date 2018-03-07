@@ -197,7 +197,7 @@ namespace PacSharpApp
                     }
                     else
                     {
-                        obj.State = new PacmanDyingState(obj);
+                        obj.State = new PacmanDyingState(obj, ShowHighscoreScreen);
                     }
 
                     playerDied = true;
@@ -433,6 +433,8 @@ namespace PacSharpApp
             GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);
             GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
         }
+
+        private void ShowHighscoreScreen() => actionQueue.Add((HighscoreScreenDelay, () => State = GameState.Highscores));
         #endregion
 
         #region Tile Updates
