@@ -22,7 +22,7 @@ namespace PacSharpApp.Graphics.Animation
         private const string InkyNickname = "INKY";
         private const string StaticClydeObjName = "staticClyde";
         private const string ClydeName = "POKEY";
-        private const string ClydeNickname = "\"CLYDE\"";
+        private const string ClydeNickname = "CLYDE";
         private const string PelletDemoObjName = "pelletDemo";
         private const string PowerPelletDemoObjName = "powerPelletDemo";
 
