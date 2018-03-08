@@ -33,9 +33,13 @@ namespace PacSharpApp.Objects
 
         private TimeSpan untilUnafraid = afraidDuration;
 
-        internal GhostAfraidState(GhostObject owner)
+        internal GhostAfraidState(GhostObject owner, bool turnBlue)
             : base(owner)
-        { }
+        {
+            TurnBlue = turnBlue;
+        }
+
+        internal bool TurnBlue { get; }
 
         internal override void Update(TimeSpan elapsedTime)
         {
@@ -52,6 +56,8 @@ namespace PacSharpApp.Objects
 
         private bool ShouldFlash(TimeSpan previousRemaining)
         {
+            if (!TurnBlue)
+                return false;
             return flashTimings.Any(
                 timing => previousRemaining.TotalSeconds > timing
                        && untilUnafraid.TotalSeconds < timing);

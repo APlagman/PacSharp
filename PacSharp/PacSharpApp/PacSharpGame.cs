@@ -190,7 +190,7 @@ namespace PacSharpApp
             bool playerDied = false;
             foreach (var touchedGhost in ghosts.Where(ghost => ghost.Bounds.IntersectsWith(obj.MouthBounds)))
             {
-                if (touchedGhost.IsAfraid)
+                if (touchedGhost.IsAfraid && levelNumber <= 20)
                     HandleGhostEaten(obj, touchedGhost);
                 else if (touchedGhost.IsNormal)
                 {
@@ -251,8 +251,7 @@ namespace PacSharpApp
             foreach (var pellet in eaten)
             {
                 Score += PowerPelletObject.Worth;
-                if (levelNumber <= 20)
-                    BeginPowerPelletEffects();
+                BeginPowerPelletEffects();
                 GraphicsHandler.Unregister(pellet);
                 powerPellets.Remove(pellet);
             }
@@ -381,7 +380,7 @@ namespace PacSharpApp
         {
             foreach (var ghost in ghosts)
                 if (!ghost.IsRespawning)
-                    ghost.State = new GhostAfraidState(ghost);
+                    ghost.State = new GhostAfraidState(ghost, levelNumber <= 20);
             ghostsEaten = 0;
         }
 

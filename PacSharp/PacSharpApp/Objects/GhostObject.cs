@@ -34,7 +34,7 @@ namespace PacSharpApp.Objects
 
         private void OnStateChanged()
         {
-            if (IsAfraid)
+            if (IsAfraid && (State as GhostAfraidState).TurnBlue)
             {
                 sprite.UpdateAnimationSet(GhostSprite.AnimationID.Afraid.ToString());
                 sprite.Palette = PaletteID.GhostAfraid;
