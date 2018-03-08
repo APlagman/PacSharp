@@ -126,7 +126,7 @@ namespace PacSharpApp
                     if (VictoryConditionReached && !victoryAlreadyReached)
                     {
                         victoryAlreadyReached = true;
-                        actionQueue.Add((VictoryPauseDuration, () => StartNextLevel()));
+                        actionQueue.Add((VictoryPauseDuration, StartNextLevel));
                     }
                     UpdateGhostModeTimer(elapsedTime);
                     break;
@@ -209,11 +209,13 @@ namespace PacSharpApp
             int fruitLeftCol = (int)(fruitPos.X) / GraphicsConstants.TileWidth - 1;
             int fruitRow = (int)(fruitPos.Y - GraphicsConstants.TileWidth / 2) / GraphicsConstants.TileWidth;
             fruit.DrawPoints(Tiles, fruitRow, fruitLeftCol);
-            actionQueue.Add((EatFruitDisplayScoreDuration, () =>
-            {
-                Tiles.DrawRange((fruitRow, fruitLeftCol), (fruitRow, fruitLeftCol + 3), GraphicsID.TileEmpty, PaletteID.Empty);
-            }));
+            actionQueue.Add((EatFruitDisplayScoreDuration, () => RemoveDisplayedFruitScore(fruitLeftCol, fruitRow)));
             fruit = null;
+        }
+
+        private void RemoveDisplayedFruitScore(int fruitLeftCol, int fruitRow)
+        {
+            Tiles.DrawRange((fruitRow, fruitLeftCol), (fruitRow, fruitLeftCol + 3), GraphicsID.TileEmpty, PaletteID.Empty);
         }
 
         private void CheckForWarpCollisions()
@@ -231,23 +233,23 @@ namespace PacSharpApp
 
         private void CheckIfTouchingGhosts(PacmanObject obj)
         {
-            if (victoryAlreadyReached || !(obj.State is PacmanMovingState))
+            if (victoryAlreadyReached || !obj.IsMoving)
                 return;
             bool playerDied = false;
             foreach (var touchedGhost in ghosts.Where(ghost => ghost.TilePosition.Equals(obj.TilePosition)))
             {
-                if (touchedGhost.IsFrightened && GhostsShouldTurnBlue())
+                if (touchedGhost.IsFrightened && GhostsShouldTurnBlue)
                     HandleGhostEaten(obj, touchedGhost);
                 else if (!touchedGhost.IsRespawning)
                 {
                     if (LivesRemaining > 0)
                     {
-                        obj.State = new PacmanRespawningState(obj, RespawnPlayer);
+                        obj.BeginRespawning(DelayRespawn);
                         --LivesRemaining;
                     }
                     else
                     {
-                        obj.State = new PacmanDyingState(obj, ShowHighscoreScreen);
+                        obj.BeginDeath(ShowHighscoreScreen);
                     }
 
                     playerDied = true;
@@ -269,18 +271,20 @@ namespace PacSharpApp
             {
                 Position = eater.Position
             };
-            eaten.State = new GhostRespawningState(eaten);
+            eaten.BeginRespawning();
             GraphicsHandler.Hide(eater);
             GraphicsHandler.Hide(eaten);
             DisableMovement();
             ++ghostsEaten;
-            actionQueue.Add((EatGhostPauseDuration, () =>
-            {
-                GraphicsHandler.Unregister(scoreObj);
-                GraphicsHandler.Show(player);
-                GraphicsHandler.Show(eaten);
-                EnableMovement();
-            }));
+            actionQueue.Add((EatGhostPauseDuration, () => AfterGhostEatenPause(eaten, scoreObj)));
+        }
+
+        private void AfterGhostEatenPause(GhostObject eaten, ScoreObject scoreObj)
+        {
+            GraphicsHandler.Unregister(scoreObj);
+            GraphicsHandler.Show(player);
+            GraphicsHandler.Show(eaten);
+            EnableMovement();
         }
 
         private void CheckIfEatingPellets(PacmanObject obj)
@@ -330,15 +334,15 @@ namespace PacSharpApp
 
         private void HandleWarpBeginning(PacmanObject obj)
         {
-            obj.State = new PacmanWarpingState(obj);
-            actionQueue.Add((WarpMovementDisabledDuration, () => obj.State = new PacmanMovingState(obj)));
+            obj.BeginWarping();
+            actionQueue.Add((WarpMovementDisabledDuration, obj.ReturnToMovementState));
         }
 
-        private bool ShouldBeginWarping(PacmanObject obj) => OutsideGameArea(obj) && obj.State is PacmanMovingState;
+        private bool ShouldBeginWarping(PacmanObject obj) => OutsideGameArea(obj) && obj.IsMoving;
 
         private void HandleWarpBeginning(GhostObject obj)
         {
-            obj.State = new GhostWarpingState(obj);
+            obj.BeginWarping();
             actionQueue.Add((WarpMovementDisabledDuration, obj.ReturnToMovementState));
         }
 
@@ -407,42 +411,46 @@ namespace PacSharpApp
         {
             ++levelNumber;
             Paused = true;
+            GraphicsHandler.Unregister(fruit);
+            fruit = null;
             foreach (var ghost in ghosts)
                 GraphicsHandler.Unregister(ghost);
             ghosts.Clear();
             GraphicsHandler.Unregister(player);
-            player.PerformTurn(Direction.Right);
             player = null;
             InitLevel();
+            player.PerformTurn(Direction.Right);
             DelayStart();
             victoryAlreadyReached = false;
         }
 
-        private void RespawnPlayer()
+        private void DelayRespawn()
         {
             GraphicsHandler.Unregister(player);
             foreach (var ghost in ghosts)
                 GraphicsHandler.Unregister(ghost);
             player = null;
             ghosts.Clear();
-            actionQueue.Add((RespawnPlayerDelay, () =>
-            {
-                SpawnPlayer(level);
-                SpawnGhosts(level);
-                DisableMovement();
-                DelayStart();
-            }));
+            actionQueue.Add((RespawnPlayerDelay, RespawnPlayer));
+        }
+
+        private void RespawnPlayer()
+        {
+            SpawnPlayer(level);
+            SpawnGhosts(level);
+            DisableMovement();
+            DelayStart();
         }
 
         private void BeginPowerPelletEffects()
         {
             foreach (var ghost in ghosts)
                 if (!ghost.IsRespawning)
-                    ghost.State = new GhostFrightenedState(ghost, GhostsShouldTurnBlue());
+                    ghost.BecomeFrightened(GhostsShouldTurnBlue);
             ghostsEaten = 0;
         }
 
-        private bool GhostsShouldTurnBlue() => levelNumber < LevelNumberToStopGhostsTurningBlue;
+        private bool GhostsShouldTurnBlue => levelNumber < LevelNumberToStopGhostsTurningBlue;
 
         private void DisableMovement()
         {
@@ -497,7 +505,7 @@ namespace PacSharpApp
             GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
         }
 
-        private void ShowHighscoreScreen() => actionQueue.Add((HighscoreScreenDelay, () => State = GameState.Highscores));
+        private void ShowHighscoreScreen() => actionQueue.Add((HighscoreScreenDelay, () => { State = GameState.Highscores; }));
         #endregion
 
         #region Tile Updates
@@ -585,18 +593,20 @@ namespace PacSharpApp
         {
             ghostModeTimer = GhostModePhaseDuration();
             Tiles.DrawText(20, 11, ReadyText, PaletteID.Pacman);
-            actionQueue.Add((LevelStartDelay, () =>
-            {
-                player.PreventMovement = false;
-                foreach (var ghost in ghosts)
-                    ghost.PreventMovement = false;
-                GraphicsHandler.PreventAnimatedSpriteUpdates = false;
-                Tiles.DrawRange((20, 11), (20, 16), GraphicsID.TileEmpty, PaletteID.Empty);
-                player.PerformTurn(Direction.Right);
-                ghostPhase = 0;
-                ghostModeTimer = GhostModePhaseDuration();
-            }
-            ));
+            actionQueue.Add((LevelStartDelay, EnableLevelPlay));
+        }
+
+        private void EnableLevelPlay()
+        {
+            Paused = false;
+            player.PreventMovement = false;
+            foreach (var ghost in ghosts)
+                ghost.PreventMovement = false;
+            GraphicsHandler.PreventAnimatedSpriteUpdates = false;
+            Tiles.DrawRange((20, 11), (20, 16), GraphicsID.TileEmpty, PaletteID.Empty);
+            player.PerformTurn(Direction.Right);
+            ghostPhase = 0;
+            ghostModeTimer = GhostModePhaseDuration();
         }
         #endregion
 

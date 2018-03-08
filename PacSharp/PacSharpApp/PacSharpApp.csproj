@@ -69,9 +69,7 @@
     <Compile Include="Maze.cs" />
     <Compile Include="Objects\FruitObject.cs" />
     <Compile Include="Objects\GhostObject.cs" />
-    <Compile Include="Objects\GhostState.cs" />
     <Compile Include="Objects\PacmanObject.cs" />
-    <Compile Include="Objects\PacmanState.cs" />
     <Compile Include="Objects\PelletObject.cs" />
     <Compile Include="Objects\PowerPelletObject.cs" />
     <Compile Include="IGameUI.cs" />

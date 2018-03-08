@@ -38,7 +38,7 @@ namespace PacSharpApp.Objects
         internal bool IsRespawning => State is GhostRespawningState;
         internal bool IsScattering => State is GhostScatterState;
 
-        internal GhostState State
+        private GhostState State
         {
             get => state;
             set
@@ -140,12 +140,92 @@ namespace PacSharpApp.Objects
                     GraphicsConstants.TileSize)));
         }
 
-        internal void ReturnToMovementState()
+        internal void ReturnToMovementState() => State = (ShouldScatter) ? new GhostScatterState(this) : new GhostChaseState(this) as GhostState;
+
+        internal void BeginRespawning() => State = new GhostRespawningState(this);
+
+        internal void BeginWarping() => State = new GhostWarpingState(this);
+
+        internal void BecomeFrightened(bool turnBlue) => State = new GhostFrightenedState(this, turnBlue);
+
+        #region State
+        abstract class GhostState
         {
-            if (ShouldScatter)
-                State = new GhostScatterState(this);
-            else
-                State = new GhostChaseState(this);
+            private protected GhostObject owner;
+
+            private protected GhostState(GhostObject owner)
+            {
+                this.owner = owner;
+            }
+
+            internal virtual void Update(TimeSpan elapsedTime) { }
         }
+
+        class GhostChaseState : GhostState
+        {
+            internal GhostChaseState(GhostObject owner)
+                : base(owner)
+            { }
+        }
+
+        class GhostFrightenedState : GhostState
+        {
+            private static readonly ICollection<double> flashTimings = new List<double>() { 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25 };
+            private static readonly TimeSpan afraidDuration = TimeSpan.FromSeconds(8);
+
+            private TimeSpan untilUnafraid = afraidDuration;
+
+            internal GhostFrightenedState(GhostObject owner, bool turnBlue)
+                : base(owner)
+            {
+                TurnBlue = turnBlue;
+            }
+
+            internal bool TurnBlue { get; }
+
+            internal override void Update(TimeSpan elapsedTime)
+            {
+                if (untilUnafraid < elapsedTime)
+                    owner.ReturnToMovementState();
+                else
+                {
+                    TimeSpan previousRemaining = untilUnafraid;
+                    untilUnafraid -= elapsedTime;
+                    if (ShouldFlash(previousRemaining))
+                        owner.Flash();
+                }
+            }
+
+            private bool ShouldFlash(TimeSpan previousRemaining)
+            {
+                if (!TurnBlue)
+                    return false;
+                return flashTimings.Any(
+                    timing => previousRemaining.TotalSeconds > timing
+                           && untilUnafraid.TotalSeconds < timing);
+            }
+        }
+
+        class GhostRespawningState : GhostState
+        {
+            internal GhostRespawningState(GhostObject owner)
+                : base(owner)
+            { }
+        }
+
+        class GhostWarpingState : GhostState
+        {
+            internal GhostWarpingState(GhostObject owner)
+                : base(owner)
+            { }
+        }
+
+        class GhostScatterState : GhostState
+        {
+            internal GhostScatterState(GhostObject owner)
+                : base(owner)
+            { }
+        }
+        #endregion
     }
 }
