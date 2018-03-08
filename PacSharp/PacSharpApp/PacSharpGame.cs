@@ -28,7 +28,7 @@ namespace PacSharpApp
         private const string TwoUpText = "2UP";
         private const string CreditText = "CREDIT";
         private const int BaseGhostScore = 200;
-
+        private const int LevelNumberToStopGhostsTurningBlue = 20;
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan WarpMovementDisabledDuration = TimeSpan.FromMilliseconds(300);
@@ -319,10 +319,10 @@ namespace PacSharpApp
         private void HandleWarpBeginning(GhostObject obj)
         {
             obj.State = new GhostWarpingState(obj);
-            actionQueue.Add((WarpMovementDisabledDuration, () => obj.State = new GhostNormalState(obj)));
+            actionQueue.Add((WarpMovementDisabledDuration, () => obj.State = new GhostChaseState(obj)));
         }
 
-        private bool ShouldBeginWarping(GhostObject obj) => OutsideGameArea(obj) && obj.State is GhostNormalState;
+        private bool ShouldBeginWarping(GhostObject obj) => OutsideGameArea(obj) && obj.State is GhostChaseState;
 
         private bool OutsideGameArea(GameObject obj)
         {

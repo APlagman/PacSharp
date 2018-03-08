@@ -19,21 +19,21 @@ namespace PacSharpApp.Objects
         internal virtual void Update(TimeSpan elapsedTime) { }
     }
 
-    class GhostNormalState : GhostState
+    class GhostChaseState : GhostState
     {
-        internal GhostNormalState(GhostObject owner)
+        internal GhostChaseState(GhostObject owner)
             : base(owner)
         { }
     }
 
-    class GhostAfraidState : GhostState
+    class GhostFrightenedState : GhostState
     {
         private static readonly ICollection<double> flashTimings = new List<double>() { 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25 };
         private static readonly TimeSpan afraidDuration = TimeSpan.FromSeconds(8);
 
         private TimeSpan untilUnafraid = afraidDuration;
 
-        internal GhostAfraidState(GhostObject owner, bool turnBlue)
+        internal GhostFrightenedState(GhostObject owner, bool turnBlue)
             : base(owner)
         {
             TurnBlue = turnBlue;
@@ -44,7 +44,7 @@ namespace PacSharpApp.Objects
         internal override void Update(TimeSpan elapsedTime)
         {
             if (untilUnafraid < elapsedTime)
-                owner.State = new GhostNormalState(owner);
+                owner.State = new GhostChaseState(owner);
             else
             {
                 TimeSpan previousRemaining = untilUnafraid;
