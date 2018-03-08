@@ -33,7 +33,6 @@ namespace PacSharpApp.AI
         internal override void Update(TimeSpan elapsedTime)
         {
             base.Update(elapsedTime);
-            Console.WriteLine(owner.State.ToString());
         }
     }
 }

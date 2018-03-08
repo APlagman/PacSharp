@@ -28,11 +28,16 @@ namespace PacSharpApp.AI
 
         internal void ChangeDirection()
         {
-            Direction newDirection =
+            Direction chosen;
+            var availableDirections =
                 Enum.GetValues(typeof(Direction)).Cast<Direction>()
-                .Where(dir => dir != owner.Direction && owner.CanTurnTo(level.Walls, owner.DirectionVelocity(dir)))
-                .FirstOrDefault();
-            owner.PerformTurn(newDirection);
+                .Where(dir => owner.CanTurnTo(level.Walls, owner.DirectionVelocity(dir)));
+            if (availableDirections.Contains(owner.Direction.GetOpposite()))
+                chosen = owner.Direction.GetOpposite();
+            else
+                chosen = availableDirections.First();
+            owner.PerformTurn(chosen);
+            nextDirection = chosen;
         }
 
         internal Direction ChooseNewDirection()
