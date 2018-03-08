@@ -61,7 +61,7 @@ namespace PacSharpApp.Graphics
                 AnimationID.Dying.ToString(),
                 new (Bitmap, TimeSpan)[]
                 {
-                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanDying0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerDyingAnimationFrame)),
+                    (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanDying0, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerDyingAnimationFrame * 3)),
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanDying1, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerDyingAnimationFrame)),
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanDying2, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerDyingAnimationFrame)),
                     (sourceSheet.Clone(GraphicsUtils.GetGraphicSourceRectangle(GraphicsID.SpritePacmanDying3, GraphicsConstants.SpriteWidth, sourceSheet.Width / GraphicsConstants.SpriteWidth), sourceSheet.PixelFormat), TimeSpan.FromMilliseconds(MillisPerDyingAnimationFrame)),
