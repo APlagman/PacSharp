@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using PacSharpApp.AI;
 using PacSharpApp.Graphics;
 using PacSharpApp.Utils;
@@ -106,6 +108,16 @@ namespace PacSharpApp.Objects
                 && LeftSideLeftOf(rect.Right)
                 && BottomBelow(rect.Top)
                 && TopAbove(rect.Bottom);
+        }
+
+        internal bool CanTurnTo(IReadOnlyCollection<RectangleF> walls, Vector2 directionVelocity)
+        {
+            Vector2 temp = Position;
+            Position.Round();
+            Position += directionVelocity;
+            bool canTurn = !walls.Any(wall => Bounds.IntersectsWith(wall));
+            Position = temp;
+            return canTurn;
         }
     }
 }

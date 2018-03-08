@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using PacSharpApp.Graphics;
 using PacSharpApp.Utils;
 
@@ -51,7 +50,7 @@ namespace PacSharpApp.Objects
 
         internal bool AttemptTurn(Direction newDirection)
         {
-            if (sprite.Orientation == newDirection || !CanTurnTo(DirectionVelocity(newDirection)))
+            if (sprite.Orientation == newDirection || !CanTurnTo(walls, DirectionVelocity(newDirection)))
                 return false;
             PerformTurn(newDirection);
             return true;
@@ -91,16 +90,6 @@ namespace PacSharpApp.Objects
             if ((state is PacmanRespawningState || state is PacmanDyingState))
                 sprite.RepeatAnimation = false;
             state.Update(sprite.AnimationFinished);
-        }
-
-        internal bool CanTurnTo(Vector2 directionVelocity)
-        {
-            Vector2 temp = Position;
-            Position.Round();
-            Position += directionVelocity;
-            bool canTurn = !walls.Any(wall => Bounds.IntersectsWith(wall));
-            Position = temp;
-            return canTurn;
         }
     }
 }

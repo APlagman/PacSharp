@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using PacSharpApp.Objects;
-using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -11,14 +9,17 @@ namespace PacSharpApp.AI
 {
     class InkyAIBehavior : GhostAIBehavior
     {
-        internal InkyAIBehavior(GhostObject owner, PacmanObject target, IReadOnlyCollection<RectangleF> walls, Vector2 respawnPoint)
-            : base(owner, target, walls, respawnPoint)
+        internal InkyAIBehavior(GhostObject owner, PacmanObject target, Maze level)
+            : base(owner, target, level)
         {
         }
 
+        private protected override Point DestinationTile
+            => (owner.IsRespawning) ? level.GhostRespawnTile : level.GhostFavoriteTiles[GhostType.Inky];
+
         internal override void Update(TimeSpan elapsedTime)
         {
-            //throw new NotImplementedException();
+            base.Update(elapsedTime);
         }
     }
 }

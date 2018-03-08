@@ -11,13 +11,29 @@ namespace PacSharpApp.AI
 {
     class BlinkyAIBehavior : GhostAIBehavior
     {
-        internal BlinkyAIBehavior(GhostObject owner, PacmanObject target, IReadOnlyCollection<RectangleF> walls, Vector2 respawnPoint)
-            : base(owner, target, walls, respawnPoint)
+        private static readonly Point FavoredTile = new Point(0, 3);
+
+        internal BlinkyAIBehavior(GhostObject owner, PacmanObject target, Maze level)
+            : base(owner, target, level)
         { }
+
+        private protected override Point DestinationTile
+        {
+            get
+            {
+                if (owner.IsRespawning)
+                    return level.GhostRespawnTile;
+                else if (owner.IsChasing)
+                    return target.TilePosition;
+                else
+                    return level.GhostFavoriteTiles[GhostType.Blinky];
+            }
+        }
 
         internal override void Update(TimeSpan elapsedTime)
         {
-
+            base.Update(elapsedTime);
+            Console.WriteLine(owner.State.ToString());
         }
     }
 }

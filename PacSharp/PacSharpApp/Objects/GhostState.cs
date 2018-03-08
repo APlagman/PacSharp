@@ -44,7 +44,7 @@ namespace PacSharpApp.Objects
         internal override void Update(TimeSpan elapsedTime)
         {
             if (untilUnafraid < elapsedTime)
-                owner.State = new GhostChaseState(owner);
+                owner.ReturnToMovementState();
             else
             {
                 TimeSpan previousRemaining = untilUnafraid;
@@ -74,6 +74,13 @@ namespace PacSharpApp.Objects
     class GhostWarpingState : GhostState
     {
         internal GhostWarpingState(GhostObject owner)
+            : base(owner)
+        { }
+    }
+
+    class GhostScatterState : GhostState
+    {
+        internal GhostScatterState(GhostObject owner)
             : base(owner)
         { }
     }

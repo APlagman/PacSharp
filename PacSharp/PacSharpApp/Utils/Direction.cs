@@ -7,8 +7,8 @@ namespace PacSharpApp.Utils
     enum Direction
     {
         Up = 0,
-        Down = 180,
         Left = 270,
+        Down = 180,
         Right = 90
     }
 

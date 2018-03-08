@@ -22,7 +22,9 @@ namespace PacSharpApp
             (List<Vector2> pellets, List<Vector2> powerPellets) pelletInfo, 
             Vector2 playerSpawn,
             IDictionary<GhostType, Vector2> ghostSpawns,
-            Vector2 fruitSpawn)
+            Vector2 fruitSpawn,
+            IReadOnlyCollection<Point> ghostLimitedIntersections,
+            IReadOnlyDictionary<GhostType, Point> ghostFavoriteTiles)
         {
             this.tiles = tiles;
             Walls = walls;
@@ -31,6 +33,8 @@ namespace PacSharpApp
             PlayerSpawn = playerSpawn;
             GhostSpawns = new ReadOnlyDictionary<GhostType, Vector2>(ghostSpawns);
             FruitSpawn = fruitSpawn;
+            GhostLimitedIntersections = ghostLimitedIntersections;
+            GhostFavoriteTiles = ghostFavoriteTiles;
         }
 
         internal IReadOnlyCollection<RectangleF> Walls { get; }
@@ -39,6 +43,12 @@ namespace PacSharpApp
         internal Vector2 PlayerSpawn { get; }
         internal IReadOnlyDictionary<GhostType, Vector2> GhostSpawns { get; }
         internal Vector2 FruitSpawn { get; }
+        internal IReadOnlyCollection<Point> GhostLimitedIntersections { get; }
+        internal IReadOnlyDictionary<GhostType, Point> GhostFavoriteTiles { get; }
+        internal Point GhostRespawnTile
+            => new Point(
+                (int)Math.Floor(GhostSpawns[GhostType.Pinky].X - GraphicsConstants.TileWidth / 2) / GraphicsConstants.TileWidth,
+                (int)Math.Floor(GhostSpawns[GhostType.Pinky].Y) / GraphicsConstants.TileWidth);
 
         internal void Draw(TileCollection dest)
         {
@@ -70,6 +80,10 @@ namespace PacSharpApp
         private const string PelletLayerName = "Pellets";
         private const string MazeLayerName = "Maze";
         private const string FruitObjectType = "Fruit";
+        private const string SpecialTilesObjectGroupName = "Special Tiles";
+        private const string GhostLimitedIntersectionsObjectType = "GhostLimitedIntersection";
+        private const string GhostFavoriteTileObjectType = "GhostFavoriteTile";
+        private const string ObjectGroupElementName = "objectgroup";
 
         internal static Maze Load(string xml)
         {
@@ -85,7 +99,43 @@ namespace PacSharpApp
                 ReadPellets(mazeXml, mapWidth, mapHeight),
                 ReadPlayerSpawn(mazeXml),
                 ReadGhostSpawns(mazeXml),
-                ReadFruitSpawn(mazeXml));
+                ReadFruitSpawn(mazeXml),
+                ReadGhostLimitedIntersections(mazeXml),
+                ReadGhostFavoriteTiles(mazeXml));
+        }
+
+        private static IReadOnlyDictionary<GhostType, Point> ReadGhostFavoriteTiles(XDocument mazeXml)
+        {
+            var results = new Dictionary<GhostType, Point>();
+            var favoriteTileInfo = 
+                mazeXml.Root.Descendants(ObjectGroupElementName)
+                .Where(objGroup => objGroup.Attribute(NameAttribute).Value == SpecialTilesObjectGroupName)
+                .Descendants(ObjectElementName)
+                .Where(obj => obj.Attribute(TypeAttribute).Value == GhostFavoriteTileObjectType)
+                .Select(obj =>
+                (
+                    (GhostType)Enum.Parse(
+                        typeof(GhostType),
+                        obj.Attribute(NameAttribute).Value),
+                    new Point(int.Parse(obj.Attribute(XAttribute).Value) / GraphicsConstants.TileWidth,
+                                int.Parse(obj.Attribute(YAttribute).Value) / GraphicsConstants.TileWidth 
+                )));
+            foreach ((GhostType type, Point location) in favoriteTileInfo)
+                results.Add(type, location);
+            return results;
+        }
+
+        private static IReadOnlyCollection<Point> ReadGhostLimitedIntersections(XDocument mazeXml)
+        {
+            return
+                mazeXml.Root.Descendants(ObjectGroupElementName)
+                .Where(objGroup => objGroup.Attribute(NameAttribute).Value == SpecialTilesObjectGroupName)
+                .Descendants(ObjectElementName)
+                .Where(obj => obj.Attribute(TypeAttribute).Value == GhostLimitedIntersectionsObjectType)
+                .Select(obj =>
+                    new Point(int.Parse(obj.Attribute(XAttribute).Value) - GraphicsConstants.TileWidth / 2,
+                              int.Parse(obj.Attribute(YAttribute).Value) - GraphicsConstants.TileWidth / 2))
+                .ToList();
         }
 
         private static Vector2 ReadFruitSpawn(XDocument mazeXml)

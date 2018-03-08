@@ -29,6 +29,7 @@ namespace PacSharpApp
         private const string CreditText = "CREDIT";
         private const int BaseGhostScore = 200;
         private const int LevelNumberToStopGhostsTurningBlue = 20;
+
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan WarpMovementDisabledDuration = TimeSpan.FromMilliseconds(300);
@@ -55,6 +56,9 @@ namespace PacSharpApp
         private PacmanObject player;
         private IReadOnlyCollection<RectangleF> walls;
         private FruitObject fruit;
+
+        private TimeSpan ghostModeTimer;
+        private int ghostPhase;
 
         private bool victoryAlreadyReached = false;
 
@@ -124,10 +128,26 @@ namespace PacSharpApp
                         victoryAlreadyReached = true;
                         actionQueue.Add((VictoryPauseDuration, () => StartNextLevel()));
                     }
+                    UpdateGhostModeTimer(elapsedTime);
                     break;
                 default:
                     break;
             }
+        }
+
+        private void UpdateGhostModeTimer(TimeSpan elapsedTime)
+        {
+            if (ghostPhase < 7 && ghostModeTimer < elapsedTime)
+            {
+                ++ghostPhase;
+                ghostModeTimer = GhostModePhaseDuration();
+                foreach (var ghost in ghosts)
+                {
+                    ghost.ShouldScatter = (ghostPhase % 2 == 0);
+                }
+            }
+            else
+                ghostModeTimer -= elapsedTime;
         }
 
         private void UpdateActionQueue(TimeSpan elapsedTime)
@@ -216,9 +236,9 @@ namespace PacSharpApp
             bool playerDied = false;
             foreach (var touchedGhost in ghosts.Where(ghost => ghost.TilePosition.Equals(obj.TilePosition)))
             {
-                if (touchedGhost.IsAfraid && GhostsShouldTurnBlue())
+                if (touchedGhost.IsFrightened && GhostsShouldTurnBlue())
                     HandleGhostEaten(obj, touchedGhost);
-                else if (touchedGhost.IsNormal)
+                else if (!touchedGhost.IsRespawning)
                 {
                     if (LivesRemaining > 0)
                     {
@@ -319,10 +339,10 @@ namespace PacSharpApp
         private void HandleWarpBeginning(GhostObject obj)
         {
             obj.State = new GhostWarpingState(obj);
-            actionQueue.Add((WarpMovementDisabledDuration, () => obj.State = new GhostChaseState(obj)));
+            actionQueue.Add((WarpMovementDisabledDuration, obj.ReturnToMovementState));
         }
 
-        private bool ShouldBeginWarping(GhostObject obj) => OutsideGameArea(obj) && obj.State is GhostChaseState;
+        private bool ShouldBeginWarping(GhostObject obj) => OutsideGameArea(obj) && obj.IsChasing;
 
         private bool OutsideGameArea(GameObject obj)
         {
@@ -359,7 +379,7 @@ namespace PacSharpApp
                 var pacman = obj as PacmanObject;
                 pacman.PerformTurn(
                     Enum.GetValues(typeof(Direction)).Cast<Direction?>()
-                    .Where(dir => dir != pacman.Orientation && dir != pacman.Orientation.GetOpposite() && player.CanTurnTo(PacmanObject.DirectionVelocity(dir.Value))).FirstOrDefault());
+                    .Where(dir => dir != pacman.Orientation && dir != pacman.Orientation.GetOpposite() && player.CanTurnTo(walls, PacmanObject.DirectionVelocity(dir.Value))).FirstOrDefault());
             }
         }
 
@@ -518,6 +538,33 @@ namespace PacSharpApp
                 GraphicsHandler.SetStaticSprite(lives.Last(), GraphicsID.SpritePacmanMiddleRight, PaletteID.Pacman);
             }
         }
+
+        private TimeSpan GhostModePhaseDuration()
+        {
+            if (levelNumber < 2)
+            {
+                if (ghostPhase == 0 || ghostPhase == 2)
+                    return TimeSpan.FromSeconds(7);
+                else if (ghostPhase == 4 || ghostPhase == 6)
+                    return TimeSpan.FromSeconds(5);
+                else
+                    return TimeSpan.FromSeconds(20);
+            }
+            else
+            {
+                if (ghostPhase == 0 || ghostPhase == 2)
+                    return TimeSpan.FromSeconds((levelNumber < 5) ? 7 : 5);
+                else if (ghostPhase == 1 || ghostPhase == 3)
+                    return TimeSpan.FromSeconds(20);
+                else if (ghostPhase == 4)
+                    return TimeSpan.FromSeconds(5);
+                else if (ghostPhase == 5)
+                    return TimeSpan.FromSeconds((levelNumber < 5) ? 1033 : 1037);
+                else
+                    return TimeSpan.FromSeconds(1.0d / 60);
+            }
+            throw new Exception("Unhandled ghost mode / level state.");
+        }
         #endregion
 
         #region Game Start
@@ -536,6 +583,7 @@ namespace PacSharpApp
 
         private void DelayStart()
         {
+            ghostModeTimer = GhostModePhaseDuration();
             Tiles.DrawText(20, 11, ReadyText, PaletteID.Pacman);
             actionQueue.Add((LevelStartDelay, () =>
             {
@@ -545,7 +593,10 @@ namespace PacSharpApp
                 GraphicsHandler.PreventAnimatedSpriteUpdates = false;
                 Tiles.DrawRange((20, 11), (20, 16), GraphicsID.TileEmpty, PaletteID.Empty);
                 player.PerformTurn(Direction.Right);
-            }));
+                ghostPhase = 0;
+                ghostModeTimer = GhostModePhaseDuration();
+            }
+            ));
         }
         #endregion
 
@@ -584,7 +635,7 @@ namespace PacSharpApp
         private void SpawnGhosts(Maze level)
         {
             ghosts = new HashSet<GhostObject>
-                (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player, walls, spawn.Value)
+                (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player, level)
                 {
                     Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2)
                 }));
