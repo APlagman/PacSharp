@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using PacSharpApp.AI;
+using PacSharpApp.Graphics;
 using PacSharpApp.Utils;
 
 /// <summary>
@@ -37,6 +38,7 @@ namespace PacSharpApp.Objects
         internal ref Vector2 Velocity { get { return ref velocity; } }
         internal bool PreventMovement { get; set; } = false;
         internal Size Size { get; }
+        internal Point TilePosition => new Point((int)Math.Floor(Position.X / GraphicsConstants.TileWidth), (int)Math.Floor(Position.Y / GraphicsConstants.TileWidth));
 
         internal RectangleF Bounds => new RectangleF(new PointF((float)Position.X - Size.Width / 2, (float)Position.Y - Size.Height / 2), Size);
 

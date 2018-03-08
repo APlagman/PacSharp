@@ -214,7 +214,7 @@ namespace PacSharpApp
             if (victoryAlreadyReached || !(obj.State is PacmanMovingState))
                 return;
             bool playerDied = false;
-            foreach (var touchedGhost in ghosts.Where(ghost => ghost.Bounds.IntersectsWith(obj.MouthBounds)))
+            foreach (var touchedGhost in ghosts.Where(ghost => ghost.TilePosition.Equals(obj.TilePosition)))
             {
                 if (touchedGhost.IsAfraid && levelNumber <= 20)
                     HandleGhostEaten(obj, touchedGhost);
