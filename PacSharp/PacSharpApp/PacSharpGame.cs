@@ -251,7 +251,8 @@ namespace PacSharpApp
             foreach (var pellet in eaten)
             {
                 Score += PowerPelletObject.Worth;
-                BeginPowerPelletEffects();
+                if (levelNumber <= 20)
+                    BeginPowerPelletEffects();
                 GraphicsHandler.Unregister(pellet);
                 powerPellets.Remove(pellet);
             }
