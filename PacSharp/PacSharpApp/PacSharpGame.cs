@@ -216,7 +216,7 @@ namespace PacSharpApp
             bool playerDied = false;
             foreach (var touchedGhost in ghosts.Where(ghost => ghost.TilePosition.Equals(obj.TilePosition)))
             {
-                if (touchedGhost.IsAfraid && levelNumber <= 20)
+                if (touchedGhost.IsAfraid && GhostsShouldTurnBlue())
                     HandleGhostEaten(obj, touchedGhost);
                 else if (touchedGhost.IsNormal)
                 {
@@ -418,9 +418,11 @@ namespace PacSharpApp
         {
             foreach (var ghost in ghosts)
                 if (!ghost.IsRespawning)
-                    ghost.State = new GhostAfraidState(ghost, levelNumber <= 20);
+                    ghost.State = new GhostFrightenedState(ghost, GhostsShouldTurnBlue());
             ghostsEaten = 0;
         }
+
+        private bool GhostsShouldTurnBlue() => levelNumber < LevelNumberToStopGhostsTurningBlue;
 
         private void DisableMovement()
         {
