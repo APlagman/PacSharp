@@ -162,6 +162,7 @@ namespace PacSharpApp.Graphics
         SpriteCherry = 0,
         SpriteStrawberry = 1,
         SpriteOrange = 2,
+        SpriteBell = 3,
         SpriteApple = 4,
         SpriteMelon = 5,
         SpriteGalaxian = 6,

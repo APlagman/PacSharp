@@ -21,7 +21,8 @@ namespace PacSharpApp
             List<RectangleF> walls,
             (List<Vector2> pellets, List<Vector2> powerPellets) pelletInfo, 
             Vector2 playerSpawn,
-            IDictionary<GhostType, Vector2> ghostSpawns)
+            IDictionary<GhostType, Vector2> ghostSpawns,
+            Vector2 fruitSpawn)
         {
             this.tiles = tiles;
             Walls = walls;
@@ -29,6 +30,7 @@ namespace PacSharpApp
             PowerPellets = pelletInfo.powerPellets;
             PlayerSpawn = playerSpawn;
             GhostSpawns = new ReadOnlyDictionary<GhostType, Vector2>(ghostSpawns);
+            FruitSpawn = fruitSpawn;
         }
 
         internal IReadOnlyCollection<RectangleF> Walls { get; }
@@ -36,6 +38,7 @@ namespace PacSharpApp
         internal IReadOnlyCollection<Vector2> PowerPellets { get; }
         internal Vector2 PlayerSpawn { get; }
         internal IReadOnlyDictionary<GhostType, Vector2> GhostSpawns { get; }
+        internal Vector2 FruitSpawn { get; }
 
         internal void Draw(TileCollection dest)
         {
@@ -66,6 +69,7 @@ namespace PacSharpApp
         private const string GhostObjectType = "Ghost";
         private const string PelletLayerName = "Pellets";
         private const string MazeLayerName = "Maze";
+        private const string FruitObjectType = "Fruit";
 
         internal static Maze Load(string xml)
         {
@@ -80,7 +84,16 @@ namespace PacSharpApp
                 ReadWalls(mazeXml),
                 ReadPellets(mazeXml, mapWidth, mapHeight),
                 ReadPlayerSpawn(mazeXml),
-                ReadGhostSpawns(mazeXml));
+                ReadGhostSpawns(mazeXml),
+                ReadFruitSpawn(mazeXml));
+        }
+
+        private static Vector2 ReadFruitSpawn(XDocument mazeXml)
+        {
+            return mazeXml.Root.Descendants(ObjectElementName)
+                .Where(obj => obj.Attribute(TypeAttribute).Value == FruitObjectType)
+                .Select(fruit => new Vector2(float.Parse(fruit.Attribute(XAttribute).Value), float.Parse(fruit.Attribute(YAttribute).Value)))
+                .First();
         }
 
         private static IDictionary<GhostType, Vector2> ReadGhostSpawns(XDocument mazeXml)

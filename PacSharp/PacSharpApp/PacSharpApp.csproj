@@ -67,6 +67,7 @@
     <Compile Include="Graphics\PacmanSpriteAnimationExtensions.cs" />
     <Compile Include="Graphics\PowerPelletSprite.cs" />
     <Compile Include="Maze.cs" />
+    <Compile Include="Objects\FruitObject.cs" />
     <Compile Include="Objects\GhostObject.cs" />
     <Compile Include="Objects\GhostState.cs" />
     <Compile Include="Objects\PacmanObject.cs" />

@@ -36,6 +36,7 @@ namespace PacSharpApp
         private static readonly TimeSpan LevelStartDelay = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan RespawnPlayerDelay = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan HighscoreScreenDelay = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan EatFruitDisplayScoreDuration = TimeSpan.FromSeconds(2);
 
         private int creditsRemaining = 0;
         private int livesRemaining;
@@ -53,6 +54,7 @@ namespace PacSharpApp
         private ISet<GhostObject> ghosts;
         private PacmanObject player;
         private IReadOnlyCollection<RectangleF> walls;
+        private FruitObject fruit;
 
         private bool victoryAlreadyReached = false;
 
@@ -164,13 +166,37 @@ namespace PacSharpApp
         {
             if (player == null)
                 return;
-            HandleWarpCollisions();
+            CheckForWarpCollisions();
             PushOutOfWalls(player);
-            HandleEatingPellets(player);
-            HandleTouchingGhosts(player);
+            CheckIfEatingPellets(player);
+            CheckIfTouchingGhosts(player);
+            CheckIfEatingFruit(player);
         }
 
-        private void HandleWarpCollisions()
+        private void CheckIfEatingFruit(PacmanObject eater)
+        {
+            if (fruit != null && eater.MouthBounds.IntersectsWith(fruit.Bounds))
+            {
+                HandleEatingFruit(eater);
+            }
+        }
+
+        private void HandleEatingFruit(PacmanObject eater)
+        {
+            Score += fruit.Score;
+            GraphicsHandler.Unregister(fruit);
+            Vector2 fruitPos = fruit.Position;
+            int fruitLeftCol = (int)(fruitPos.X) / GraphicsConstants.TileWidth - 1;
+            int fruitRow = (int)(fruitPos.Y - GraphicsConstants.TileWidth / 2) / GraphicsConstants.TileWidth;
+            fruit.DrawPoints(Tiles, fruitRow, fruitLeftCol);
+            actionQueue.Add((EatFruitDisplayScoreDuration, () =>
+            {
+                Tiles.DrawRange((fruitRow, fruitLeftCol), (fruitRow, fruitLeftCol + 3), GraphicsID.TileEmpty, PaletteID.Empty);
+            }));
+            fruit = null;
+        }
+
+        private void CheckForWarpCollisions()
         {
             if (ShouldBeginWarping(player))
                 HandleWarpBeginning(player);
@@ -183,7 +209,7 @@ namespace PacSharpApp
             }
         }
 
-        private void HandleTouchingGhosts(PacmanObject obj)
+        private void CheckIfTouchingGhosts(PacmanObject obj)
         {
             if (victoryAlreadyReached || !(obj.State is PacmanMovingState))
                 return;
@@ -237,7 +263,7 @@ namespace PacSharpApp
             }));
         }
 
-        private void HandleEatingPellets(PacmanObject obj)
+        private void CheckIfEatingPellets(PacmanObject obj)
         {
             HandleEatingNormalPellets(obj);
             HandleEatingPowerPellets(obj);
@@ -259,6 +285,7 @@ namespace PacSharpApp
 
         private void HandleEatingNormalPellets(PacmanObject obj)
         {
+            int prevPelletCount = pellets.Count;
             List<PelletObject> eaten =
                 pellets.Where(pellet => obj.MouthBounds.IntersectsWith(pellet.EdibleBounds))
                 .ToList();
@@ -268,6 +295,17 @@ namespace PacSharpApp
                 GraphicsHandler.Unregister(pellet);
                 pellets.Remove(pellet);
             }
+            if (pellets.Count <= 170 && prevPelletCount > 170 ||
+                pellets.Count <= 70 && prevPelletCount > 70)
+                SpawnFruit();
+        }
+
+        private void SpawnFruit()
+        {
+            fruit = new FruitObject(GraphicsHandler, GraphicsID.SpriteCherry) //TODO
+            {
+                Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
+            };
         }
 
         private void HandleWarpBeginning(PacmanObject obj)
