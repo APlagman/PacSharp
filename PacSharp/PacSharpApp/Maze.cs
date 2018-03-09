@@ -133,8 +133,8 @@ namespace PacSharpApp
                 .Descendants(ObjectElementName)
                 .Where(obj => obj.Attribute(TypeAttribute).Value == GhostLimitedIntersectionsObjectType)
                 .Select(obj =>
-                    new Point(int.Parse(obj.Attribute(XAttribute).Value) - GraphicsConstants.TileWidth / 2,
-                              int.Parse(obj.Attribute(YAttribute).Value) - GraphicsConstants.TileWidth / 2))
+                    new Point(int.Parse(obj.Attribute(XAttribute).Value) / GraphicsConstants.TileWidth,
+                              int.Parse(obj.Attribute(YAttribute).Value) / GraphicsConstants.TileWidth))
                 .ToList();
         }
 
