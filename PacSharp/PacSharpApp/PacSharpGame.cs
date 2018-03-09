@@ -29,6 +29,7 @@ namespace PacSharpApp
         private const string CreditText = "CREDIT";
         private const int BaseGhostScore = 200;
         private const int LevelNumberToStopGhostsTurningBlue = 20;
+        private const double MinimumFruitAppearanceDurationInSeconds = 9;
 
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
@@ -330,6 +331,16 @@ namespace PacSharpApp
             {
                 Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
             };
+            actionQueue.Add((TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds), () => Despawn(fruit)));
+        }
+
+        private void Despawn(GameObject obj)
+        {
+            if (obj != null)
+            {
+                GraphicsHandler.Unregister(obj);
+                obj = null;
+            }
         }
 
         private void HandleWarpBeginning(PacmanObject obj)
