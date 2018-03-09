@@ -22,7 +22,7 @@ namespace PacSharpApp.Graphics
             UpdateImagesInUse(true);
         }
 
-        private protected string CurrentAnimationSetID { get => currentAnimationSetID; set { currentAnimationSetID = value; UpdateImagesInUse(true); } }
+        internal string CurrentAnimationSetID { get => currentAnimationSetID; private protected set { currentAnimationSetID = value; UpdateImagesInUse(true); } }
         internal sealed override Image Image => images[currentImageIndex];
         internal bool AnimationFinished { get; private set; }
         internal bool RepeatAnimation { get; set; } = true;

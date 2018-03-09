@@ -40,21 +40,34 @@ namespace PacSharpApp.AI
             nextDirection = chosen;
         }
 
-        internal Direction ChooseNewDirection()
+        internal void ChooseNewDirection()
         {
-            var available =
-                Enum.GetValues(typeof(Direction)).Cast<Direction>()
-                .Where(dir => dir != owner.Direction.GetOpposite() && owner.CanTurnToTile(level.Walls, NextTile(dir)));
-            if (available.Count() == 0)
-                return owner.Direction;
-            if (!owner.IsFrightened && level.GhostLimitedIntersections.Contains(owner.TilePosition))
-                available = available.Where(dir => dir != Direction.Up);
-            double minDistance = available.Min(dir => DistanceToTarget(dir));
-            var prioritized = available.Where(dir => DistanceToTarget(dir) == minDistance);
+            Direction chosen;
+            if (owner.ExitingGhostHouse)
+            {
+                owner.ExitingGhostHouse = false;
+                chosen = Direction.Left;
+            }
+            else
+            {
+                var available =
+                    Enum.GetValues(typeof(Direction)).Cast<Direction>()
+                    .Where(dir => dir != owner.Direction.GetOpposite() && owner.CanTurnToTile(level.Walls, NextTile(dir)));
+                if (available.Count() == 0)
+                    chosen = owner.Direction;
+                else
+                {
+                    if (!owner.IsFrightened && level.GhostLimitedIntersections.Contains(owner.TilePosition))
+                        available = available.Where(dir => dir != Direction.Up);
+                    double minDistance = available.Min(dir => DistanceToTarget(dir));
+                    var prioritized = available.Where(dir => DistanceToTarget(dir) == minDistance);
 
-            return (prioritized.Count() == 1)
-                ? prioritized.First()
-                : prioritized.OrderBy(dir => Array.IndexOf(Enum.GetValues(typeof(Direction)), dir)).First();
+                    chosen = (prioritized.Count() == 1)
+                        ? prioritized.First()
+                        : prioritized.OrderBy(dir => Array.IndexOf(Enum.GetValues(typeof(Direction)), dir)).First();
+                }
+            }
+            nextDirection = chosen;
         }
 
         private double DistanceToTarget(Direction dir)
@@ -85,7 +98,7 @@ namespace PacSharpApp.AI
             if (owner.TilePosition != lastTilePos && !owner.IsWarping)
             {
                 lastTilePos = owner.TilePosition;
-                nextDirection = ChooseNewDirection();
+                ChooseNewDirection();
             }
             if ((owner.Velocity.X == 0 && owner.Velocity.Y == 0) || owner.CanTurnTo(level.Walls, owner.DirectionVelocity(nextDirection)))
                 owner.PerformTurn(nextDirection);

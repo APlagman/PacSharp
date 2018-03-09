@@ -34,7 +34,6 @@ namespace PacSharpApp
 
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
-        private static readonly TimeSpan WarpMovementDisabledDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan MainMenuAnimationsDisabledDuration = TimeSpan.FromMilliseconds(500);
         private static readonly TimeSpan LevelStartDelay = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan RespawnPlayerDelay = TimeSpan.FromMilliseconds(300);
@@ -233,7 +232,7 @@ namespace PacSharpApp
                 if (ShouldBeginWarping(ghost))
                     ghost.BeginWarping();
                 if (ShouldEndWarping(ghost))
-                    ghost.ReturnToMovementState();
+                    ghost.EndWarping();
                 WarpIfOffScreen(ghost);
             }
         }
@@ -369,7 +368,7 @@ namespace PacSharpApp
 
         private bool ShouldBeginWarping(GhostObject obj)
             => level.WarpTunnelStarts.Contains(obj.TilePosition)
-            && (obj.IsChasing || obj.IsScattering || obj.IsFrightened)
+            && !obj.IsWarping && !obj.IsRespawning
             && obj.IsFacingMazeEdge;
 
         private bool ShouldEndWarping(GhostObject obj)
@@ -676,7 +675,8 @@ namespace PacSharpApp
             ghosts = new HashSet<GhostObject>
                 (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player, level)
                 {
-                    Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2)
+                    Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2),
+                    ExitingGhostHouse = (spawn.Key == GhostType.Blinky)
                 }));
         }
 

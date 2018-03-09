@@ -60,8 +60,7 @@ namespace PacSharpApp.Graphics
 
         internal GhostSprite()
             : base(sourceImages, AnimationID.NormalRight.ToString())
-        {
-        }
+        { }
 
         internal override int ZIndex => 10;
 

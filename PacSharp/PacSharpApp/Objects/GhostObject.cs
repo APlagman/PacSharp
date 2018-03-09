@@ -13,6 +13,7 @@ namespace PacSharpApp.Objects
 {
     class GhostObject : GameObject
     {
+        private bool isFrightened = false;
         private int levelNumber;
         private bool shouldScatter = true;
         private GhostState state;
@@ -30,12 +31,13 @@ namespace PacSharpApp.Objects
         }
 
         internal Direction Direction { get; set; }
-        internal bool IsFrightened => State is GhostFrightenedState;
+        internal bool IsFrightened { get => isFrightened; private set => isFrightened = value; }
         internal bool IsChasing => State is GhostChaseState;
         internal bool IsRespawning => State is GhostRespawningState;
         internal bool IsScattering => State is GhostScatterState;
         internal bool IsWarping => State is GhostWarpingState;
         internal int LevelNumber { private get => levelNumber; set { levelNumber = value; } }
+        internal bool ExitingGhostHouse { get; set; } = false;
 
         private GhostState State
         {
@@ -130,18 +132,27 @@ namespace PacSharpApp.Objects
             Velocity = DirectionVelocity(Direction);
             if ((prevState is GhostChaseState || prevState is GhostScatterState) && !IsWarping)
                 (Behavior as GhostAIBehavior).ChangeDirection();
-            if (IsFrightened && (State as GhostFrightenedState).TurnBlue)
+            if (State is GhostFrightenedState)
             {
-                sprite.UpdateAnimationSet(GhostSprite.AnimationID.Afraid.ToString());
-                sprite.Palette = PaletteID.GhostAfraid;
+                IsFrightened = true;
+                if ((State as GhostFrightenedState).TurnBlue)
+                {
+                    sprite.UpdateAnimationSet(GhostSprite.AnimationID.Afraid.ToString());
+                    sprite.Palette = PaletteID.GhostAfraid;
+                }
             }
             else
-                sprite.UpdateAnimationSet(Direction.ToGhostSpriteAnimationID().ToString());
+            {
+                if (!(IsFrightened && IsWarping))
+                    sprite.UpdateAnimationSet(Direction.ToGhostSpriteAnimationID().ToString());
+                if (!IsWarping)
+                    IsFrightened = false;
+            }
             if (IsRespawning)
             {
                 sprite.Palette = PaletteID.GhostRespawning;
             }
-            else if (IsChasing || IsScattering || IsWarping)
+            else if (IsChasing || IsScattering || (IsWarping && !IsFrightened))
             {
                 sprite.Palette = normalPalette;
             }
@@ -165,7 +176,7 @@ namespace PacSharpApp.Objects
         {
             Direction = dir;
             Velocity = DirectionVelocity(dir);
-            if (!IsFrightened)
+            if (!IsFrightened && sprite.CurrentAnimationSetID != Direction.ToGhostSpriteAnimationID().ToString())
                 sprite.UpdateAnimationSet(Direction.ToGhostSpriteAnimationID().ToString());
         }
 
@@ -197,7 +208,6 @@ namespace PacSharpApp.Objects
         internal void ReturnToMovementState()
         {
             State = (ShouldScatter) ? new GhostScatterState(this) : new GhostChaseState(this) as GhostState;
-            WarpStartPosition = Point.Empty;
         }
 
         internal void BeginRespawning() => State = new GhostRespawningState(this);
@@ -205,14 +215,32 @@ namespace PacSharpApp.Objects
         internal void BeginWarping()
         {
             WarpStartPosition = TilePosition;
-            State = new GhostWarpingState(this);
+            State = new GhostWarpingState(this,
+                (State as GhostFrightenedState)?.UntilUnafraid ?? TimeSpan.MaxValue,
+                (State as GhostFrightenedState)?.TurnBlue ?? false);
         }
 
-        internal void BecomeFrightened(bool turnBlue) => State = new GhostFrightenedState(this, turnBlue);
+        internal void EndWarping()
+        {
+            WarpStartPosition = Point.Empty;
+            State = (IsFrightened
+                ? (!(State as GhostWarpingState).UntilUnafraid.Equals(TimeSpan.MaxValue))
+                    ? new GhostFrightenedState(this, (State as GhostWarpingState).TurnBlue, (State as GhostWarpingState).UntilUnafraid)
+                    : new GhostFrightenedState(this, (State as GhostWarpingState).TurnBlue)
+                : (ShouldScatter) ? new GhostScatterState(this) : new GhostChaseState(this) as GhostState);
+        }
+
+        internal void BecomeFrightened(bool turnBlue)
+        {
+            State = new GhostFrightenedState(this, turnBlue);
+            (Behavior as GhostAIBehavior).ChooseNewDirection();
+        }
 
         #region State
         abstract class GhostState
         {
+            private protected static readonly ICollection<double> flashTimings = new List<double>() { 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25 };
+
             private protected GhostObject owner;
 
             private protected GhostState(GhostObject owner)
@@ -232,7 +260,6 @@ namespace PacSharpApp.Objects
 
         class GhostFrightenedState : GhostState
         {
-            private static readonly ICollection<double> flashTimings = new List<double>() { 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25 };
             private static readonly TimeSpan afraidDuration = TimeSpan.FromSeconds(8);
 
             private TimeSpan untilUnafraid = afraidDuration;
@@ -243,6 +270,14 @@ namespace PacSharpApp.Objects
                 TurnBlue = turnBlue;
             }
 
+            internal GhostFrightenedState(GhostObject owner, bool turnBlue, TimeSpan untilUnafraid)
+                : base(owner)
+            {
+                this.untilUnafraid = untilUnafraid;
+                TurnBlue = turnBlue;
+            }
+
+            internal TimeSpan UntilUnafraid => untilUnafraid;
             internal bool TurnBlue { get; }
 
             internal override void Update(TimeSpan elapsedTime)
@@ -277,9 +312,41 @@ namespace PacSharpApp.Objects
 
         class GhostWarpingState : GhostState
         {
-            internal GhostWarpingState(GhostObject owner)
+            private TimeSpan untilUnafraid;
+
+            internal GhostWarpingState(GhostObject owner, TimeSpan frightenedTimeRemaining, bool turnBlue)
                 : base(owner)
-            { }
+            {
+                untilUnafraid = frightenedTimeRemaining;
+                TurnBlue = turnBlue;
+            }
+
+            internal bool TurnBlue { get; }
+            internal TimeSpan UntilUnafraid => untilUnafraid;
+
+            internal override void Update(TimeSpan elapsedTime)
+            {
+                if (UntilUnafraid == TimeSpan.MaxValue)
+                    return;
+                if (untilUnafraid <= elapsedTime)
+                    owner.ReturnToMovementState();
+                else
+                {
+                    TimeSpan previousRemaining = untilUnafraid;
+                    untilUnafraid -= elapsedTime;
+                    if (ShouldFlash(previousRemaining))
+                        owner.Flash();
+                }
+            }
+
+            private bool ShouldFlash(TimeSpan previousRemaining)
+            {
+                if (!TurnBlue)
+                    return false;
+                return flashTimings.Any(
+                    timing => previousRemaining.TotalSeconds > timing
+                           && untilUnafraid.TotalSeconds <= timing);
+            }
         }
 
         class GhostScatterState : GhostState
