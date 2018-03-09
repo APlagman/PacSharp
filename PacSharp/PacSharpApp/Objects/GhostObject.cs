@@ -197,11 +197,11 @@ namespace PacSharpApp.Objects
             }
         }
 
-        internal bool CanTurnToTile(IReadOnlyCollection<RectangleF> walls, Point nextTile)
+        internal bool CanEnter(IReadOnlyCollection<RectangleF> walls, Point futureTile)
         {
             return !walls.Any(wall => wall.IntersectsWith(
                 new RectangleF(
-                    new PointF(nextTile.X * GraphicsConstants.TileWidth, nextTile.Y * GraphicsConstants.TileWidth),
+                    new PointF(futureTile.X * GraphicsConstants.TileWidth, futureTile.Y * GraphicsConstants.TileWidth),
                     GraphicsConstants.TileSize)));
         }
 
@@ -233,7 +233,6 @@ namespace PacSharpApp.Objects
         internal void BecomeFrightened(bool turnBlue)
         {
             State = new GhostFrightenedState(this, turnBlue);
-            (Behavior as GhostAIBehavior).ChooseNewDirection();
         }
 
         #region State

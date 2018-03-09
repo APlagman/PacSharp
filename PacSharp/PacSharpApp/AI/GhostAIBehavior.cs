@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using PacSharpApp.Graphics;
 using PacSharpApp.Objects;
 using PacSharpApp.Utils;
 
@@ -38,9 +39,13 @@ namespace PacSharpApp.AI
                 chosen = availableDirections.First();
             owner.PerformTurn(chosen);
             nextDirection = chosen;
+            if (IsIntersection(owner.TilePosition))
+                ChooseNewDirection(false);
+            else if (IsIntersection(NextTile(owner.TilePosition, owner.Direction)))
+                ChooseNewDirection();
         }
 
-        internal void ChooseNewDirection()
+        internal void ChooseNewDirection(bool useNextTile = true)
         {
             Direction chosen;
             if (owner.ExitingGhostHouse)
@@ -52,42 +57,65 @@ namespace PacSharpApp.AI
             {
                 var available =
                     Enum.GetValues(typeof(Direction)).Cast<Direction>()
-                    .Where(dir => dir != owner.Direction.GetOpposite() && owner.CanTurnToTile(level.Walls, NextTile(dir)));
+                    .Where(dir => dir != owner.Direction.GetOpposite() && owner.CanEnter(level.Walls, FutureTile(dir, useNextTile)));
                 if (available.Count() == 0)
                     chosen = owner.Direction;
                 else
                 {
-                    if (!owner.IsFrightened && level.GhostLimitedIntersections.Contains(owner.TilePosition))
+                    if (!owner.IsFrightened && level.GhostLimitedIntersections.Contains(useNextTile ? NextTile(owner.TilePosition, owner.Direction) : owner.TilePosition))
                         available = available.Where(dir => dir != Direction.Up);
-                    double minDistance = available.Min(dir => DistanceToTarget(dir));
-                    var prioritized = available.Where(dir => DistanceToTarget(dir) == minDistance);
+                    if (available.Count() == 0)
+                        chosen = owner.Direction; // Shouldn't normally be here
+                    else
+                    {
+                        double minDistance = available.Min(dir => DistanceToTarget(dir, useNextTile));
+                        var prioritized = available.Where(dir => DistanceToTarget(dir, useNextTile) == minDistance);
 
-                    chosen = (prioritized.Count() == 1)
-                        ? prioritized.First()
-                        : prioritized.OrderBy(dir => Array.IndexOf(Enum.GetValues(typeof(Direction)), dir)).First();
+                        chosen = (prioritized.Count() == 1)
+                            ? prioritized.First()
+                            : prioritized.OrderBy(dir => Array.IndexOf(Enum.GetValues(typeof(Direction)), dir)).First();
+                    }
                 }
             }
             nextDirection = chosen;
         }
 
-        private double DistanceToTarget(Direction dir)
+        private double DistanceToTarget(Direction dir, bool useNextTile = true)
         {
-            Point nextTile = NextTile(dir);
-            return Math.Sqrt(Math.Pow(DestinationTile.X - nextTile.X, 2) + Math.Pow(DestinationTile.Y - nextTile.Y, 2));
+            Point futureTile = FutureTile(dir, useNextTile);
+            return Math.Sqrt(Math.Pow(DestinationTile.X - futureTile.X, 2) + Math.Pow(DestinationTile.Y - futureTile.Y, 2));
         }
 
-        private Point NextTile(Direction dir)
+        private Point FutureTile(Direction dir, bool useNextTile = true)
+        {
+            Point reference = (useNextTile ? NextTile(owner.TilePosition, owner.Direction) : owner.TilePosition);
+            switch (dir)
+            {
+                case Direction.Up:
+                    return new Point(reference.X, reference.Y - 1);
+                case Direction.Left:
+                    return new Point(reference.X - 1, reference.Y);
+                case Direction.Down:
+                    return new Point(reference.X, reference.Y + 1);
+                case Direction.Right:
+                    return new Point(reference.X + 1, reference.Y);
+                default:
+                    throw new Exception("Unhandled direction.");
+            }
+        }
+
+        private Point NextTile(Point reference, Direction dir)
         {
             switch (dir)
             {
                 case Direction.Up:
-                    return new Point(owner.TilePosition.X, owner.TilePosition.Y - 1);
+                    return new Point(reference.X, reference.Y - 1);
                 case Direction.Left:
-                    return new Point(owner.TilePosition.X - 1, owner.TilePosition.Y);
+                    return new Point(reference.X - 1, reference.Y);
                 case Direction.Down:
-                    return new Point(owner.TilePosition.X, owner.TilePosition.Y + 1);
+                    return new Point(reference.X, reference.Y + 1);
                 case Direction.Right:
-                    return new Point(owner.TilePosition.X + 1, owner.TilePosition.Y);
+                    return new Point(reference.X + 1, reference.Y);
                 default:
                     throw new Exception("Unhandled direction.");
             }
@@ -98,10 +126,30 @@ namespace PacSharpApp.AI
             if (owner.TilePosition != lastTilePos && !owner.IsWarping)
             {
                 lastTilePos = owner.TilePosition;
-                ChooseNewDirection();
+                if (IsIntersection(NextTile(owner.TilePosition, owner.Direction)) || owner.ExitingGhostHouse)
+                    ChooseNewDirection();
             }
             if ((owner.Velocity.X == 0 && owner.Velocity.Y == 0) || owner.CanTurnTo(level.Walls, owner.DirectionVelocity(nextDirection)))
                 owner.PerformTurn(nextDirection);
+        }
+
+        private bool IsIntersection(Point point)
+        {
+            var testDirections =
+                Enum.GetValues(typeof(Direction)).Cast<Direction>()
+                .Where(dir => dir != owner.Direction && dir != owner.Direction.GetOpposite());
+            if (!owner.IsFrightened && level.GhostLimitedIntersections.Contains(point))
+                testDirections = testDirections.Where(dir => dir != Direction.Up);
+            int availableDirections = testDirections.Count(dir => IsNotBlocked(point, dir));
+            return (availableDirections > 0);
+        }
+
+        private bool IsNotBlocked(Point point, Direction dir)
+        {
+            return !level.Walls.Any(wall => wall.IntersectsWith(
+                            new RectangleF(
+                                new PointF(NextTile(point, dir).X * GraphicsConstants.TileWidth, NextTile(point, dir).Y * GraphicsConstants.TileWidth),
+                                GraphicsConstants.TileSize)));
         }
 
         internal static AIBehavior FromGhostType(GhostType type, GhostObject owner, PacmanObject target, Maze level)
