@@ -12,13 +12,12 @@ namespace PacSharpApp.Objects
 {
     class PacmanObject : GameObject
     {
-        private const double DefaultSpeed = 0.03d;
-
+        private int levelNumber;
         private PacmanSprite sprite;
         private PacmanState state;
         private IReadOnlyCollection<RectangleF> walls;
 
-        public Direction Orientation => sprite.Orientation;
+        internal Direction Orientation => sprite.Orientation;
 
         internal PacmanObject(GraphicsHandler handler, IReadOnlyCollection<RectangleF> walls)
             : base(GraphicsConstants.SpriteSize)
@@ -32,7 +31,36 @@ namespace PacSharpApp.Objects
             this.walls = walls;
         }
 
+        internal int LevelNumber { private get => levelNumber; set { levelNumber = value; } }
+        internal bool GhostsAreFrightened { private get; set; } = false;
+        private double CurrentSpeed
+        {
+            get
+            {
+                if (GhostsAreFrightened)
+                {
+                    if (LevelNumber == 0)
+                        return PacSharpGame.MovementSpeed * 0.8;
+                    else if (LevelNumber < 4 || LevelNumber > 19)
+                        return PacSharpGame.MovementSpeed * 0.9;
+                    else
+                        return PacSharpGame.MovementSpeed;
+                }
+                else
+                {
+                    if (LevelNumber == 0)
+                        return PacSharpGame.MovementSpeed * 0.9;
+                    else if (LevelNumber < 4)
+                        return PacSharpGame.MovementSpeed * 0.95;
+                    else
+                        return PacSharpGame.MovementSpeed;
+                }
+            }
+        }
+
         private PacmanState State { get => state; set { state = value; OnStateChanged(); } }
+
+        internal Point WarpStartPosition { get; private set; } = Point.Empty;
 
         private void OnStateChanged()
         {
@@ -45,6 +73,29 @@ namespace PacSharpApp.Objects
         internal RectangleF MouthBounds => new RectangleF(new PointF((float)Position.X - 1.5f, (float)Position.Y - 1.5f), new Size(3, 3));
 
         internal bool IsMoving => State is PacmanMovingState;
+        internal bool IsWarping => State is PacmanWarpingState;
+
+        private Direction Direction => sprite.Orientation;
+
+        internal bool IsFacingMazeEdge
+        {
+            get
+            {
+                switch (Direction)
+                {
+                    case Direction.Up:
+                        return TilePosition.Y < GraphicsConstants.GridHeight / 2;
+                    case Direction.Left:
+                        return TilePosition.X < GraphicsConstants.GridWidth / 2;
+                    case Direction.Down:
+                        return TilePosition.Y >= GraphicsConstants.GridHeight / 2;
+                    case Direction.Right:
+                        return TilePosition.X >= GraphicsConstants.GridWidth / 2;
+                    default:
+                        throw new Exception("Unhandled direction.");
+                }
+            }
+        }
 
         internal void HandleInput(InputHandler input)
         {
@@ -70,18 +121,18 @@ namespace PacSharpApp.Objects
             Position.Round();
         }
 
-        internal static Vector2 DirectionVelocity(Direction newDirection)
+        internal Vector2 DirectionVelocity(Direction newDirection)
         {
             switch (newDirection)
             {
                 case Direction.Up:
-                    return new Vector2(0, Game.UpMultiplier * DefaultSpeed);
+                    return new Vector2(0, Game.UpMultiplier * CurrentSpeed);
                 case Direction.Down:
-                    return new Vector2(0, Game.DownMultiplier * DefaultSpeed);
+                    return new Vector2(0, Game.DownMultiplier * CurrentSpeed);
                 case Direction.Left:
-                    return new Vector2(-1 * DefaultSpeed, 0);
+                    return new Vector2(-1 * CurrentSpeed, 0);
                 case Direction.Right:
-                    return new Vector2(1 * DefaultSpeed, 0);
+                    return new Vector2(1 * CurrentSpeed, 0);
                 default:
                     throw new Exception("Unhandled direction.");
             }
@@ -98,14 +149,21 @@ namespace PacSharpApp.Objects
         internal void ReturnToMovementState()
         {
             if (State is PacmanWarpingState)
+            {
                 State = new PacmanMovingState(this);
+                WarpStartPosition = Point.Empty;
+            }
         }
 
         internal void BeginRespawning(Action onRespawn) => State = new PacmanRespawningState(this, onRespawn);
 
         internal void BeginDeath(Action onDeath) => State = new PacmanDyingState(this, onDeath);
 
-        internal void BeginWarping() => State = new PacmanWarpingState(this);
+        internal void BeginWarping()
+        {
+            WarpStartPosition = TilePosition;
+            State = new PacmanWarpingState(this);
+        }
 
         #region State
         abstract class PacmanState

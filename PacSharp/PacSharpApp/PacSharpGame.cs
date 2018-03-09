@@ -30,6 +30,7 @@ namespace PacSharpApp
         private const int BaseGhostScore = 200;
         private const int LevelNumberToStopGhostsTurningBlue = 20;
         private const double MinimumFruitAppearanceDurationInSeconds = 9;
+        internal const double MovementSpeed = 0.0375d;
 
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
@@ -187,7 +188,7 @@ namespace PacSharpApp
         {
             if (player == null)
                 return;
-            CheckForWarpCollisions();
+            CheckWarping();
             PushOutOfWalls(player);
             CheckIfEatingPellets(player);
             CheckIfTouchingGhosts(player);
@@ -219,17 +220,31 @@ namespace PacSharpApp
             Tiles.DrawRange((fruitRow, fruitLeftCol), (fruitRow, fruitLeftCol + 3), GraphicsID.TileEmpty, PaletteID.Empty);
         }
 
-        private void CheckForWarpCollisions()
+        private void CheckWarping()
         {
-            if (ShouldBeginWarping(player))
-                HandleWarpBeginning(player);
-            WarpIfOffScreen(player);
+            CheckPlayerWarping();
+            CheckGhostWarping();
+        }
+
+        private void CheckGhostWarping()
+        {
             foreach (var ghost in ghosts)
             {
                 if (ShouldBeginWarping(ghost))
-                    HandleWarpBeginning(ghost);
+                    ghost.BeginWarping();
+                if (ShouldEndWarping(ghost))
+                    ghost.ReturnToMovementState();
                 WarpIfOffScreen(ghost);
             }
+        }
+
+        private void CheckPlayerWarping()
+        {
+            if (ShouldBeginWarping(player))
+                player.BeginWarping();
+            if (ShouldEndWarping(player))
+                player.ReturnToMovementState();
+            WarpIfOffScreen(player);
         }
 
         private void CheckIfTouchingGhosts(PacmanObject obj)
@@ -331,7 +346,7 @@ namespace PacSharpApp
             {
                 Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
             };
-            actionQueue.Add((TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds), () => Despawn(fruit)));
+            actionQueue.Add((TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds), () => { Despawn(fruit); fruit = null; }));
         }
 
         private void Despawn(GameObject obj)
@@ -339,25 +354,28 @@ namespace PacSharpApp
             if (obj != null)
             {
                 GraphicsHandler.Unregister(obj);
-                obj = null;
             }
         }
 
-        private void HandleWarpBeginning(PacmanObject obj)
-        {
-            obj.BeginWarping();
-            actionQueue.Add((WarpMovementDisabledDuration, obj.ReturnToMovementState));
-        }
+        private bool ShouldBeginWarping(PacmanObject obj)
+            => level.WarpTunnelStarts.Contains(obj.TilePosition)
+            && obj.IsMoving
+            && obj.IsFacingMazeEdge;
 
-        private bool ShouldBeginWarping(PacmanObject obj) => OutsideGameArea(obj) && obj.IsMoving;
+        private bool ShouldEndWarping(PacmanObject obj)
+            => level.WarpTunnelStarts.Contains(obj.TilePosition)
+            && obj.IsWarping
+            && !obj.TilePosition.Equals(obj.WarpStartPosition);
 
-        private void HandleWarpBeginning(GhostObject obj)
-        {
-            obj.BeginWarping();
-            actionQueue.Add((WarpMovementDisabledDuration, obj.ReturnToMovementState));
-        }
+        private bool ShouldBeginWarping(GhostObject obj)
+            => level.WarpTunnelStarts.Contains(obj.TilePosition)
+            && (obj.IsChasing || obj.IsScattering || obj.IsFrightened)
+            && obj.IsFacingMazeEdge;
 
-        private bool ShouldBeginWarping(GhostObject obj) => OutsideGameArea(obj) && obj.IsChasing;
+        private bool ShouldEndWarping(GhostObject obj)
+            => level.WarpTunnelStarts.Contains(obj.TilePosition)
+            && obj.IsWarping
+            && !obj.TilePosition.Equals(obj.WarpStartPosition);
 
         private bool OutsideGameArea(GameObject obj)
         {
@@ -394,7 +412,7 @@ namespace PacSharpApp
                 var pacman = obj as PacmanObject;
                 pacman.PerformTurn(
                     Enum.GetValues(typeof(Direction)).Cast<Direction?>()
-                    .Where(dir => dir != pacman.Orientation && dir != pacman.Orientation.GetOpposite() && player.CanTurnTo(walls, PacmanObject.DirectionVelocity(dir.Value))).FirstOrDefault());
+                    .Where(dir => dir != pacman.Orientation && dir != pacman.Orientation.GetOpposite() && player.CanTurnTo(walls, pacman.DirectionVelocity(dir.Value))).FirstOrDefault());
             }
         }
 

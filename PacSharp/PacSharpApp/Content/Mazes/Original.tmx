@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="28" height="36" tilewidth="8" tileheight="8" nextobjectid="77">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="28" height="36" tilewidth="8" tileheight="8" nextobjectid="82">
  <tileset firstgid="1" name="Tiles" tilewidth="8" tileheight="8" tilecount="256" columns="16">
   <image source="../Tiles.png" width="128" height="128"/>
  </tileset>
@@ -72,6 +72,8 @@
   <object id="74" name="Clyde" type="GhostFavoriteTile" x="0" y="280" width="8" height="8"/>
   <object id="75" name="Pinky" type="GhostFavoriteTile" x="16" y="0" width="8" height="8"/>
   <object id="76" name="Blinky" type="GhostFavoriteTile" x="200" y="0" width="8" height="8"/>
+  <object id="77" type="WarpTunnelStart" x="176" y="136" width="8" height="8"/>
+  <object id="78" type="WarpTunnelStart" x="32" y="136" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Collision">
   <object id="4" type="Wall" x="60" y="76" width="8" height="56"/>

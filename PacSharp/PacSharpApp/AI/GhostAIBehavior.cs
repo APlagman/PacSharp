@@ -82,7 +82,7 @@ namespace PacSharpApp.AI
 
         internal override void Update(TimeSpan elapsedTime)
         {
-            if (owner.TilePosition != lastTilePos)
+            if (owner.TilePosition != lastTilePos && !owner.IsWarping)
             {
                 lastTilePos = owner.TilePosition;
                 nextDirection = ChooseNewDirection();

@@ -13,10 +13,7 @@ namespace PacSharpApp.Objects
 {
     class GhostObject : GameObject
     {
-        private const double NormalSpeed = 0.031d;
-        private const double FrightenedSpeed = 0.0155d;
-        private const double RespawningSpeed = 0.062d;
-
+        private int levelNumber;
         private bool shouldScatter = true;
         private GhostState state;
         private readonly GhostSprite sprite;
@@ -37,6 +34,8 @@ namespace PacSharpApp.Objects
         internal bool IsChasing => State is GhostChaseState;
         internal bool IsRespawning => State is GhostRespawningState;
         internal bool IsScattering => State is GhostScatterState;
+        internal bool IsWarping => State is GhostWarpingState;
+        internal int LevelNumber { private get => levelNumber; set { levelNumber = value; } }
 
         private GhostState State
         {
@@ -58,7 +57,62 @@ namespace PacSharpApp.Objects
                 OnShouldScatterChanged();
             }
         }
-        private double CurrentSpeed => (IsFrightened? FrightenedSpeed : (IsRespawning? RespawningSpeed : NormalSpeed));
+
+        private double CurrentSpeed
+        {
+            get
+            {
+                if (IsFrightened)
+                {
+                    if (LevelNumber == 0)
+                        return PacSharpGame.MovementSpeed * 0.50;
+                    else if (LevelNumber < 4)
+                        return PacSharpGame.MovementSpeed * 0.55;
+                    else
+                        return PacSharpGame.MovementSpeed * 0.60;
+                }
+                else if (IsWarping)
+                {
+                    if (LevelNumber == 0)
+                        return PacSharpGame.MovementSpeed * 0.40;
+                    else if (LevelNumber < 4)
+                        return PacSharpGame.MovementSpeed * 0.45;
+                    else
+                        return PacSharpGame.MovementSpeed * 0.50;
+                }
+                else
+                {
+                    if (LevelNumber == 0)
+                        return PacSharpGame.MovementSpeed * 0.75;
+                    else if (LevelNumber < 4)
+                        return PacSharpGame.MovementSpeed * 0.85;
+                    else
+                        return PacSharpGame.MovementSpeed * 0.95;
+                }
+            }
+        }
+
+        internal Point WarpStartPosition { get; private set; } = Point.Empty;
+        
+        internal bool IsFacingMazeEdge
+        {
+            get
+            {
+                switch (Direction)
+                {
+                    case Direction.Up:
+                        return TilePosition.Y < GraphicsConstants.GridHeight / 2;
+                    case Direction.Left:
+                        return TilePosition.X < GraphicsConstants.GridWidth / 2;
+                    case Direction.Down:
+                        return TilePosition.Y >= GraphicsConstants.GridHeight / 2;
+                    case Direction.Right:
+                        return TilePosition.X >= GraphicsConstants.GridWidth / 2;
+                    default:
+                        throw new Exception("Unhandled direction.");
+                }
+            }
+        }
 
         private void OnShouldScatterChanged()
         {
@@ -74,7 +128,7 @@ namespace PacSharpApp.Objects
         private void OnStateChanged(GhostState prevState)
         {
             Velocity = DirectionVelocity(Direction);
-            if (prevState is GhostChaseState || prevState is GhostScatterState)
+            if ((prevState is GhostChaseState || prevState is GhostScatterState) && !IsWarping)
                 (Behavior as GhostAIBehavior).ChangeDirection();
             if (IsFrightened && (State as GhostFrightenedState).TurnBlue)
             {
@@ -87,7 +141,7 @@ namespace PacSharpApp.Objects
             {
                 sprite.Palette = PaletteID.GhostRespawning;
             }
-            else if (IsChasing || IsScattering)
+            else if (IsChasing || IsScattering || IsWarping)
             {
                 sprite.Palette = normalPalette;
             }
@@ -140,11 +194,19 @@ namespace PacSharpApp.Objects
                     GraphicsConstants.TileSize)));
         }
 
-        internal void ReturnToMovementState() => State = (ShouldScatter) ? new GhostScatterState(this) : new GhostChaseState(this) as GhostState;
+        internal void ReturnToMovementState()
+        {
+            State = (ShouldScatter) ? new GhostScatterState(this) : new GhostChaseState(this) as GhostState;
+            WarpStartPosition = Point.Empty;
+        }
 
         internal void BeginRespawning() => State = new GhostRespawningState(this);
 
-        internal void BeginWarping() => State = new GhostWarpingState(this);
+        internal void BeginWarping()
+        {
+            WarpStartPosition = TilePosition;
+            State = new GhostWarpingState(this);
+        }
 
         internal void BecomeFrightened(bool turnBlue) => State = new GhostFrightenedState(this, turnBlue);
 

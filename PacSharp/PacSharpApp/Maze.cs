@@ -24,7 +24,8 @@ namespace PacSharpApp
             IDictionary<GhostType, Vector2> ghostSpawns,
             Vector2 fruitSpawn,
             IReadOnlyCollection<Point> ghostLimitedIntersections,
-            IReadOnlyDictionary<GhostType, Point> ghostFavoriteTiles)
+            IReadOnlyDictionary<GhostType, Point> ghostFavoriteTiles,
+            IReadOnlyCollection<Point> warpTunnelStarts)
         {
             this.tiles = tiles;
             Walls = walls;
@@ -35,6 +36,7 @@ namespace PacSharpApp
             FruitSpawn = fruitSpawn;
             GhostLimitedIntersections = ghostLimitedIntersections;
             GhostFavoriteTiles = ghostFavoriteTiles;
+            WarpTunnelStarts = warpTunnelStarts;
         }
 
         internal IReadOnlyCollection<RectangleF> Walls { get; }
@@ -45,6 +47,8 @@ namespace PacSharpApp
         internal Vector2 FruitSpawn { get; }
         internal IReadOnlyCollection<Point> GhostLimitedIntersections { get; }
         internal IReadOnlyDictionary<GhostType, Point> GhostFavoriteTiles { get; }
+        internal IReadOnlyCollection<Point> WarpTunnelStarts { get; }
+
         internal Point GhostRespawnTile
             => new Point(
                 (int)Math.Floor(GhostSpawns[GhostType.Pinky].X - GraphicsConstants.TileWidth / 2) / GraphicsConstants.TileWidth,
@@ -84,6 +88,7 @@ namespace PacSharpApp
         private const string GhostLimitedIntersectionsObjectType = "GhostLimitedIntersection";
         private const string GhostFavoriteTileObjectType = "GhostFavoriteTile";
         private const string ObjectGroupElementName = "objectgroup";
+        private const string WarpTunnelStartLocationObjectType = "WarpTunnelStart";
 
         internal static Maze Load(string xml)
         {
@@ -101,7 +106,21 @@ namespace PacSharpApp
                 ReadGhostSpawns(mazeXml),
                 ReadFruitSpawn(mazeXml),
                 ReadGhostLimitedIntersections(mazeXml),
-                ReadGhostFavoriteTiles(mazeXml));
+                ReadGhostFavoriteTiles(mazeXml),
+                ReadWarpTunnelStartLocations(mazeXml));
+        }
+
+        private static IReadOnlyCollection<Point> ReadWarpTunnelStartLocations(XDocument mazeXml)
+        {
+            return
+                mazeXml.Root.Descendants(ObjectGroupElementName)
+                .Where(objGroup => objGroup.Attribute(NameAttribute).Value == SpecialTilesObjectGroupName)
+                .Descendants(ObjectElementName)
+                .Where(obj => obj.Attribute(TypeAttribute).Value == WarpTunnelStartLocationObjectType)
+                .Select(obj =>
+                    new Point(int.Parse(obj.Attribute(XAttribute).Value) / GraphicsConstants.TileWidth,
+                              int.Parse(obj.Attribute(YAttribute).Value) / GraphicsConstants.TileWidth))
+                .ToList();
         }
 
         private static IReadOnlyDictionary<GhostType, Point> ReadGhostFavoriteTiles(XDocument mazeXml)
