@@ -137,7 +137,7 @@ namespace PacSharpApp
 
         private void UpdateGhostModeTimer(TimeSpan elapsedTime)
         {
-            if (ghostPhase < 7 && ghostModeTimer < elapsedTime)
+            if (ghostPhase < 7 && ghostModeTimer <= elapsedTime)
             {
                 ++ghostPhase;
                 ghostModeTimer = GhostModePhaseDuration();

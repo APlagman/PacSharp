@@ -185,7 +185,7 @@ namespace PacSharpApp.Objects
 
             internal override void Update(TimeSpan elapsedTime)
             {
-                if (untilUnafraid < elapsedTime)
+                if (untilUnafraid <= elapsedTime)
                     owner.ReturnToMovementState();
                 else
                 {
@@ -202,7 +202,7 @@ namespace PacSharpApp.Objects
                     return false;
                 return flashTimings.Any(
                     timing => previousRemaining.TotalSeconds > timing
-                           && untilUnafraid.TotalSeconds < timing);
+                           && untilUnafraid.TotalSeconds <= timing);
             }
         }
 
