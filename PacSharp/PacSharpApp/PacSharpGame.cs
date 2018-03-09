@@ -341,11 +341,31 @@ namespace PacSharpApp
 
         private void SpawnFruit()
         {
-            fruit = new FruitObject(GraphicsHandler, GraphicsID.SpriteCherry) //TODO
+            fruit = new FruitObject(GraphicsHandler, GetFruitFromLevelNumber())
             {
                 Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
             };
             actionQueue.Add((TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds), () => { Despawn(fruit); fruit = null; }));
+        }
+
+        private GraphicsID GetFruitFromLevelNumber()
+        {
+            if (levelNumber == 0)
+                return GraphicsID.SpriteCherry;
+            else if (levelNumber == 1)
+                return GraphicsID.SpriteStrawberry;
+            else if (levelNumber < 4)
+                return GraphicsID.SpriteOrange;
+            else if (levelNumber < 6)
+                return GraphicsID.SpriteApple;
+            else if (levelNumber < 8)
+                return GraphicsID.SpriteMelon;
+            else if (levelNumber < 10)
+                return GraphicsID.SpriteGalaxian;
+            else if (levelNumber < 12)
+                return GraphicsID.SpriteBell;
+            else
+                return GraphicsID.SpriteKey;
         }
 
         private void Despawn(GameObject obj)
