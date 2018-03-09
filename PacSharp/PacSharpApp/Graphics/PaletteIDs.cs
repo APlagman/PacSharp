@@ -16,7 +16,7 @@ namespace PacSharpApp.Graphics
         Cherry = 20,
         Strawberry = 15,
         Orange = 21,
-        Apple = 15,
+        Apple = 20,
         Melon = 23,
         Galaxian = 9,
         Key = 22,
