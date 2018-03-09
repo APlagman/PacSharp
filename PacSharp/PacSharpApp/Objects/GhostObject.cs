@@ -64,16 +64,7 @@ namespace PacSharpApp.Objects
         {
             get
             {
-                if (IsFrightened)
-                {
-                    if (LevelNumber == 0)
-                        return PacSharpGame.MovementSpeed * 0.50;
-                    else if (LevelNumber < 4)
-                        return PacSharpGame.MovementSpeed * 0.55;
-                    else
-                        return PacSharpGame.MovementSpeed * 0.60;
-                }
-                else if (IsWarping)
+                if (IsWarping)
                 {
                     if (LevelNumber == 0)
                         return PacSharpGame.MovementSpeed * 0.40;
@@ -81,6 +72,15 @@ namespace PacSharpApp.Objects
                         return PacSharpGame.MovementSpeed * 0.45;
                     else
                         return PacSharpGame.MovementSpeed * 0.50;
+                }
+                else if (IsFrightened)
+                {
+                    if (LevelNumber == 0)
+                        return PacSharpGame.MovementSpeed * 0.50;
+                    else if (LevelNumber < 4)
+                        return PacSharpGame.MovementSpeed * 0.55;
+                    else
+                        return PacSharpGame.MovementSpeed * 0.60;
                 }
                 else
                 {

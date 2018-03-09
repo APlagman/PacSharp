@@ -676,7 +676,8 @@ namespace PacSharpApp
                 (level.GhostSpawns.Select(spawn => new GhostObject(GraphicsHandler, spawn.Key, player, level)
                 {
                     Position = new Vector2(spawn.Value.X + GraphicsConstants.TileWidth / 2, spawn.Value.Y + GraphicsConstants.TileWidth / 2),
-                    ExitingGhostHouse = (spawn.Key == GhostType.Blinky)
+                    ExitingGhostHouse = (spawn.Key == GhostType.Blinky),
+                    LevelNumber = levelNumber
                 }));
         }
 
