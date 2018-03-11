@@ -27,7 +27,9 @@ namespace PacSharpApp.Objects
             sprite = new GhostSprite() { Palette = normalPalette };
             handler.Register(this, sprite);
             Behavior = GhostAIBehavior.FromGhostType(type, this, target, level);
-            State = new GhostScatterState(this);
+            State = new GhostHomeState(this);
+            PerformTurn(Direction.Down);
+            Velocity = Vector2.Zero;
         }
 
         internal Direction Direction { get; set; }
@@ -38,6 +40,7 @@ namespace PacSharpApp.Objects
         internal bool IsWarping => State is GhostWarpingState;
         internal int LevelNumber { private get => levelNumber; set { levelNumber = value; } }
         internal bool ExitingGhostHouse { get; set; } = false;
+        internal bool IsHome => State is GhostHomeState;
 
         private GhostState State
         {
@@ -151,11 +154,19 @@ namespace PacSharpApp.Objects
             if (IsRespawning)
             {
                 sprite.Palette = PaletteID.GhostRespawning;
+                (Behavior as GhostAIBehavior).ChooseNewDirection(false, false);
             }
             else if (IsChasing || IsScattering || (IsWarping && !IsFrightened))
             {
                 sprite.Palette = normalPalette;
             }
+        }
+
+        internal void EnteringGhostHouse()
+        {
+            Velocity = Vector2.Zero;
+            State = new GhostHomeState(this);
+            sprite.Palette = normalPalette;
         }
 
         internal override void Update(TimeSpan elapsedTime)
@@ -351,6 +362,13 @@ namespace PacSharpApp.Objects
         class GhostScatterState : GhostState
         {
             internal GhostScatterState(GhostObject owner)
+                : base(owner)
+            { }
+        }
+
+        class GhostHomeState : GhostState
+        {
+            internal GhostHomeState(GhostObject owner)
                 : base(owner)
             { }
         }

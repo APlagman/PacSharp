@@ -493,7 +493,7 @@ namespace PacSharpApp
         private void BeginPowerPelletEffects()
         {
             foreach (var ghost in ghosts)
-                if (!ghost.IsRespawning)
+                if (!ghost.IsRespawning && !ghost.IsHome)
                     ghost.BecomeFrightened(GhostsShouldTurnBlue);
             ghostsEaten = 0;
         }

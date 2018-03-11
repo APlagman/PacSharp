@@ -17,12 +17,14 @@ namespace PacSharpApp.AI
         private protected readonly Maze level;
         private Point lastTilePos;
         private Direction nextDirection;
+        private readonly GhostType type;
 
-        protected GhostAIBehavior(GhostObject owner, PacmanObject target, Maze level)
+        protected GhostAIBehavior(GhostObject owner, PacmanObject target, Maze level, GhostType type)
         {
             this.owner = owner;
             this.target = target;
             this.level = level;
+            this.type = type;
         }
 
         private protected abstract Point DestinationTile { get; }
@@ -45,7 +47,7 @@ namespace PacSharpApp.AI
                 ChooseNewDirection();
         }
 
-        internal void ChooseNewDirection(bool useNextTile = true)
+        internal void ChooseNewDirection(bool useNextTile = true, bool excludeOpposite = true)
         {
             Direction chosen;
             if (owner.ExitingGhostHouse)
@@ -57,7 +59,7 @@ namespace PacSharpApp.AI
             {
                 var available =
                     Enum.GetValues(typeof(Direction)).Cast<Direction>()
-                    .Where(dir => dir != owner.Direction.GetOpposite() && owner.CanEnter(level.Walls, FutureTile(dir, useNextTile)));
+                    .Where(dir => (!excludeOpposite || dir != owner.Direction.GetOpposite()) && owner.CanEnter(level.Walls, FutureTile(dir, useNextTile)));
                 if (available.Count() == 0)
                     chosen = owner.Direction;
                 else
@@ -123,6 +125,34 @@ namespace PacSharpApp.AI
 
         internal override void Update(TimeSpan elapsedTime)
         {
+            if (owner.IsHome)
+            {
+                Vector2 pos = owner.Position.RoundedToNearest(0.5);
+                if (owner.ExitingGhostHouse)
+                {
+                    if (pos.X == level.GhostHouseEntrance.X)
+                        MoveVerticallyToExit(pos);
+                    else
+                        MoveHorizontallyToExit(pos);
+                }
+                else if (pos.Y == (level.GhostRespawnTile.Y + 0.5) * GraphicsConstants.TileWidth)
+                    MoveToSpawnPosition(pos);
+                return;
+            }
+            if (owner.IsRespawning)
+            {
+                Vector2 pos = owner.Position.RoundedToNearest(1);
+                if (pos.X == level.GhostHouseEntrance.X && pos.Y == level.GhostHouseEntrance.Y)
+                {
+                    owner.PerformTurn(Direction.Down);
+                    return;
+                }
+                else if (pos.X == level.GhostHouseEntrance.X && pos.Y == (level.GhostRespawnTile.Y + 0.5) * GraphicsConstants.TileWidth)
+                {
+                    owner.EnteringGhostHouse();
+                    return;
+                }
+            }
             if (owner.TilePosition != lastTilePos && !owner.IsWarping)
             {
                 lastTilePos = owner.TilePosition;
@@ -131,6 +161,40 @@ namespace PacSharpApp.AI
             }
             if ((owner.Velocity.X == 0 && owner.Velocity.Y == 0) || owner.CanTurnTo(level.Walls, owner.DirectionVelocity(nextDirection)))
                 owner.PerformTurn(nextDirection);
+        }
+
+        private void MoveVerticallyToExit(Vector2 pos)
+        {
+            if (pos.Y == level.GhostHouseEntrance.Y)
+            {
+                LeftGhostHouse();
+            }
+            else
+                owner.PerformTurn(Direction.Up);
+        }
+
+        private void MoveHorizontallyToExit(Vector2 pos)
+        {
+            owner.PerformTurn(level.GhostHouseEntrance.X < pos.X ? Direction.Left : Direction.Right);
+        }
+
+        private void MoveToSpawnPosition(Vector2 pos)
+        {
+            if (pos.X == level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2)
+                owner.Velocity = Vector2.Zero;
+            else
+            {
+                owner.PerformTurn(level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2 < pos.X ? Direction.Left : Direction.Right);
+                owner.Velocity.Y = 0;
+            }
+        }
+
+        private void LeftGhostHouse()
+        {
+            owner.ExitingGhostHouse = false;
+            owner.PerformTurn(Direction.Left);
+            owner.ReturnToMovementState();
+            ChooseNewDirection();
         }
 
         private bool IsIntersection(Point point)

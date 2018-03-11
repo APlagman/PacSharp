@@ -10,7 +10,7 @@ namespace PacSharpApp.AI
     class ClydeAIBehavior : GhostAIBehavior
     {
         internal ClydeAIBehavior(GhostObject owner, PacmanObject target, Maze level)
-            : base(owner, target, level)
+            : base(owner, target, level, GhostType.Clyde)
         {
         }
 

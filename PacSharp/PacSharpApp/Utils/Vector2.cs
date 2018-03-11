@@ -62,5 +62,16 @@ namespace PacSharpApp.Utils
         {
             return new PointF((float)vec.X, (float)vec.Y);
         }
+
+        public static Vector2 RoundedToNearest(this Vector2 vec, double val)
+        {
+            double x = vec.X - vec.X % val;
+            if (vec.X % val > val / 2)
+                x += val;
+            double y = vec.Y - vec.Y % val;
+            if (vec.Y % val > val / 2)
+                y += val;
+            return new Vector2(x, y);
+        }
     }
 }

@@ -37,6 +37,7 @@ namespace PacSharpApp
             GhostLimitedIntersections = ghostLimitedIntersections;
             GhostFavoriteTiles = ghostFavoriteTiles;
             WarpTunnelStarts = warpTunnelStarts;
+            GhostHouseEntrance = new Vector2(GhostSpawns[GhostType.Blinky].X + GraphicsConstants.TileWidth / 2, GhostSpawns[GhostType.Blinky].Y + GraphicsConstants.TileWidth / 2);
         }
 
         internal IReadOnlyCollection<RectangleF> Walls { get; }
@@ -48,6 +49,7 @@ namespace PacSharpApp
         internal IReadOnlyCollection<Point> GhostLimitedIntersections { get; }
         internal IReadOnlyDictionary<GhostType, Point> GhostFavoriteTiles { get; }
         internal IReadOnlyCollection<Point> WarpTunnelStarts { get; }
+        internal Vector2 GhostHouseEntrance { get; }
 
         internal Point GhostRespawnTile
             => new Point(

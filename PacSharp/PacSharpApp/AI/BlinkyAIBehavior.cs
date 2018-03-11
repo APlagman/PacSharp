@@ -14,7 +14,7 @@ namespace PacSharpApp.AI
         private static readonly Point FavoredTile = new Point(0, 3);
 
         internal BlinkyAIBehavior(GhostObject owner, PacmanObject target, Maze level)
-            : base(owner, target, level)
+            : base(owner, target, level, GhostType.Blinky)
         { }
 
         private protected override Point DestinationTile

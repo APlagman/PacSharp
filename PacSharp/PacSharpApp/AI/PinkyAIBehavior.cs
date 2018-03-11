@@ -10,7 +10,7 @@ namespace PacSharpApp.AI
     class PinkyAIBehavior : GhostAIBehavior
     {
         internal PinkyAIBehavior(GhostObject owner, PacmanObject target, Maze level)
-            : base(owner, target, level)
+            : base(owner, target, level, GhostType.Pinky)
         {
         }
 
