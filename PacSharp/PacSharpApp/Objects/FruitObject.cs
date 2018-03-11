@@ -76,27 +76,27 @@ namespace PacSharpApp.Objects
                     tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints00End, PaletteID.Text);
                     break;
                 case 1000:
-                    tiles.SetTile(fruitRow, fruitLeftCol, GraphicsID.TilePoints10LeftAligned, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol - 1, GraphicsID.TilePoints10LeftAligned, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 0, GraphicsID.TilePoints00Left, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints00Right, PaletteID.Text);
+                    break;
+                case 2000:
+                    tiles.SetTile(fruitRow, fruitLeftCol - 1, GraphicsID.TilePoints20Left, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 0, GraphicsID.TilePoints20Right, PaletteID.Text);
                     tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints00Left, PaletteID.Text);
                     tiles.SetTile(fruitRow, fruitLeftCol + 2, GraphicsID.TilePoints00Right, PaletteID.Text);
                     break;
-                case 2000:
-                    tiles.SetTile(fruitRow, fruitLeftCol, GraphicsID.TilePoints20Left, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints20Right, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 2, GraphicsID.TilePoints00Left, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 3, GraphicsID.TilePoints00Right, PaletteID.Text);
-                    break;
                 case 3000:
-                    tiles.SetTile(fruitRow, fruitLeftCol, GraphicsID.TilePoints30Left, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints30Right, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 2, GraphicsID.TilePoints00Left, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 3, GraphicsID.TilePoints00Right, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol - 1, GraphicsID.TilePoints30Left, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 0, GraphicsID.TilePoints30Right, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints00Left, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 2, GraphicsID.TilePoints00Right, PaletteID.Text);
                     break;
                 case 5000:
-                    tiles.SetTile(fruitRow, fruitLeftCol, GraphicsID.TilePoints50Left, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints50Right, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 2, GraphicsID.TilePoints00Left, PaletteID.Text);
-                    tiles.SetTile(fruitRow, fruitLeftCol + 3, GraphicsID.TilePoints00Right, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol - 1, GraphicsID.TilePoints50Left, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 0, GraphicsID.TilePoints50Right, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 1, GraphicsID.TilePoints00Left, PaletteID.Text);
+                    tiles.SetTile(fruitRow, fruitLeftCol + 2, GraphicsID.TilePoints00Right, PaletteID.Text);
                     break;
             }
         }
