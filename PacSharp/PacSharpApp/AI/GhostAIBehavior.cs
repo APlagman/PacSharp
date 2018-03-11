@@ -28,6 +28,8 @@ namespace PacSharpApp.AI
         }
 
         private protected abstract Point DestinationTile { get; }
+        internal abstract int ReleasePriority { get; }
+        private protected abstract int NormalDotLimit(int levelNumber);
 
         internal void ChangeDirection()
         {
@@ -80,6 +82,12 @@ namespace PacSharpApp.AI
                 }
             }
             nextDirection = chosen;
+        }
+
+        internal void PelletCounterUpdated(int levelNumber)
+        {
+            if (owner.IsHome && owner.PelletCounter > NormalDotLimit(levelNumber))
+                owner.ExitingGhostHouse = true;
         }
 
         private double DistanceToTarget(Direction dir, bool useNextTile = true)
@@ -161,6 +169,21 @@ namespace PacSharpApp.AI
             }
             if ((owner.Velocity.X == 0 && owner.Velocity.Y == 0) || owner.CanTurnTo(level.Walls, owner.DirectionVelocity(nextDirection)))
                 owner.PerformTurn(nextDirection);
+            if (EnsureNotMovingThroughWalls())
+            {
+                ChooseNewDirection(false);
+                owner.PerformTurn(nextDirection);
+            }
+        }
+
+        private bool EnsureNotMovingThroughWalls()
+        {
+            return !owner.IsHome
+                && !(owner.IsRespawning
+                    && owner.Position.RoundedToNearest(1).X == level.GhostHouseEntrance.X
+                    && owner.Position.RoundedToNearest(1).Y <= (level.GhostRespawnTile.Y + 0.5) * GraphicsConstants.TileWidth
+                    && owner.Direction == Direction.Down)
+                && !owner.CanTurnTo(level.Walls, owner.Velocity);
         }
 
         private void MoveVerticallyToExit(Vector2 pos)
@@ -232,5 +255,7 @@ namespace PacSharpApp.AI
                     throw new Exception("Unhandled ghost AI.");
             }
         }
+
+        internal abstract bool GlobalPelletReleaseReached(int globalPelletCounter);
     }
 }

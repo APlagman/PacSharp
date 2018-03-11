@@ -19,6 +19,7 @@ namespace PacSharpApp.Objects
         private GhostState state;
         private readonly GhostSprite sprite;
         private readonly PaletteID normalPalette;
+        private int pelletCounter = 0;
 
         internal GhostObject(GraphicsHandler handler, GhostType type, PacmanObject target, Maze level)
             : base(GraphicsConstants.SpriteSize)
@@ -41,6 +42,9 @@ namespace PacSharpApp.Objects
         internal int LevelNumber { private get => levelNumber; set { levelNumber = value; } }
         internal bool ExitingGhostHouse { get; set; } = false;
         internal bool IsHome => State is GhostHomeState;
+
+        internal int PelletCounter { get => pelletCounter; set { pelletCounter = value; (Behavior as GhostAIBehavior).PelletCounterUpdated(levelNumber); } }
+        internal bool PelletCounterEnabled { get; set; } = false;
 
         private GhostState State
         {
@@ -164,9 +168,9 @@ namespace PacSharpApp.Objects
 
         internal void EnteringGhostHouse()
         {
-            Velocity = Vector2.Zero;
             State = new GhostHomeState(this);
             sprite.Palette = normalPalette;
+            Velocity = Vector2.Zero;
         }
 
         internal override void Update(TimeSpan elapsedTime)

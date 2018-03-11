@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using PacSharpApp.Objects;
-using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -17,6 +15,8 @@ namespace PacSharpApp.AI
             : base(owner, target, level, GhostType.Blinky)
         { }
 
+        internal override int ReleasePriority => 0;
+
         private protected override Point DestinationTile
         {
             get
@@ -30,9 +30,13 @@ namespace PacSharpApp.AI
             }
         }
 
+        internal override bool GlobalPelletReleaseReached(int globalPelletCounter) => true;
+
         internal override void Update(TimeSpan elapsedTime)
         {
             base.Update(elapsedTime);
         }
+
+        private protected override int NormalDotLimit(int levelNumber) => 0;
     }
 }

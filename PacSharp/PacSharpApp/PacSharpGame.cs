@@ -43,6 +43,8 @@ namespace PacSharpApp
         private int creditsRemaining = 0;
         private int livesRemaining;
         private int LivesRemaining { get => livesRemaining; set { livesRemaining = value; UpdateLives(); } }
+        private int globalPelletCounter = 0;
+        private bool globalPelletCounterEnabled = false;
 
         private int ghostsEaten = 0;
         private int levelNumber = 0;
@@ -62,6 +64,7 @@ namespace PacSharpApp
         private int ghostPhase;
 
         private bool victoryAlreadyReached = false;
+        private TimeSpan pelletTimer = TimeSpan.MinValue;
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
@@ -130,10 +133,23 @@ namespace PacSharpApp
                         actionQueue.Add((VictoryPauseDuration, StartNextLevel));
                     }
                     UpdateGhostModeTimer(elapsedTime);
+                    UpdatePelletTimer(elapsedTime);
                     break;
                 default:
                     break;
             }
+        }
+
+        private void UpdatePelletTimer(TimeSpan elapsedTime)
+        {
+            if (pelletTimer <= elapsedTime)
+            {
+                if (GhostToRelease != null)
+                    GhostToRelease.ExitingGhostHouse = true;
+                pelletTimer = PelletTimerInterval;
+            }
+            else
+                pelletTimer -= elapsedTime;
         }
 
         private void UpdateGhostModeTimer(TimeSpan elapsedTime)
@@ -172,8 +188,12 @@ namespace PacSharpApp
             {
                 if (!Paused)
                     player?.Update(elapsedTime);
-                foreach (var ghosts in ghosts)
-                    ghosts.Update(elapsedTime);
+                foreach (var ghost in ghosts)
+                    ghost.PelletCounterEnabled = false;
+                if (GhostToRelease != null)
+                    GhostToRelease.PelletCounterEnabled = true;
+                foreach (var ghost in ghosts)
+                    ghost.Update(elapsedTime);
                 foreach (var pellet in pellets)
                     pellet.Update(elapsedTime);
                 foreach (var pellet in powerPellets)
@@ -261,6 +281,10 @@ namespace PacSharpApp
                     {
                         obj.BeginRespawning(DelayRespawn);
                         --LivesRemaining;
+                        foreach (var ghost in ghosts)
+                            ghost.PelletCounterEnabled = false;
+                        globalPelletCounterEnabled = true;
+                        globalPelletCounter = 0;
                     }
                     else
                     {
@@ -337,6 +361,24 @@ namespace PacSharpApp
             if (pellets.Count <= 170 && prevPelletCount > 170 ||
                 pellets.Count <= 70 && prevPelletCount > 70)
                 SpawnFruit();
+            if (eaten.Count > 0)
+            {
+                foreach (var ghost in ghosts)
+                {
+                    if (ghost.IsHome && ghost.PelletCounterEnabled)
+                        ++ghost.PelletCounter;
+                }
+                if (globalPelletCounterEnabled)
+                    UpdateGlobalPelletCounter();
+                pelletTimer = PelletTimerInterval;
+            }
+        }
+
+        private void UpdateGlobalPelletCounter()
+        {
+            ++globalPelletCounter;
+            if (GhostToRelease != null)
+                GhostToRelease.ExitingGhostHouse = (GhostToRelease.Behavior as GhostAIBehavior).GlobalPelletReleaseReached(globalPelletCounter);
         }
 
         private void SpawnFruit()
@@ -406,7 +448,6 @@ namespace PacSharpApp
 
         private void PushOutOfWalls(GameObject obj)
         {
-            bool collided = false;
             foreach (RectangleF wall in walls.Where(wall => obj.Bounds.IntersectsWith(wall)))
             {
                 if (obj.CollidingFromAbove(wall))
@@ -417,9 +458,7 @@ namespace PacSharpApp
                     obj.Position.X -= (obj.Right - wall.Left);
                 if (obj.CollidingFromRight(wall))
                     obj.Position.X -= (obj.Left - wall.Right);
-                collided = true;
             }
-            TurnPlayerOnCollision(obj, collided);
         }
         #endregion Collision
 
@@ -470,6 +509,9 @@ namespace PacSharpApp
             player.PerformTurn(Direction.Right);
             DelayStart();
             victoryAlreadyReached = false;
+            globalPelletCounter = 0;
+            globalPelletCounterEnabled = false;
+            pelletTimer = PelletTimerInterval;
         }
 
         private void DelayRespawn()
@@ -499,6 +541,10 @@ namespace PacSharpApp
         }
 
         private bool GhostsShouldTurnBlue => levelNumber < LevelNumberToStopGhostsTurningBlue;
+
+        private GhostObject GhostToRelease => ghosts?.Where(ghost => ghost.IsHome).OrderBy(ghost => (ghost.Behavior as GhostAIBehavior).ReleasePriority).FirstOrDefault();
+
+        private TimeSpan PelletTimerInterval => (levelNumber >= 4 ? TimeSpan.FromSeconds(4) : TimeSpan.FromSeconds(3));
 
         private void DisableMovement()
         {
@@ -635,6 +681,9 @@ namespace PacSharpApp
             InitLevel();
             DelayStart();
             LivesRemaining = StartingLives;
+            globalPelletCounter = 0;
+            globalPelletCounterEnabled = false;
+            pelletTimer = PelletTimerInterval;
         }
 
         private void DelayStart()
