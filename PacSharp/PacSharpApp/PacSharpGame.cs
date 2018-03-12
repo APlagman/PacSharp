@@ -60,6 +60,10 @@ namespace PacSharpApp
 
         private TimeSpan ghostModeTimer;
         private int ghostPhase;
+        private TimeSpan fruitDespawnTimer;
+        private GameObject ghostScoreObj;
+        private TimeSpan pausePlayerOnEatingGhostTimer;
+        private ICollection<GameObject> ghostObjectsEaten = new List<GameObject>();
 
         private bool victoryAlreadyReached = false;
         private TimeSpan pelletTimer = TimeSpan.MinValue;
@@ -133,12 +137,42 @@ namespace PacSharpApp
                         ++levelNumber;
                         actionQueue.Add((VictoryPauseDuration, StartNextLevel));
                     }
-                    UpdateGhostModeTimer(elapsedTime);
-                    UpdatePelletTimer(elapsedTime);
+                    if (ghostObjectsEaten.Count == 0)
+                    {
+                        UpdateGhostModeTimer(elapsedTime);
+                        UpdatePelletTimer(elapsedTime);
+                        UpdateFruitTimer(elapsedTime);
+                    }
+                    UpdateGhostEatenPauseTimer(elapsedTime);
                     break;
                 default:
                     break;
             }
+        }
+
+        private void UpdateFruitTimer(TimeSpan elapsedTime)
+        {
+            if (fruitDespawnTimer == TimeSpan.MaxValue)
+                return;
+            if (fruitDespawnTimer <= elapsedTime)
+            {
+                Despawn(fruit);
+                fruit = null;
+            }
+            else
+                fruitDespawnTimer -= elapsedTime;
+        }
+
+        private void UpdateGhostEatenPauseTimer(TimeSpan elapsedTime)
+        {
+            if (pausePlayerOnEatingGhostTimer == TimeSpan.MaxValue)
+                return;
+            if (pausePlayerOnEatingGhostTimer <= elapsedTime)
+            {
+                AfterGhostEatenPause();
+            }
+            else
+                pausePlayerOnEatingGhostTimer -= elapsedTime;
         }
 
         private void UpdatePelletTimer(TimeSpan elapsedTime)
@@ -226,7 +260,7 @@ namespace PacSharpApp
         private void HandleEatingFruit(PacmanObject eater)
         {
             Score += fruit.Score;
-            GraphicsHandler.Unregister(fruit);
+            Despawn(fruit);
             Vector2 fruitPos = fruit.Position;
             int fruitLeftCol = (int)(fruitPos.X) / GraphicsConstants.TileWidth - 1;
             int fruitRow = (int)(fruitPos.Y - GraphicsConstants.TileWidth / 2) / GraphicsConstants.TileWidth;
@@ -303,7 +337,7 @@ namespace PacSharpApp
             if (playerDied)
             {
                 foreach (var ghost in ghosts)
-                    GraphicsHandler.Unregister(ghost);
+                    Despawn(ghost);
                 ghosts.Clear();
             }
         }
@@ -311,7 +345,7 @@ namespace PacSharpApp
         private void HandleGhostEaten(PacmanObject eater, GhostObject eaten)
         {
             Score += GhostScore;
-            ScoreObject scoreObj = new ScoreObject(GraphicsHandler, GhostScore)
+            ghostScoreObj = new ScoreObject(GraphicsHandler, GhostScore)
             {
                 Position = eater.Position
             };
@@ -320,15 +354,22 @@ namespace PacSharpApp
             GraphicsHandler.Hide(eaten);
             DisableMovement();
             ++ghostsEaten;
-            actionQueue.Add((EatGhostPauseDuration, () => AfterGhostEatenPause(eaten, scoreObj)));
+
+            pausePlayerOnEatingGhostTimer = EatFruitDisplayScoreDuration;
+            ghostObjectsEaten.Add(eaten);
+            foreach (var ghost in ghosts.Where(ghost => ghost.IsFrightened))
+                ghost.PauseTimers = true;
         }
 
-        private void AfterGhostEatenPause(GhostObject eaten, ScoreObject scoreObj)
+        private void AfterGhostEatenPause()
         {
-            GraphicsHandler.Unregister(scoreObj);
+            Despawn(ghostScoreObj);
             GraphicsHandler.Show(player);
-            GraphicsHandler.Show(eaten);
+            foreach (var ghost in ghostObjectsEaten)
+                GraphicsHandler.Show(ghost);
             EnableMovement();
+            foreach (var ghost in ghosts.Where(ghost => ghost.IsFrightened))
+                ghost.PauseTimers = false;
         }
 
         private void CheckIfEatingPellets(PacmanObject obj)
@@ -403,7 +444,7 @@ namespace PacSharpApp
             {
                 Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
             };
-            actionQueue.Add((TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds), () => { Despawn(fruit); fruit = null; }));
+            fruitDespawnTimer = TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds);
         }
 
         private GraphicsID GetFruitFromLevelNumber()
@@ -541,6 +582,14 @@ namespace PacSharpApp
             globalPelletCounterEnabled = false;
             pelletTimer = PelletTimerInterval;
             GraphicsHandler.PreventAnimatedSpriteUpdates = false;
+            if (ghostScoreObj != null)
+            {
+                GraphicsHandler.Unregister(ghostScoreObj);
+                ghostScoreObj = null;
+            }
+            fruitDespawnTimer = TimeSpan.MaxValue;
+            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
+            ghostObjectsEaten.Clear();
         }
 
         private void DelayRespawn()
@@ -550,6 +599,11 @@ namespace PacSharpApp
                 GraphicsHandler.Unregister(ghost);
             player = null;
             ghosts.Clear();
+            if (ghostScoreObj != null)
+            {
+                GraphicsHandler.Unregister(ghostScoreObj);
+                ghostScoreObj = null;
+            }
             actionQueue.Add((RespawnPlayerDelay, RespawnPlayer));
         }
 
@@ -558,6 +612,10 @@ namespace PacSharpApp
             ghostPhase = 0;
             ghostModeTimer = TimeSpan.MaxValue;
             pelletTimer = TimeSpan.MaxValue;
+            fruitDespawnTimer = TimeSpan.MaxValue;
+            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
+            ghostObjectsEaten.Clear();
+
             SpawnPlayer(level);
             SpawnGhosts(level);
             DisableMovement();

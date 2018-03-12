@@ -126,6 +126,7 @@ namespace PacSharpApp.Objects
         }
 
         internal int CruiseElroyMode { get; set; } = 0;
+        internal bool PauseTimers { get; set; } = false;
 
         private void OnShouldScatterChanged()
         {
@@ -180,7 +181,7 @@ namespace PacSharpApp.Objects
         internal override void Update(TimeSpan elapsedTime)
         {
             base.Update(elapsedTime);
-            State.Update(elapsedTime);
+            State.Update(elapsedTime, PauseTimers);
         }
 
         internal void Flash()
@@ -268,7 +269,7 @@ namespace PacSharpApp.Objects
                 this.owner = owner;
             }
 
-            internal virtual void Update(TimeSpan elapsedTime) { }
+            internal virtual void Update(TimeSpan elapsedTime, bool preventTimerUpdates) { }
         }
 
         class GhostChaseState : GhostState
@@ -317,8 +318,10 @@ namespace PacSharpApp.Objects
             internal TimeSpan UntilUnafraid => untilUnafraid;
             internal bool TurnBlue { get; }
 
-            internal override void Update(TimeSpan elapsedTime)
+            internal override void Update(TimeSpan elapsedTime, bool preventTimerUpdates)
             {
+                if (preventTimerUpdates)
+                    return;
                 if (untilUnafraid <= elapsedTime)
                     owner.ReturnToMovementState();
                 else
@@ -361,8 +364,10 @@ namespace PacSharpApp.Objects
             internal bool TurnBlue { get; }
             internal TimeSpan UntilUnafraid => untilUnafraid;
 
-            internal override void Update(TimeSpan elapsedTime)
+            internal override void Update(TimeSpan elapsedTime, bool preventTimerUpdates)
             {
+                if (preventTimerUpdates)
+                    return;
                 if (UntilUnafraid == TimeSpan.MaxValue)
                     return;
                 if (untilUnafraid <= elapsedTime)
