@@ -822,9 +822,9 @@ namespace PacSharpApp
                     ExitingGhostHouse = (spawn.Key == GhostType.Blinky),
                     LevelNumber = levelNumber
                 }));
-            if (ghosts.Where(ghost => ghost.Behavior is InkyAIBehavior).Count() > 0)
-                (ghosts.Where(ghost => ghost.Behavior is InkyAIBehavior).FirstOrDefault()?.Behavior as InkyAIBehavior)
-                    .Reference = ghosts.Where(ghost => ghost.Behavior is BlinkyAIBehavior).FirstOrDefault();
+            if (ghosts.Where(ghost => ghost.Behavior is BlinkyAIBehavior).Count() > 0)
+                foreach (var ghost in ghosts.Where(ghost => ghost.Behavior is InkyAIBehavior))
+                    (ghost.Behavior as InkyAIBehavior).Reference = ghosts.Where(g => g.Behavior is BlinkyAIBehavior).FirstOrDefault();
         }
 
         private void CreatePowerPellets(Maze level)
