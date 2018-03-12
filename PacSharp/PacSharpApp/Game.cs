@@ -136,9 +136,8 @@ namespace PacSharpApp
         private void Update(TimeSpan elapsedTime)
         {
             HandleInput();
-            if (PreventUpdate)
-                return;
-            UpdateImpl(elapsedTime);
+            if (!PreventUpdate)
+                UpdateImpl(elapsedTime);
             InputHandler.Update();
         }
 

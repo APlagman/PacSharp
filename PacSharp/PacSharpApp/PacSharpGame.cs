@@ -12,6 +12,11 @@ using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
+/// 
+/// Sources used to replicate game behavior:
+/// https://www.lomont.org/Software/Games/PacMan/PacmanEmulation.pdf
+/// http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior
+/// https://www.gamasutra.com/view/feature/132330/the_pacman_dossier.php
 /// </summary>
 namespace PacSharpApp
 {
@@ -78,7 +83,7 @@ namespace PacSharpApp
             get => displayedHighScore;
             set { displayedHighScore = value; UpdateHighScore(); }
         }
-        private protected override bool PreventUpdate => false;
+        private protected override bool PreventUpdate => Paused;
         private bool VictoryConditionReached => pellets.Count == 0 && powerPellets.Count == 0;
         private int GhostScore => BaseGhostScore << ghostsEaten;
         private protected override bool UseFixedTimeStepForUpdates => true;
@@ -129,6 +134,8 @@ namespace PacSharpApp
                 case GameState.Cutscene:
                     break;
                 case GameState.Playing:
+                    if (Paused)
+                        break;
                     HandleCollisions();
                     if (VictoryConditionReached && !victoryAlreadyReached)
                     {
@@ -144,9 +151,21 @@ namespace PacSharpApp
                         UpdateFruitTimer(elapsedTime);
                     }
                     UpdateGhostEatenPauseTimer(elapsedTime);
+                    CheckCruiseElroyState();
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void CheckCruiseElroyState()
+        {
+            if (pellets.Count > CruiseElroyThreshold)
+                return;
+            foreach (var ghost in ghosts)
+            {
+                if (ghost.Behavior is BlinkyAIBehavior && (ghosts.Where(g => g.IsHome).Count() == 0 || playerHasLostLifeThisLevel == false))
+                    ghost.CruiseElroyMode = (pellets.Count <= CruiseElroyThreshold2) ? 2 : 1;
             }
         }
 
@@ -177,6 +196,8 @@ namespace PacSharpApp
 
         private void UpdatePelletTimer(TimeSpan elapsedTime)
         {
+            if (pelletTimer == TimeSpan.MaxValue)
+                return;
             if (pelletTimer <= elapsedTime)
             {
                 if (GhostToRelease != null)
@@ -189,6 +210,8 @@ namespace PacSharpApp
 
         private void UpdateGhostModeTimer(TimeSpan elapsedTime)
         {
+            if (ghostModeTimer == TimeSpan.MaxValue)
+                return;
             if (ghostPhase < 7 && ghostModeTimer <= elapsedTime)
             {
                 ++ghostPhase;
@@ -420,14 +443,6 @@ namespace PacSharpApp
                     UpdateGlobalPelletCounter();
                 pelletTimer = PelletTimerInterval;
                 obj.DelayMotion = 1;
-                if (pellets.Count <= CruiseElroyThreshold)
-                {
-                    foreach (var ghost in ghosts)
-                    {
-                        if (ghost.Behavior is BlinkyAIBehavior && (ghosts.Where(g => g.IsHome).Count() == 0 || playerHasLostLifeThisLevel == false))
-                            ghost.CruiseElroyMode = (pellets.Count <= CruiseElroyThreshold2) ? 2 : 1;
-                    }
-                }
             }
         }
 
