@@ -12,7 +12,7 @@ namespace PacSharpApp.Objects
 {
     class PacmanObject : GameObject
     {
-        private const double PlayerMovementSpeed = 0.044d;
+        private const double PlayerMovementSpeed = 0.088d;
 
         private int levelNumber;
         private PacmanSprite sprite;

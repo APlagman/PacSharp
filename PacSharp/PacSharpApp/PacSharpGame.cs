@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using PacSharpApp.AI;
 using PacSharpApp.Graphics;
 using PacSharpApp.Graphics.Animation;
@@ -43,6 +45,7 @@ namespace PacSharpApp
         private static readonly TimeSpan HighscoreScreenDelay = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan EatFruitDisplayScoreDuration = TimeSpan.FromSeconds(2);
 
+        private Highscores currentHighscores;
         private int creditsRemaining = 0;
         private int livesRemaining;
         private int LivesRemaining { get => livesRemaining; set { livesRemaining = value; UpdateLives(); } }
@@ -76,8 +79,24 @@ namespace PacSharpApp
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
-        { }
-        
+        {
+            LoadHighscores();
+        }
+
+        private void LoadHighscores()
+        {
+            try
+            {
+                var serializer = new XmlSerializer(typeof(Highscores));
+                using (var highscoreFile = new StreamReader(@".\Highscores"))
+                    currentHighscores = serializer.Deserialize(highscoreFile) as Highscores;
+            }
+            catch (IOException)
+            {
+                currentHighscores = new Highscores();
+            }
+        }
+
         private int DisplayedHighScore
         {
             get => displayedHighScore;
@@ -335,6 +354,7 @@ namespace PacSharpApp
                     HandleGhostEaten(obj, touchedGhost);
                 else if (!touchedGhost.IsRespawning)
                 {
+                    player.Velocity = Vector2.Zero;
                     playerHasLostLifeThisLevel = true;
                     if (LivesRemaining > 0)
                     {
@@ -362,6 +382,7 @@ namespace PacSharpApp
                 foreach (var ghost in ghosts)
                     Despawn(ghost);
                 ghosts.Clear();
+                ghostObjectsEaten.Clear();
             }
         }
 
@@ -387,7 +408,8 @@ namespace PacSharpApp
         private void AfterGhostEatenPause()
         {
             Despawn(ghostScoreObj);
-            GraphicsHandler.Show(player);
+            if (player != null)
+                GraphicsHandler.Show(player);
             foreach (var ghost in ghostObjectsEaten)
                 GraphicsHandler.Show(ghost);
             EnableMovement();
@@ -572,7 +594,7 @@ namespace PacSharpApp
         {
             pelletTimer = TimeSpan.MaxValue;
             ghostModeTimer = TimeSpan.MaxValue;
-            Paused = true;
+            Paused = false;
             if (fruit != null)
             {
                 GraphicsHandler.Unregister(fruit);
@@ -627,7 +649,6 @@ namespace PacSharpApp
             ghostPhase = 0;
             ghostModeTimer = TimeSpan.MaxValue;
             pelletTimer = TimeSpan.MaxValue;
-            fruitDespawnTimer = TimeSpan.MaxValue;
             pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
             ghostObjectsEaten.Clear();
 
@@ -705,7 +726,8 @@ namespace PacSharpApp
 
         private void EnableMovement()
         {
-            player.PreventMovement = false;
+            if (player != null)
+                player.PreventMovement = false;
             foreach (var ghost in ghosts)
                 ghost.PreventMovement = false;
         }
@@ -724,6 +746,10 @@ namespace PacSharpApp
             if (State == GameState.Menu || State == GameState.Playing)
             {
                 AddTopScreenInfo();
+            }
+            if (State == GameState.Highscores)
+            {
+
             }
         }
 
@@ -777,6 +803,8 @@ namespace PacSharpApp
             if (Score < OneUpThreshold && value >= OneUpThreshold)
                 ++LivesRemaining;
             base.UpdateScore(value);
+            if (value > DisplayedHighScore)
+                DisplayedHighScore = value;
             Tiles.DrawInteger(1, 6, Score);
         }
 

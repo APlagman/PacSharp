@@ -13,7 +13,7 @@ namespace PacSharpApp.Objects
 {
     class GhostObject : GameObject
     {
-        private const double GhostMovementSpeed = 0.044d;
+        private const double GhostMovementSpeed = 0.088d;
 
         private bool isFrightened = false;
         private int levelNumber;
