@@ -94,11 +94,11 @@ namespace PacSharpApp.Objects
                 else
                 {
                     if (LevelNumber == 0)
-                        return GhostMovementSpeed * 0.75;
+                        return GhostMovementSpeed * (0.75 + CruiseElroyMode * 0.05);
                     else if (LevelNumber < 4)
-                        return GhostMovementSpeed * 0.85;
+                        return GhostMovementSpeed * (0.85 + CruiseElroyMode * 0.05);
                     else
-                        return GhostMovementSpeed * 0.95;
+                        return GhostMovementSpeed * (0.95 + CruiseElroyMode * 0.05);
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace PacSharpApp.Objects
             }
         }
 
-        internal bool CruiseElroyMode { get; set; }
+        internal int CruiseElroyMode { get; set; } = 0;
 
         private void OnShouldScatterChanged()
         {

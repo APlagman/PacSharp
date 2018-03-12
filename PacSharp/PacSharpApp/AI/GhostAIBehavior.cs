@@ -216,9 +216,9 @@ namespace PacSharpApp.AI
 
         private void LeftGhostHouse()
         {
+            owner.ReturnToMovementState();
             owner.ExitingGhostHouse = false;
             owner.PerformTurn(Direction.Left);
-            owner.ReturnToMovementState();
             ChooseNewDirection();
         }
 

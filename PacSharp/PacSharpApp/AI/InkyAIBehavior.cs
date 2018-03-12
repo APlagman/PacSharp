@@ -23,7 +23,7 @@ namespace PacSharpApp.AI
             get
             {
                 if (owner.IsRespawning)
-                    return level.GhostRespawnTile;
+                    return level.GhostHouseEntrance.ToTilePoint();
                 else if (owner.IsChasing)
                 {
                     Point dest = target.TilePosition;

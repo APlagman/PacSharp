@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using PacSharpApp.Objects;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -22,8 +23,8 @@ namespace PacSharpApp.AI
             get
             {
                 if (owner.IsRespawning)
-                    return level.GhostRespawnTile;
-                else if (owner.IsChasing || owner.CruiseElroyMode)
+                    return level.GhostHouseEntrance.ToTilePoint();
+                else if (owner.IsChasing || owner.CruiseElroyMode > 0)
                     return target.TilePosition;
                 else
                     return level.GhostFavoriteTiles[GhostType.Blinky];

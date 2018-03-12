@@ -29,7 +29,7 @@ namespace PacSharpApp
         private const int BaseGhostScore = 200;
         private const int LevelNumberToStopGhostsTurningBlue = 20;
         private const double MinimumFruitAppearanceDurationInSeconds = 9;
-
+        private const int OneUpThreshold = 10000;
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan MainMenuAnimationsDisabledDuration = TimeSpan.FromMilliseconds(500);
@@ -63,6 +63,7 @@ namespace PacSharpApp
 
         private bool victoryAlreadyReached = false;
         private TimeSpan pelletTimer = TimeSpan.MinValue;
+        private bool playerHasLostLifeThisLevel = false;
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
@@ -127,7 +128,9 @@ namespace PacSharpApp
                     HandleCollisions();
                     if (VictoryConditionReached && !victoryAlreadyReached)
                     {
+                        GraphicsHandler.PreventAnimatedSpriteUpdates = true;
                         victoryAlreadyReached = true;
+                        ++levelNumber;
                         actionQueue.Add((VictoryPauseDuration, StartNextLevel));
                     }
                     UpdateGhostModeTimer(elapsedTime);
@@ -275,12 +278,16 @@ namespace PacSharpApp
                     HandleGhostEaten(obj, touchedGhost);
                 else if (!touchedGhost.IsRespawning)
                 {
+                    playerHasLostLifeThisLevel = true;
                     if (LivesRemaining > 0)
                     {
                         obj.BeginRespawning(DelayRespawn);
                         --LivesRemaining;
                         foreach (var ghost in ghosts)
+                        {
                             ghost.PelletCounterEnabled = false;
+                            ghost.CruiseElroyMode = 0;
+                        }
                         globalPelletCounterEnabled = true;
                         globalPelletCounter = 0;
                     }
@@ -372,6 +379,14 @@ namespace PacSharpApp
                     UpdateGlobalPelletCounter();
                 pelletTimer = PelletTimerInterval;
                 obj.DelayMotion = 1;
+                if (pellets.Count <= CruiseElroyThreshold)
+                {
+                    foreach (var ghost in ghosts)
+                    {
+                        if (ghost.Behavior is BlinkyAIBehavior && (ghosts.Where(g => g.IsHome).Count() == 0 || playerHasLostLifeThisLevel == false))
+                            ghost.CruiseElroyMode = (pellets.Count <= CruiseElroyThreshold2) ? 2 : 1;
+                    }
+                }
             }
         }
 
@@ -497,16 +512,23 @@ namespace PacSharpApp
 
         private void StartNextLevel()
         {
-            ++levelNumber;
             Paused = true;
             if (fruit != null)
+            {
                 GraphicsHandler.Unregister(fruit);
-            fruit = null;
-            foreach (var ghost in ghosts)
-                GraphicsHandler.Unregister(ghost);
-            ghosts.Clear();
-            GraphicsHandler.Unregister(player);
-            player = null;
+                fruit = null;
+            }
+            if (ghosts != null)
+            {
+                foreach (var ghost in ghosts)
+                    GraphicsHandler.Unregister(ghost);
+                ghosts.Clear();
+            }
+            if (player != null)
+            {
+                GraphicsHandler.Unregister(player);
+                player = null;
+            }
             InitLevel();
             player.PerformTurn(Direction.Right);
             DelayStart();
@@ -514,6 +536,7 @@ namespace PacSharpApp
             globalPelletCounter = 0;
             globalPelletCounterEnabled = false;
             pelletTimer = PelletTimerInterval;
+            GraphicsHandler.PreventAnimatedSpriteUpdates = false;
         }
 
         private void DelayRespawn()
@@ -547,6 +570,51 @@ namespace PacSharpApp
         private GhostObject GhostToRelease => ghosts?.Where(ghost => ghost.IsHome).OrderBy(ghost => (ghost.Behavior as GhostAIBehavior).ReleasePriority).FirstOrDefault();
 
         private TimeSpan PelletTimerInterval => (levelNumber >= 4 ? TimeSpan.FromSeconds(4) : TimeSpan.FromSeconds(3));
+
+        private int CruiseElroyThreshold
+        {
+            get
+            {
+                if (levelNumber == 0)
+                    return 20;
+                else if (levelNumber == 1)
+                    return 30;
+                else if (levelNumber < 5)
+                    return 40;
+                else if (levelNumber < 8)
+                    return 50;
+                else if (levelNumber < 11)
+                    return 60;
+                else if (levelNumber < 14)
+                    return 80;
+                else if (levelNumber < 18)
+                    return 100;
+                else
+                    return 120;
+            }
+        }
+        private int CruiseElroyThreshold2
+        {
+            get
+            {
+                if (levelNumber == 0)
+                    return 10;
+                else if (levelNumber == 1)
+                    return 15;
+                else if (levelNumber < 5)
+                    return 20;
+                else if (levelNumber < 8)
+                    return 25;
+                else if (levelNumber < 11)
+                    return 30;
+                else if (levelNumber < 14)
+                    return 40;
+                else if (levelNumber < 18)
+                    return 50;
+                else
+                    return 60;
+            }
+        }
 
         private void DisableMovement()
         {
@@ -624,8 +692,11 @@ namespace PacSharpApp
             Tiles.DrawText(35, 2, $"{CreditText}  {creditsRemaining}");
         }
 
-        private protected override void UpdateScore()
+        private protected override void UpdateScore(int value)
         {
+            if (Score < OneUpThreshold && value >= OneUpThreshold)
+                ++LivesRemaining;
+            base.UpdateScore(value);
             Tiles.DrawInteger(1, 6, Score);
         }
 
@@ -681,18 +752,12 @@ namespace PacSharpApp
         #region Game Start
         private void StartGame()
         {
-            victoryAlreadyReached = false;
             levelNumber = 0;
             State = GameState.Playing;
             Score = 0;
             DisplayedHighScore = 0;
-
-            InitLevel();
-            DelayStart();
             LivesRemaining = StartingLives;
-            globalPelletCounter = 0;
-            globalPelletCounterEnabled = false;
-            pelletTimer = PelletTimerInterval;
+            StartNextLevel();
         }
 
         private void DelayStart()

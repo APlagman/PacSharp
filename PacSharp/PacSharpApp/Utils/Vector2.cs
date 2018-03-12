@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using PacSharpApp.Graphics;
 /// <summary>
 /// Alex Plagman
 /// </summary>
@@ -72,6 +73,11 @@ namespace PacSharpApp.Utils
             if (vec.Y % val > val / 2)
                 y += val;
             return new Vector2(x, y);
+        }
+
+        public static Point ToTilePoint(this Vector2 vec)
+        {
+            return new Point((int)Math.Floor(vec.X / GraphicsConstants.TileWidth), (int)Math.Floor(vec.Y / GraphicsConstants.TileWidth));
         }
     }
 }

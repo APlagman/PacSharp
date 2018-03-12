@@ -56,8 +56,7 @@ namespace PacSharpApp
             get => score;
             set
             {
-                score = value;
-                UpdateScore();
+                UpdateScore(value);
             }
         }
 
@@ -174,7 +173,7 @@ namespace PacSharpApp
             Animation = null;
         }
 
-        private protected virtual void UpdateScore() { }
+        private protected virtual void UpdateScore(int value) { score = value; }
 
         internal void ScheduleReset() => resetScheduled = true;
 

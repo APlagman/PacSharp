@@ -21,7 +21,7 @@ namespace PacSharpApp.AI
             get
             {
                 if (owner.IsRespawning)
-                    return level.GhostRespawnTile;
+                    return level.GhostHouseEntrance.ToTilePoint();
                 else if (owner.IsChasing)
                     return target.TilePosition.DistanceTo(owner.TilePosition) < 8
                         ? level.GhostFavoriteTiles[GhostType.Clyde]
