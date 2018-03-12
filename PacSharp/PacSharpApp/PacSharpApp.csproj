@@ -99,6 +99,7 @@
     <Compile Include="Graphics\Sprite.cs" />
     <Compile Include="Graphics\StaticSprite.cs" />
     <Compile Include="Graphics\TileCollection.cs" />
+    <Compile Include="Utils\PointExtensions.cs" />
     <Compile Include="Utils\RectangleExtensions.cs" />
     <Compile Include="Utils\Vector2.cs" />
     <EmbeddedResource Include="PacSharpGameForm.resx">

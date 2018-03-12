@@ -12,6 +12,8 @@ namespace PacSharpApp.Objects
 {
     class PacmanObject : GameObject
     {
+        private const double PlayerMovementSpeed = 0.044d;
+
         private int levelNumber;
         private PacmanSprite sprite;
         private PacmanState state;
@@ -40,20 +42,20 @@ namespace PacSharpApp.Objects
                 if (GhostsAreFrightened)
                 {
                     if (LevelNumber == 0)
-                        return PacSharpGame.MovementSpeed * 0.8;
+                        return PlayerMovementSpeed * 0.8;
                     else if (LevelNumber < 4 || LevelNumber > 19)
-                        return PacSharpGame.MovementSpeed * 0.9;
+                        return PlayerMovementSpeed * 0.9;
                     else
-                        return PacSharpGame.MovementSpeed;
+                        return PlayerMovementSpeed;
                 }
                 else
                 {
                     if (LevelNumber == 0)
-                        return PacSharpGame.MovementSpeed * 0.9;
+                        return PlayerMovementSpeed * 0.9;
                     else if (LevelNumber < 4)
-                        return PacSharpGame.MovementSpeed * 0.95;
+                        return PlayerMovementSpeed * 0.95;
                     else
-                        return PacSharpGame.MovementSpeed;
+                        return PlayerMovementSpeed;
                 }
             }
         }
@@ -76,6 +78,8 @@ namespace PacSharpApp.Objects
         internal bool IsWarping => State is PacmanWarpingState;
 
         private Direction Direction => sprite.Orientation;
+
+        internal int DelayMotion { get; set; } = 0;
 
         internal bool IsFacingMazeEdge
         {
@@ -140,7 +144,15 @@ namespace PacSharpApp.Objects
 
         internal override void Update(TimeSpan elapsedTime)
         {
+            Vector2 tempVelocity = Velocity;
+            if (DelayMotion > 0)
+                Velocity = Vector2.Zero;
             base.Update(elapsedTime);
+            if (DelayMotion > 0)
+            {
+                Velocity = tempVelocity;
+                --DelayMotion;
+            }
             if ((state is PacmanRespawningState || state is PacmanDyingState))
                 sprite.RepeatAnimation = false;
             state.Update(sprite.AnimationFinished);

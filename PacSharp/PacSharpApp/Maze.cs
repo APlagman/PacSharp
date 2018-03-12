@@ -169,7 +169,7 @@ namespace PacSharpApp
 
         private static IDictionary<GhostType, Vector2> ReadGhostSpawns(XDocument mazeXml)
         {
-            var ghostSpawns = new Dictionary<GhostType, Vector2>();
+            var ghostSpawns = new SortedDictionary<GhostType, Vector2>();
             var spawnInfo = 
                 mazeXml.Root.Descendants(ObjectElementName)
                 .Where(obj => obj.Attribute(TypeAttribute).Value == GhostObjectType)

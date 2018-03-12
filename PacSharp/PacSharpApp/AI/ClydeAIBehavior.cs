@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using PacSharpApp.Objects;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -14,9 +15,21 @@ namespace PacSharpApp.AI
         { }
 
         internal override int ReleasePriority => 3;
-
+        
         private protected override Point DestinationTile
-            => (owner.IsRespawning) ? level.GhostRespawnTile : level.GhostFavoriteTiles[GhostType.Clyde];
+        {
+            get
+            {
+                if (owner.IsRespawning)
+                    return level.GhostRespawnTile;
+                else if (owner.IsChasing)
+                    return target.TilePosition.DistanceTo(owner.TilePosition) < 8
+                        ? level.GhostFavoriteTiles[GhostType.Clyde]
+                        : target.TilePosition;
+                else
+                    return level.GhostFavoriteTiles[GhostType.Clyde];
+            }
+        }
 
         internal override bool GlobalPelletReleaseReached(int globalPelletCounter) => globalPelletCounter >= 32;
 

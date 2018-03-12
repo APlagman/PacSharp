@@ -20,7 +20,6 @@ namespace PacSharpApp
     /// </summary>
     sealed class PacSharpGame : Game
     {
-        private const double PlayerMovementSpeed = 1.0;
         private const int StartingLives = 2;
         private const string ReadyText = "READY!";
         private const string OneUpText = "1UP";
@@ -30,7 +29,6 @@ namespace PacSharpApp
         private const int BaseGhostScore = 200;
         private const int LevelNumberToStopGhostsTurningBlue = 20;
         private const double MinimumFruitAppearanceDurationInSeconds = 9;
-        internal const double MovementSpeed = 0.0375d;
 
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
@@ -190,7 +188,7 @@ namespace PacSharpApp
                     player?.Update(elapsedTime);
                 foreach (var ghost in ghosts)
                     ghost.PelletCounterEnabled = false;
-                if (GhostToRelease != null)
+                if (globalPelletCounterEnabled == false && GhostToRelease != null)
                     GhostToRelease.PelletCounterEnabled = true;
                 foreach (var ghost in ghosts)
                     ghost.Update(elapsedTime);
@@ -344,6 +342,8 @@ namespace PacSharpApp
                 GraphicsHandler.Unregister(pellet);
                 powerPellets.Remove(pellet);
             }
+            if (eaten.Count > 0)
+                obj.DelayMotion = 3;
         }
 
         private void HandleEatingNormalPellets(PacmanObject obj)
@@ -371,6 +371,7 @@ namespace PacSharpApp
                 if (globalPelletCounterEnabled)
                     UpdateGlobalPelletCounter();
                 pelletTimer = PelletTimerInterval;
+                obj.DelayMotion = 1;
             }
         }
 
@@ -498,7 +499,8 @@ namespace PacSharpApp
         {
             ++levelNumber;
             Paused = true;
-            GraphicsHandler.Unregister(fruit);
+            if (fruit != null)
+                GraphicsHandler.Unregister(fruit);
             fruit = null;
             foreach (var ghost in ghosts)
                 GraphicsHandler.Unregister(ghost);
@@ -582,6 +584,13 @@ namespace PacSharpApp
             Score = 0;
             State = GameState.Menu;
             Paused = false;
+            fruit = null;
+            ghosts = null;
+            player = null;
+            pellets = null;
+            powerPellets = null;
+            actionQueue.Clear();
+            walls = null;
         }
 
         private void BeginMainMenuChase()
@@ -748,6 +757,9 @@ namespace PacSharpApp
                     ExitingGhostHouse = (spawn.Key == GhostType.Blinky),
                     LevelNumber = levelNumber
                 }));
+            if (ghosts.Where(ghost => ghost.Behavior is InkyAIBehavior).Count() > 0)
+                (ghosts.Where(ghost => ghost.Behavior is InkyAIBehavior).FirstOrDefault()?.Behavior as InkyAIBehavior)
+                    .Reference = ghosts.Where(ghost => ghost.Behavior is BlinkyAIBehavior).FirstOrDefault();
         }
 
         private void CreatePowerPellets(Maze level)

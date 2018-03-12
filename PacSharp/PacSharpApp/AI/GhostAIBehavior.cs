@@ -90,11 +90,8 @@ namespace PacSharpApp.AI
                 owner.ExitingGhostHouse = true;
         }
 
-        private double DistanceToTarget(Direction dir, bool useNextTile = true)
-        {
-            Point futureTile = FutureTile(dir, useNextTile);
-            return Math.Sqrt(Math.Pow(DestinationTile.X - futureTile.X, 2) + Math.Pow(DestinationTile.Y - futureTile.Y, 2));
-        }
+        private double DistanceToTarget(Direction dir, bool useNextTile = true) =>
+            FutureTile(dir, useNextTile).DistanceTo(DestinationTile);
 
         private Point FutureTile(Direction dir, bool useNextTile = true)
         {
@@ -135,7 +132,7 @@ namespace PacSharpApp.AI
         {
             if (owner.IsHome)
             {
-                Vector2 pos = owner.Position.RoundedToNearest(0.5);
+                Vector2 pos = owner.Position.RoundedToNearest(1);
                 if (owner.ExitingGhostHouse)
                 {
                     if (pos.X == level.GhostHouseEntrance.X)
@@ -190,6 +187,8 @@ namespace PacSharpApp.AI
         {
             if (pos.Y == level.GhostHouseEntrance.Y)
             {
+                owner.Position.X = level.GhostHouseEntrance.X - 0.5;
+                owner.Position.Y = pos.Y;
                 LeftGhostHouse();
             }
             else
@@ -204,7 +203,10 @@ namespace PacSharpApp.AI
         private void MoveToSpawnPosition(Vector2 pos)
         {
             if (pos.X == level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2)
+            {
+                owner.PerformTurn(Direction.Down);
                 owner.Velocity = Vector2.Zero;
+            }
             else
             {
                 owner.PerformTurn(level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2 < pos.X ? Direction.Left : Direction.Right);

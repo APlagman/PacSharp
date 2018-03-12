@@ -13,6 +13,8 @@ namespace PacSharpApp.Objects
 {
     class GhostObject : GameObject
     {
+        private const double GhostMovementSpeed = 0.044d;
+
         private bool isFrightened = false;
         private int levelNumber;
         private bool shouldScatter = true;
@@ -74,29 +76,29 @@ namespace PacSharpApp.Objects
                 if (IsWarping)
                 {
                     if (LevelNumber == 0)
-                        return PacSharpGame.MovementSpeed * 0.40;
+                        return GhostMovementSpeed * 0.40;
                     else if (LevelNumber < 4)
-                        return PacSharpGame.MovementSpeed * 0.45;
+                        return GhostMovementSpeed * 0.45;
                     else
-                        return PacSharpGame.MovementSpeed * 0.50;
+                        return GhostMovementSpeed * 0.50;
                 }
                 else if (IsFrightened)
                 {
                     if (LevelNumber == 0)
-                        return PacSharpGame.MovementSpeed * 0.50;
+                        return GhostMovementSpeed * 0.50;
                     else if (LevelNumber < 4)
-                        return PacSharpGame.MovementSpeed * 0.55;
+                        return GhostMovementSpeed * 0.55;
                     else
-                        return PacSharpGame.MovementSpeed * 0.60;
+                        return GhostMovementSpeed * 0.60;
                 }
                 else
                 {
                     if (LevelNumber == 0)
-                        return PacSharpGame.MovementSpeed * 0.75;
+                        return GhostMovementSpeed * 0.75;
                     else if (LevelNumber < 4)
-                        return PacSharpGame.MovementSpeed * 0.85;
+                        return GhostMovementSpeed * 0.85;
                     else
-                        return PacSharpGame.MovementSpeed * 0.95;
+                        return GhostMovementSpeed * 0.95;
                 }
             }
         }
@@ -122,6 +124,8 @@ namespace PacSharpApp.Objects
                 }
             }
         }
+
+        internal bool CruiseElroyMode { get; set; }
 
         private void OnShouldScatterChanged()
         {
@@ -253,7 +257,7 @@ namespace PacSharpApp.Objects
         #region State
         abstract class GhostState
         {
-            private protected static readonly ICollection<double> flashTimings = new List<double>() { 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25 };
+            private protected static readonly ICollection<double> flashTimings = new List<double>() { 2.25, 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.25 };
 
             private protected GhostObject owner;
 

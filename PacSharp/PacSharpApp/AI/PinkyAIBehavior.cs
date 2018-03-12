@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using PacSharpApp.Objects;
+using PacSharpApp.Utils;
 
 /// <summary>
 /// Alex Plagman
@@ -16,7 +17,38 @@ namespace PacSharpApp.AI
         internal override int ReleasePriority => 1;
 
         private protected override Point DestinationTile
-            => (owner.IsRespawning) ? level.GhostRespawnTile : level.GhostFavoriteTiles[GhostType.Pinky];
+        {
+            get
+            {
+                if (owner.IsRespawning)
+                    return level.GhostRespawnTile;
+                else if (owner.IsChasing)
+                {
+                    Point dest = target.TilePosition;
+                    switch (target.Orientation)
+                    {
+                        case Direction.Down:
+                            dest.Y += 4;
+                            break;
+                        case Direction.Up:
+                            dest.Y -= 4;
+                            dest.X -= 4; // Replicating original game bug
+                            break;
+                        case Direction.Left:
+                            dest.X -= 4;
+                            break;
+                        case Direction.Right:
+                            dest.X += 4;
+                            break;
+                        default:
+                            throw new Exception("Unhandled direction.");
+                    }
+                    return dest;
+                }
+                else
+                    return level.GhostFavoriteTiles[GhostType.Pinky];
+            }
+        }
 
         internal override bool GlobalPelletReleaseReached(int globalPelletCounter) => globalPelletCounter >= 7;
 

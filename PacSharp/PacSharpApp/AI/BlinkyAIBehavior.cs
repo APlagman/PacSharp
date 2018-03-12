@@ -23,7 +23,7 @@ namespace PacSharpApp.AI
             {
                 if (owner.IsRespawning)
                     return level.GhostRespawnTile;
-                else if (owner.IsChasing)
+                else if (owner.IsChasing || owner.CruiseElroyMode)
                     return target.TilePosition;
                 else
                     return level.GhostFavoriteTiles[GhostType.Blinky];
