@@ -140,7 +140,7 @@ namespace PacSharpApp.AI
                     else
                         MoveHorizontallyToExit(pos);
                 }
-                else if (pos.Y == (level.GhostRespawnTile.Y + 0.5) * GraphicsConstants.TileWidth)
+                else
                     MoveToSpawnPosition(pos);
                 return;
             }
@@ -185,7 +185,7 @@ namespace PacSharpApp.AI
 
         private void MoveVerticallyToExit(Vector2 pos)
         {
-            if (pos.Y == level.GhostHouseEntrance.Y)
+            if (pos.Y <= level.GhostHouseEntrance.Y)
             {
                 owner.Position.X = level.GhostHouseEntrance.X - 0.5;
                 owner.Position.Y = pos.Y;
@@ -202,15 +202,20 @@ namespace PacSharpApp.AI
 
         private void MoveToSpawnPosition(Vector2 pos)
         {
-            if (pos.X == level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2)
+            if (pos.Equals(new Vector2(level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2, level.GhostSpawns[type].Y + GraphicsConstants.TileWidth / 2)))
             {
                 owner.PerformTurn(Direction.Down);
                 owner.Velocity = Vector2.Zero;
             }
-            else
+            else if (pos.Y == level.GhostSpawns[type].Y + GraphicsConstants.TileWidth / 2)
             {
                 owner.PerformTurn(level.GhostSpawns[type].X + GraphicsConstants.TileWidth / 2 < pos.X ? Direction.Left : Direction.Right);
                 owner.Velocity.Y = 0;
+            }
+            else
+            {
+                owner.PerformTurn(level.GhostSpawns[type].Y + GraphicsConstants.TileWidth / 2 < pos.Y ? Direction.Up : Direction.Down);
+                owner.Velocity.X = 0;
             }
         }
 

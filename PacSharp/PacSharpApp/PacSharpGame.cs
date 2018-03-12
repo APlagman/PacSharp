@@ -462,7 +462,9 @@ namespace PacSharpApp
                 || obj.BottomBelow(GraphicsHandler.GameArea.Bottom);
         }
 
-        private void PushOutOfWalls(GameObject obj)
+        private void PushOutOfWalls(GameObject obj) => PushOutOfWalls(obj, walls);
+
+        internal static void PushOutOfWalls(GameObject obj, IReadOnlyCollection<RectangleF> walls)
         {
             foreach (RectangleF wall in walls.Where(wall => obj.Bounds.IntersectsWith(wall)))
             {
@@ -512,6 +514,8 @@ namespace PacSharpApp
 
         private void StartNextLevel()
         {
+            pelletTimer = TimeSpan.MaxValue;
+            ghostModeTimer = TimeSpan.MaxValue;
             Paused = true;
             if (fruit != null)
             {
@@ -551,6 +555,9 @@ namespace PacSharpApp
 
         private void RespawnPlayer()
         {
+            ghostPhase = 0;
+            ghostModeTimer = TimeSpan.MaxValue;
+            pelletTimer = TimeSpan.MaxValue;
             SpawnPlayer(level);
             SpawnGhosts(level);
             DisableMovement();
@@ -762,13 +769,14 @@ namespace PacSharpApp
 
         private void DelayStart()
         {
-            ghostModeTimer = GhostModePhaseDuration();
             Tiles.DrawText(20, 11, ReadyText, PaletteID.Pacman);
             actionQueue.Add((LevelStartDelay, EnableLevelPlay));
         }
 
         private void EnableLevelPlay()
         {
+            pelletTimer = PelletTimerInterval;
+            ghostModeTimer = GhostModePhaseDuration();
             Paused = false;
             player.PreventMovement = false;
             foreach (var ghost in ghosts)

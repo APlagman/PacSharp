@@ -131,9 +131,9 @@ namespace PacSharpApp.Objects
         {
             if (IsChasing || IsScattering)
             {
-                if (ShouldScatter && !IsScattering)
+                if (ShouldScatter)
                     State = new GhostScatterState(this);
-                else if (!IsChasing)
+                else
                     State = new GhostChaseState(this);
             }
         }
@@ -193,6 +193,8 @@ namespace PacSharpApp.Objects
 
         internal virtual void PerformTurn(Direction dir)
         {
+            if (Direction != dir)
+                Position = Position.RoundedToNearest(4);
             Direction = dir;
             Velocity = DirectionVelocity(dir);
             if (!IsFrightened && sprite.CurrentAnimationSetID != Direction.ToGhostSpriteAnimationID().ToString())
@@ -245,13 +247,13 @@ namespace PacSharpApp.Objects
             State = (IsFrightened
                 ? (!(State as GhostWarpingState).UntilUnafraid.Equals(TimeSpan.MaxValue))
                     ? new GhostFrightenedState(this, (State as GhostWarpingState).TurnBlue, (State as GhostWarpingState).UntilUnafraid)
-                    : new GhostFrightenedState(this, (State as GhostWarpingState).TurnBlue)
+                    : new GhostFrightenedState(this, levelNumber, (State as GhostWarpingState).TurnBlue)
                 : (ShouldScatter) ? new GhostScatterState(this) : new GhostChaseState(this) as GhostState);
         }
 
         internal void BecomeFrightened(bool turnBlue)
         {
-            State = new GhostFrightenedState(this, turnBlue);
+            State = new GhostFrightenedState(this, levelNumber, turnBlue);
         }
 
         #region State
@@ -278,14 +280,31 @@ namespace PacSharpApp.Objects
 
         class GhostFrightenedState : GhostState
         {
-            private static readonly TimeSpan afraidDuration = TimeSpan.FromSeconds(8);
+            private TimeSpan untilUnafraid;
 
-            private TimeSpan untilUnafraid = afraidDuration;
-
-            internal GhostFrightenedState(GhostObject owner, bool turnBlue)
+            internal GhostFrightenedState(GhostObject owner, int levelNumber, bool turnBlue)
                 : base(owner)
             {
+                untilUnafraid = FrightDuration(levelNumber);
                 TurnBlue = turnBlue;
+            }
+
+            private TimeSpan FrightDuration(int levelNumber)
+            {
+                if (levelNumber == 0)
+                    return TimeSpan.FromSeconds(6);
+                else if (levelNumber == 1 || levelNumber == 5 || levelNumber == 9)
+                    return TimeSpan.FromSeconds(5);
+                else if (levelNumber == 2)
+                    return TimeSpan.FromSeconds(4);
+                else if (levelNumber == 3 || levelNumber == 13)
+                    return TimeSpan.FromSeconds(3);
+                else if (levelNumber < 8 || levelNumber == 10)
+                    return TimeSpan.FromSeconds(2);
+                else if (levelNumber < 16 || levelNumber == 17)
+                    return TimeSpan.FromSeconds(1);
+                else
+                    return TimeSpan.MinValue;
             }
 
             internal GhostFrightenedState(GhostObject owner, bool turnBlue, TimeSpan untilUnafraid)
