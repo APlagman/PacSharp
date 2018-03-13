@@ -79,7 +79,7 @@ namespace PacSharpApp.Objects
 
         private Direction Direction => sprite.Orientation;
 
-        internal int DelayMotion { get; set; } = 0;
+        internal int FramesToDelayMotion { get; set; } = 0;
 
         internal bool IsFacingMazeEdge
         {
@@ -145,13 +145,13 @@ namespace PacSharpApp.Objects
         internal override void Update(TimeSpan elapsedTime)
         {
             Vector2 tempVelocity = Velocity;
-            if (DelayMotion > 0)
+            if (FramesToDelayMotion > 0)
                 Velocity = Vector2.Zero;
             base.Update(elapsedTime);
-            if (DelayMotion > 0)
+            if (FramesToDelayMotion > 0)
             {
                 Velocity = tempVelocity;
-                --DelayMotion;
+                --FramesToDelayMotion;
             }
             if ((state is PacmanRespawningState || state is PacmanDyingState))
                 sprite.RepeatAnimation = false;

@@ -55,7 +55,6 @@ namespace PacSharpApp.Graphics
             }
         }
 
-        #region GameObject Sprites
         internal void Register(GameObject obj, Sprite sprite) => gameObjectMap.Add(obj, sprite);
         internal void Unregister(GameObject obj) => gameObjectMap.Remove(obj);
 
@@ -78,7 +77,6 @@ namespace PacSharpApp.Graphics
 
         internal void Show(GameObject obj) => gameObjectMap[obj].Visible = true;
         internal void Hide(GameObject obj) => gameObjectMap[obj].Visible = false;
-        #endregion
 
         internal void UpdateAnimatedSprites(TimeSpan elapsedTime)
         {

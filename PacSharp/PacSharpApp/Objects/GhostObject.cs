@@ -192,7 +192,7 @@ namespace PacSharpApp.Objects
                 sprite.Palette = PaletteID.GhostAfraid;
         }
 
-        internal virtual void PerformTurn(Direction dir)
+        internal void PerformTurn(Direction dir)
         {
             if (Direction != dir)
                 Position = Position.RoundedToNearest(2);

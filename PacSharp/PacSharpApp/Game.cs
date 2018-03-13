@@ -145,6 +145,14 @@ namespace PacSharpApp
 
         private protected abstract void HandleInput();
         private protected abstract void UpdateImpl(TimeSpan elapsedTime);
+
+        private protected void Despawn(GameObject obj)
+        {
+            if (obj != null)
+            {
+                GraphicsHandler.Unregister(obj);
+            }
+        }
         #endregion
 
         #region Game State

@@ -28,6 +28,7 @@ namespace PacSharpApp
     /// </summary>
     sealed class PacSharpGame : Game
     {
+        #region Constants
         private const int StartingLives = 2;
         private const string ReadyText = "READY!";
         private const string OneUpText = "1UP";
@@ -38,6 +39,19 @@ namespace PacSharpApp
         private const int LevelNumberToStopGhostsTurningBlue = 20;
         private const double MinimumFruitAppearanceDurationInSeconds = 9;
         private const int OneUpThreshold = 10000;
+        private const int PowerPelletMovementDelayFrames = 3;
+        private const int PelletMovementDelayFrames = 1;
+        private const int FirstFruitThreshold = 170;
+        private const int SecondFruitThreshold = 70;
+        private const int LastOrangeLevel = 4;
+        private const int LastAppleLevel = 6;
+        private const int LastMelonLevel = 8;
+        private const int LastGalaxianLevel = 10;
+        private const int LastBellLevel = 12;
+        private const int LastStrawberryLevel = 2;
+        private const int MaxFruitsToDraw = 6;
+        private const int UpperBonusFruitRow = 34;
+        private const int RightmostBonusFruitLeftColumn = 26;
         private static readonly TimeSpan EatGhostPauseDuration = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan VictoryPauseDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan MainMenuAnimationsDisabledDuration = TimeSpan.FromMilliseconds(500);
@@ -45,7 +59,9 @@ namespace PacSharpApp
         private static readonly TimeSpan RespawnPlayerDelay = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan HighscoreScreenDelay = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan EatFruitDisplayScoreDuration = TimeSpan.FromSeconds(2);
+        #endregion
 
+        #region Fields
         private Highscores currentHighscores;
         private int creditsRemaining = 0;
         private int livesRemaining;
@@ -81,6 +97,7 @@ namespace PacSharpApp
         private bool enteringHighscoreInitials = false;
         private int highscoreInitialToChangePosition = 0;
         private int highscoreToChangeIndex = 0;
+        #endregion
 
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
@@ -88,25 +105,7 @@ namespace PacSharpApp
             LoadHighscores();
         }
 
-        private void LoadHighscores()
-        {
-            try
-            {
-                var serializer = new BinaryFormatter();
-                using (var highscoreFile = File.OpenRead(@".\Highscores"))
-                    currentHighscores = serializer.Deserialize(highscoreFile) as Highscores;
-            }
-            catch (SerializationException)
-            {
-                currentHighscores = new Highscores();
-            }
-            catch (IOException)
-            {
-                currentHighscores = new Highscores();
-            }
-            DisplayedHighScore = currentHighscores.Highscore;
-        }
-
+        #region Properties
         private int DisplayedHighScore
         {
             get => displayedHighScore;
@@ -117,7 +116,12 @@ namespace PacSharpApp
         private int GhostScore => BaseGhostScore << ghostsEaten;
         private protected override bool UseFixedTimeStepForUpdates => true;
         private protected override bool UseFixedTimeStepForAnimations => true;
+        private bool GhostsShouldTurnBlue => levelNumber < LevelNumberToStopGhostsTurningBlue;
+        private GhostObject GhostToRelease => ghosts?.Where(ghost => ghost.IsHome).OrderBy(ghost => (ghost.Behavior as GhostAIBehavior).ReleasePriority).FirstOrDefault();
+        private TimeSpan PelletTimerInterval => (levelNumber >= 4 ? TimeSpan.FromSeconds(4) : TimeSpan.FromSeconds(3));
+        #endregion
 
+        #region Input
         private protected override void HandleInput()
         {
             if (InputHandler.HeldKeys.Contains(Keys.R) && InputHandler.HeldKeys.Contains(Keys.ControlKey))
@@ -128,72 +132,70 @@ namespace PacSharpApp
             switch (State)
             {
                 case GameState.Menu:
-                    {
-                        if (InputHandler.HeldKeys.Contains(Keys.Enter))
-                        {
-                            StartGame();
-                            break;
-                        }
-                        if (InputHandler.HeldKeys.Contains(Keys.H) && InputHandler.HeldKeys.Contains(Keys.ControlKey))
-                        {
-                            State = GameState.Highscores;
-                            ShowHighscoreScreen();
-                            break;
-                        }
-                    }
+                    HandleMenuInput();
                     break;
                 case GameState.Playing:
-                    {
-                        if (InputHandler.PressedKeys.Contains(Keys.P))
-                            Paused = !Paused;
-                        if (!Paused)
-                            player?.HandleInput(InputHandler);
-                    }
+                    HandlePlayingInput();
                     break;
                 case GameState.Highscores:
-                    {
-                        if (enteringHighscoreInitials)
-                        {
-                            foreach (var key in InputHandler.PressedKeys)
-                            {
-                                if ((int)key >= (int)Keys.A && (int)key <= (int)Keys.Z)
-                                {
-                                    char[] initials = currentHighscores.ToDisplay[highscoreToChangeIndex].initials.ToCharArray();
-                                    initials[highscoreInitialToChangePosition] = (char)key;
-                                    string newInitials = new string(initials);
-                                    ++highscoreInitialToChangePosition;
-                                    highscoreInitialToChangePosition %= 3;
-                                    currentHighscores.Update(highscoreToChangeIndex, newInitials);
-                                    for (int t = 0; t < 3; ++t)
-                                        Tiles.ClearTile(4 + highscoreToChangeIndex * 2, 20 + t);
-                                    GraphicsHandler.CommitTiles(Tiles);
-                                    Tiles.DrawText(4 + highscoreToChangeIndex * 2, 20, newInitials);
-                                    break;
-                                }
-                            }
-                            if (InputHandler.PressedKeys.Contains(Keys.Enter))
-                            {
-                                enteringHighscoreInitials = false;
-                                SaveHighScores();
-                            }
-                        }
-                    }
+                    HandleHighscoreInput();
                     break;
                 default:
                     break;
             }
         }
 
-        private void SaveHighScores()
+        private void HandleHighscoreInput()
         {
-            try
+            if (enteringHighscoreInitials)
             {
-                var serializer = new BinaryFormatter();
-                using (var highscoreFile = File.OpenWrite(@".\Highscores"))
-                    serializer.Serialize(highscoreFile, currentHighscores);
+                foreach (var key in InputHandler.PressedKeys)
+                {
+                    if ((int)key >= (int)Keys.A && (int)key <= (int)Keys.Z)
+                    {
+                        char[] initials = currentHighscores.ToDisplay[highscoreToChangeIndex].initials.ToCharArray();
+                        initials[highscoreInitialToChangePosition] = (char)key;
+                        string newInitials = new string(initials);
+                        ++highscoreInitialToChangePosition;
+                        highscoreInitialToChangePosition %= 3;
+                        currentHighscores.Update(highscoreToChangeIndex, newInitials);
+                        for (int t = 0; t < 3; ++t)
+                            Tiles.ClearTile(4 + highscoreToChangeIndex * 2, 20 + t);
+                        GraphicsHandler.CommitTiles(Tiles);
+                        Tiles.DrawText(4 + highscoreToChangeIndex * 2, 20, newInitials);
+                        break;
+                    }
+                }
+                if (InputHandler.PressedKeys.Contains(Keys.Enter))
+                {
+                    enteringHighscoreInitials = false;
+                    SaveHighScores();
+                }
             }
-            catch (IOException) { }
         }
+
+        private void HandlePlayingInput()
+        {
+            if (InputHandler.PressedKeys.Contains(Keys.P))
+                Paused = !Paused;
+            if (!Paused)
+                player?.HandleInput(InputHandler);
+        }
+
+        private void HandleMenuInput()
+        {
+            if (InputHandler.HeldKeys.Contains(Keys.Enter))
+            {
+                StartGame();
+                return;
+            }
+            if (InputHandler.HeldKeys.Contains(Keys.H) && InputHandler.HeldKeys.Contains(Keys.ControlKey))
+            {
+                State = GameState.Highscores;
+                ShowHighscoreScreen();
+            }
+        }
+        #endregion
 
         #region Update Logic
         private protected override void UpdateImpl(TimeSpan elapsedTime)
@@ -368,11 +370,6 @@ namespace PacSharpApp
             fruit = null;
         }
 
-        private void RemoveDisplayedFruitScore(int fruitLeftCol, int fruitRow)
-        {
-            Tiles.DrawRange((fruitRow, fruitLeftCol), (fruitRow, fruitLeftCol + 3), GraphicsID.TileEmpty, PaletteID.Empty);
-        }
-
         private void CheckWarping()
         {
             CheckPlayerWarping();
@@ -415,7 +412,7 @@ namespace PacSharpApp
                     playerHasLostLifeThisLevel = true;
                     if (LivesRemaining > 0)
                     {
-                        obj.BeginRespawning(DelayRespawn);
+                        obj.BeginRespawning(BeginRespawningPlayer);
                         --LivesRemaining;
                         foreach (var ghost in ghosts)
                         {
@@ -500,11 +497,11 @@ namespace PacSharpApp
             {
                 Score += PowerPelletObject.Worth;
                 BeginPowerPelletEffects();
-                GraphicsHandler.Unregister(pellet);
+                Despawn(pellet);
                 powerPellets.Remove(pellet);
             }
             if (eaten.Count > 0)
-                obj.DelayMotion = 3;
+                obj.FramesToDelayMotion = PowerPelletMovementDelayFrames;
         }
 
         private void HandleEatingNormalPellets(PacmanObject obj)
@@ -516,11 +513,11 @@ namespace PacSharpApp
             foreach (var pellet in eaten)
             {
                 Score += PelletObject.Worth;
-                GraphicsHandler.Unregister(pellet);
+                Despawn(pellet);
                 pellets.Remove(pellet);
             }
-            if (pellets.Count <= 170 && prevPelletCount > 170 ||
-                pellets.Count <= 70 && prevPelletCount > 70)
+            if (pellets.Count <= FirstFruitThreshold && prevPelletCount > FirstFruitThreshold ||
+                pellets.Count <= SecondFruitThreshold && prevPelletCount > SecondFruitThreshold)
                 SpawnFruit();
             if (eaten.Count > 0)
             {
@@ -532,7 +529,7 @@ namespace PacSharpApp
                 if (globalPelletCounterEnabled)
                     UpdateGlobalPelletCounter();
                 pelletTimer = PelletTimerInterval;
-                obj.DelayMotion = 1;
+                obj.FramesToDelayMotion = PelletMovementDelayFrames;
             }
         }
 
@@ -541,45 +538,6 @@ namespace PacSharpApp
             ++globalPelletCounter;
             if (GhostToRelease != null)
                 GhostToRelease.ExitingGhostHouse = (GhostToRelease.Behavior as GhostAIBehavior).GlobalPelletReleaseReached(globalPelletCounter);
-        }
-
-        private void SpawnFruit()
-        {
-            fruit = new FruitObject(GraphicsHandler, GetFruitFromLevelNumber())
-            {
-                Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
-            };
-            fruitDespawnTimer = TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds);
-        }
-
-        private GraphicsID GetFruitFromLevelNumber() => GetFruitFromLevelNumber(levelNumber);
-
-        private static GraphicsID GetFruitFromLevelNumber(int levelNumber)
-        {
-            if (levelNumber == 0)
-                return GraphicsID.SpriteCherry;
-            else if (levelNumber == 1)
-                return GraphicsID.SpriteStrawberry;
-            else if (levelNumber < 4)
-                return GraphicsID.SpriteOrange;
-            else if (levelNumber < 6)
-                return GraphicsID.SpriteApple;
-            else if (levelNumber < 8)
-                return GraphicsID.SpriteMelon;
-            else if (levelNumber < 10)
-                return GraphicsID.SpriteGalaxian;
-            else if (levelNumber < 12)
-                return GraphicsID.SpriteBell;
-            else
-                return GraphicsID.SpriteKey;
-        }
-
-        private void Despawn(GameObject obj)
-        {
-            if (obj != null)
-            {
-                GraphicsHandler.Unregister(obj);
-            }
         }
 
         private bool ShouldBeginWarping(PacmanObject obj)
@@ -626,7 +584,40 @@ namespace PacSharpApp
                     obj.Position.X -= (obj.Left - wall.Right);
             }
         }
-        #endregion Collision
+        #endregion
+
+        #region Fruit
+        private void SpawnFruit()
+        {
+            fruit = new FruitObject(GraphicsHandler, GetFruitFromLevelNumber())
+            {
+                Position = level.FruitSpawn + new Vector2(GraphicsConstants.TileWidth / 2, GraphicsConstants.TileWidth / 2)
+            };
+            fruitDespawnTimer = TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds);
+        }
+
+        private GraphicsID GetFruitFromLevelNumber() => GetFruitFromLevelNumber(levelNumber);
+
+        private static GraphicsID GetFruitFromLevelNumber(int levelNumber)
+        {
+            if (levelNumber == 0)
+                return GraphicsID.SpriteCherry;
+            else if (levelNumber < LastStrawberryLevel)
+                return GraphicsID.SpriteStrawberry;
+            else if (levelNumber < LastOrangeLevel)
+                return GraphicsID.SpriteOrange;
+            else if (levelNumber < LastAppleLevel)
+                return GraphicsID.SpriteApple;
+            else if (levelNumber < LastMelonLevel)
+                return GraphicsID.SpriteMelon;
+            else if (levelNumber < LastGalaxianLevel)
+                return GraphicsID.SpriteGalaxian;
+            else if (levelNumber < LastBellLevel)
+                return GraphicsID.SpriteBell;
+            else
+                return GraphicsID.SpriteKey;
+        }
+        #endregion
 
         #region Gameplay Effects
         private void TurnPlayerOnCollision(GameObject obj, bool collided)
@@ -664,76 +655,71 @@ namespace PacSharpApp
         {
             pelletTimer = TimeSpan.MaxValue;
             ghostModeTimer = TimeSpan.MaxValue;
+            fruitDespawnTimer = TimeSpan.MaxValue;
+            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
+
             Paused = false;
-            if (fruit != null)
-            {
-                GraphicsHandler.Unregister(fruit);
-                fruit = null;
-            }
+
+            Despawn(fruit);
+            fruit = null;
             if (ghosts != null)
             {
                 foreach (var ghost in ghosts)
-                    GraphicsHandler.Unregister(ghost);
+                    Despawn(ghost);
                 ghosts.Clear();
             }
-            if (player != null)
-            {
-                GraphicsHandler.Unregister(player);
-                player = null;
-            }
-            InitLevel();
-            player.PerformTurn(Direction.Right);
-            DelayStart();
+            Despawn(player);
+            player = null;
+            Despawn(ghostScoreObj);
+            ghostScoreObj = null;
+            ghostObjectsEaten?.Clear();
+
             victoryAlreadyReached = false;
             globalPelletCounter = 0;
             globalPelletCounterEnabled = false;
-            pelletTimer = PelletTimerInterval;
             GraphicsHandler.PreventAnimatedSpriteUpdates = false;
-            if (ghostScoreObj != null)
-            {
-                GraphicsHandler.Unregister(ghostScoreObj);
-                ghostScoreObj = null;
-            }
-            fruitDespawnTimer = TimeSpan.MaxValue;
-            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
-            ghostObjectsEaten.Clear();
+
+            InitLevel();
+            player.PerformTurn(Direction.Right);
+            DelayStart();
+
+            pelletTimer = PelletTimerInterval;
             DrawFruits();
         }
 
         private void DrawFruits()
         {
-            int toDraw = Math.Min(6, levelNumber + 1);
+            int toDraw = Math.Min(MaxFruitsToDraw, levelNumber + 1);
             int temp = levelNumber - (toDraw - 1);
             while (toDraw > 0)
             {
-                Tiles.DrawFruit(34, 26 - (toDraw - 1) * 2, GetFruitFromLevelNumber(temp));
+                Tiles.DrawFruit(UpperBonusFruitRow, RightmostBonusFruitLeftColumn - (toDraw - 1) * 2, GetFruitFromLevelNumber(temp));
                 ++temp;
                 --toDraw;
             }
         }
 
-        private void DelayRespawn()
+        private void BeginRespawningPlayer()
         {
-            GraphicsHandler.Unregister(player);
-            foreach (var ghost in ghosts)
-                GraphicsHandler.Unregister(ghost);
+            Despawn(player);
             player = null;
+            foreach (var ghost in ghosts)
+                Despawn(ghost);
             ghosts.Clear();
-            if (ghostScoreObj != null)
-            {
-                GraphicsHandler.Unregister(ghostScoreObj);
-                ghostScoreObj = null;
-            }
+            Despawn(ghostScoreObj);
+            ghostScoreObj = null;
+            ghostObjectsEaten.Clear();
+
+            ghostModeTimer = TimeSpan.MaxValue;
+            pelletTimer = TimeSpan.MaxValue;
+            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
+
             actionQueue.Add((RespawnPlayerDelay, RespawnPlayer));
         }
 
         private void RespawnPlayer()
         {
             ghostPhase = 0;
-            ghostModeTimer = TimeSpan.MaxValue;
-            pelletTimer = TimeSpan.MaxValue;
-            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
-            ghostObjectsEaten.Clear();
 
             SpawnPlayer(level);
             SpawnGhosts(level);
@@ -748,12 +734,6 @@ namespace PacSharpApp
                     ghost.BecomeFrightened(GhostsShouldTurnBlue);
             ghostsEaten = 0;
         }
-
-        private bool GhostsShouldTurnBlue => levelNumber < LevelNumberToStopGhostsTurningBlue;
-
-        private GhostObject GhostToRelease => ghosts?.Where(ghost => ghost.IsHome).OrderBy(ghost => (ghost.Behavior as GhostAIBehavior).ReleasePriority).FirstOrDefault();
-
-        private TimeSpan PelletTimerInterval => (levelNumber >= 4 ? TimeSpan.FromSeconds(4) : TimeSpan.FromSeconds(3));
 
         private int CruiseElroyThreshold
         {
@@ -814,6 +794,33 @@ namespace PacSharpApp
             foreach (var ghost in ghosts)
                 ghost.PreventMovement = false;
         }
+
+        private TimeSpan GhostModePhaseDuration()
+        {
+            if (levelNumber < 2)
+            {
+                if (ghostPhase == 0 || ghostPhase == 2)
+                    return TimeSpan.FromSeconds(7);
+                else if (ghostPhase == 4 || ghostPhase == 6)
+                    return TimeSpan.FromSeconds(5);
+                else
+                    return TimeSpan.FromSeconds(20);
+            }
+            else
+            {
+                if (ghostPhase == 0 || ghostPhase == 2)
+                    return TimeSpan.FromSeconds((levelNumber < 5) ? 7 : 5);
+                else if (ghostPhase == 1 || ghostPhase == 3)
+                    return TimeSpan.FromSeconds(20);
+                else if (ghostPhase == 4)
+                    return TimeSpan.FromSeconds(5);
+                else if (ghostPhase == 5)
+                    return TimeSpan.FromSeconds((levelNumber < 5) ? 1033 : 1037);
+                else
+                    return TimeSpan.FromSeconds(1.0d / 60);
+            }
+            throw new Exception("Unhandled ghost mode / level state.");
+        }
         #endregion
 
         #region Game State
@@ -830,20 +837,6 @@ namespace PacSharpApp
             {
                 AddTopScreenInfo();
             }
-        }
-
-        private PaletteID HighscoreEntryPalette(int i)
-        {
-            if (i % 5 == 0)
-                return PaletteID.Blinky;
-            else if (i % 5 == 1)
-                return PaletteID.Pinky;
-            else if (i % 5 == 2)
-                return PaletteID.Inky;
-            else if (i % 5 == 3)
-                return PaletteID.Clyde;
-            else
-                return PaletteID.Pacman;
         }
 
         private protected override void ResetImpl()
@@ -873,25 +866,6 @@ namespace PacSharpApp
             };
             (GameObjects["PacMan"] as PacmanObject).PerformTurn(Direction.Left);
             GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
-        }
-
-        private void ShowHighscoreScreen()
-        {
-            if (Score > currentHighscores.Minimum)
-            {
-                highscoreToChangeIndex = currentHighscores.AddScore(Score, "---");
-                enteringHighscoreInitials = true;
-                highscoreInitialToChangePosition = 0;
-            }
-            Tiles.Clear();
-            GraphicsHandler.CommitTiles(Tiles);
-            Tiles.DrawText(1, 9, "HIGHSCORES", PaletteID.Pacman);
-            for (int i = 0; i < currentHighscores.ToDisplay.Count; ++i)
-            {
-                Tiles.DrawInteger(4 + 2 * i, 3, i + 1, HighscoreEntryPalette(i));
-                Tiles.DrawInteger(4 + 2 * i, 17, currentHighscores.ToDisplay[i].score, HighscoreEntryPalette(i));
-                Tiles.DrawText(4 + 2 * i, 23, currentHighscores.ToDisplay[i].initials, HighscoreEntryPalette(i));
-            }
         }
         #endregion
 
@@ -926,9 +900,8 @@ namespace PacSharpApp
 
         private void UpdateLives()
         {
-            // Remove life sprites
             foreach (var life in lives)
-                GraphicsHandler.Unregister(life);
+                Despawn(life);
             lives.Clear();
             for (int i = 0; i < LivesRemaining; ++i)
             {
@@ -940,31 +913,9 @@ namespace PacSharpApp
             }
         }
 
-        private TimeSpan GhostModePhaseDuration()
+        private void RemoveDisplayedFruitScore(int fruitLeftCol, int fruitRow)
         {
-            if (levelNumber < 2)
-            {
-                if (ghostPhase == 0 || ghostPhase == 2)
-                    return TimeSpan.FromSeconds(7);
-                else if (ghostPhase == 4 || ghostPhase == 6)
-                    return TimeSpan.FromSeconds(5);
-                else
-                    return TimeSpan.FromSeconds(20);
-            }
-            else
-            {
-                if (ghostPhase == 0 || ghostPhase == 2)
-                    return TimeSpan.FromSeconds((levelNumber < 5) ? 7 : 5);
-                else if (ghostPhase == 1 || ghostPhase == 3)
-                    return TimeSpan.FromSeconds(20);
-                else if (ghostPhase == 4)
-                    return TimeSpan.FromSeconds(5);
-                else if (ghostPhase == 5)
-                    return TimeSpan.FromSeconds((levelNumber < 5) ? 1033 : 1037);
-                else
-                    return TimeSpan.FromSeconds(1.0d / 60);
-            }
-            throw new Exception("Unhandled ghost mode / level state.");
+            Tiles.DrawRange((fruitRow, fruitLeftCol), (fruitRow, fruitLeftCol + 3), GraphicsID.TileEmpty, PaletteID.Empty);
         }
         #endregion
 
@@ -1071,6 +1022,71 @@ namespace PacSharpApp
             {
                 Position = new Vector2(level.PlayerSpawn.X + GraphicsConstants.TileWidth / 2, level.PlayerSpawn.Y + GraphicsConstants.TileWidth / 2)
             };
+        }
+        #endregion
+
+        #region Highscores
+        private void LoadHighscores()
+        {
+            try
+            {
+                var serializer = new BinaryFormatter();
+                using (var highscoreFile = File.OpenRead(@".\Highscores"))
+                    currentHighscores = serializer.Deserialize(highscoreFile) as Highscores;
+            }
+            catch (SerializationException)
+            {
+                currentHighscores = new Highscores();
+            }
+            catch (IOException)
+            {
+                currentHighscores = new Highscores();
+            }
+            DisplayedHighScore = currentHighscores.Highscore;
+        }
+
+        private void SaveHighScores()
+        {
+            try
+            {
+                var serializer = new BinaryFormatter();
+                using (var highscoreFile = File.OpenWrite(@".\Highscores"))
+                    serializer.Serialize(highscoreFile, currentHighscores);
+            }
+            catch (IOException) { }
+        }
+
+        private PaletteID HighscoreEntryPalette(int i)
+        {
+            if (i % 5 == 0)
+                return PaletteID.Blinky;
+            else if (i % 5 == 1)
+                return PaletteID.Pinky;
+            else if (i % 5 == 2)
+                return PaletteID.Inky;
+            else if (i % 5 == 3)
+                return PaletteID.Clyde;
+            else
+                return PaletteID.Pacman;
+        }
+
+        private void ShowHighscoreScreen()
+        {
+            if (Score > currentHighscores.Minimum)
+            {
+                highscoreToChangeIndex = currentHighscores.AddScore(Score, "---");
+                enteringHighscoreInitials = true;
+                highscoreInitialToChangePosition = 0;
+            }
+            Tiles.Clear();
+            GraphicsHandler.CommitTiles(Tiles);
+            Tiles.DrawText(1, 9, "HIGHSCORES", PaletteID.Pacman);
+            for (int i = 0; i < currentHighscores.ToDisplay.Count; ++i)
+            {
+                Tiles.DrawInteger(4 + 2 * i, 3, i + 1, HighscoreEntryPalette(i));
+                Tiles.DrawInteger(4 + 2 * i, 17, currentHighscores.ToDisplay[i].score, HighscoreEntryPalette(i));
+                Tiles.DrawText(4 + 2 * i, 23, currentHighscores.ToDisplay[i].initials, HighscoreEntryPalette(i));
+            }
         }
         #endregion
     }
