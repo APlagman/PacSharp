@@ -167,6 +167,7 @@ namespace PacSharpApp
         private protected virtual void OnGameStateChanged()
         {
             Tiles.Clear();
+            GraphicsHandler.CommitTiles(Tiles);
             GameObjects.Clear();
             GraphicsHandler.ClearMappings();
             Animation = null;

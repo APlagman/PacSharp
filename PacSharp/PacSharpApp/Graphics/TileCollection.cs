@@ -64,14 +64,16 @@ namespace PacSharpApp.Graphics
             else
             {
                 int col = lastDigitColumn;
+                int digits = 0;
                 while (toDraw > 0)
                 {
                     int digit = toDraw % 10;
                     toDraw /= 10;
                     tiles[row, col] = new Tile(DigitTile(digit), palette);
                     --col;
+                    ++digits;
                 }
-                while (col >= 0)
+                while (col > lastDigitColumn - digits)
                     tiles[row, col--] = new Tile(GraphicsID.TileEmpty, PaletteID.Empty);
             }
         }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using PacSharpApp.AI;
@@ -77,6 +79,10 @@ namespace PacSharpApp
         private TimeSpan pelletTimer = TimeSpan.MinValue;
         private bool playerHasLostLifeThisLevel = false;
 
+        private bool enteringHighscoreInitials = false;
+        private int highscoreInitialToChangePosition = 0;
+        private int highscoreToChangeIndex = 0;
+
         internal PacSharpGame(IGameUI owner, Control gameArea)
             : base(owner, gameArea)
         {
@@ -87,14 +93,19 @@ namespace PacSharpApp
         {
             try
             {
-                var serializer = new XmlSerializer(typeof(Highscores));
-                using (var highscoreFile = new StreamReader(@".\Highscores"))
+                var serializer = new BinaryFormatter();
+                using (var highscoreFile = File.OpenRead(@".\Highscores"))
                     currentHighscores = serializer.Deserialize(highscoreFile) as Highscores;
+            }
+            catch (SerializationException)
+            {
+                currentHighscores = new Highscores();
             }
             catch (IOException)
             {
                 currentHighscores = new Highscores();
             }
+            DisplayedHighScore = currentHighscores.Highscore;
         }
 
         private int DisplayedHighScore
@@ -124,6 +135,12 @@ namespace PacSharpApp
                             StartGame();
                             break;
                         }
+                        if (InputHandler.HeldKeys.Contains(Keys.H) && InputHandler.HeldKeys.Contains(Keys.ControlKey))
+                        {
+                            State = GameState.Highscores;
+                            ShowHighscoreScreen();
+                            break;
+                        }
                     }
                     break;
                 case GameState.Playing:
@@ -134,9 +151,49 @@ namespace PacSharpApp
                             player?.HandleInput(InputHandler);
                     }
                     break;
+                case GameState.Highscores:
+                    {
+                        if (enteringHighscoreInitials)
+                        {
+                            foreach (var key in InputHandler.PressedKeys)
+                            {
+                                if ((int)key >= (int)Keys.A && (int)key <= (int)Keys.Z)
+                                {
+                                    char[] initials = currentHighscores.ToDisplay[highscoreToChangeIndex].initials.ToCharArray();
+                                    initials[highscoreInitialToChangePosition] = (char)key;
+                                    string newInitials = new string(initials);
+                                    ++highscoreInitialToChangePosition;
+                                    highscoreInitialToChangePosition %= 3;
+                                    currentHighscores.Update(highscoreToChangeIndex, newInitials);
+                                    for (int t = 0; t < 3; ++t)
+                                        Tiles.ClearTile(4 + highscoreToChangeIndex * 2, 20 + t);
+                                    GraphicsHandler.CommitTiles(Tiles);
+                                    Tiles.DrawText(4 + highscoreToChangeIndex * 2, 20, newInitials);
+                                    break;
+                                }
+                            }
+                            if (InputHandler.PressedKeys.Contains(Keys.Enter))
+                            {
+                                enteringHighscoreInitials = false;
+                                SaveHighScores();
+                            }
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
+        }
+
+        private void SaveHighScores()
+        {
+            try
+            {
+                var serializer = new BinaryFormatter();
+                using (var highscoreFile = File.OpenWrite(@".\Highscores"))
+                    serializer.Serialize(highscoreFile, currentHighscores);
+            }
+            catch (IOException) { }
         }
 
         #region Update Logic
@@ -346,7 +403,7 @@ namespace PacSharpApp
 
         private void CheckIfTouchingGhosts(PacmanObject obj)
         {
-            if (victoryAlreadyReached || !obj.IsMoving)
+            if (victoryAlreadyReached || (!obj.IsMoving && !obj.IsWarping))
                 return;
             bool playerDied = false;
             foreach (var touchedGhost in ghosts.Where(ghost => ghost.TilePosition.Equals(obj.TilePosition)))
@@ -371,7 +428,17 @@ namespace PacSharpApp
                     }
                     else
                     {
-                        obj.BeginDeath(ShowHighscoreScreen);
+                        obj.BeginDeath(() =>
+                        {
+                            player = null;
+                            actionQueue.Add((HighscoreScreenDelay, () =>
+                            {
+                                State = GameState.Highscores;
+                                ShowHighscoreScreen();
+                                Score = 0;
+                            }
+                            ));
+                        });
                     }
 
                     playerDied = true;
@@ -749,10 +816,20 @@ namespace PacSharpApp
             {
                 AddTopScreenInfo();
             }
-            if (State == GameState.Highscores)
-            {
+        }
 
-            }
+        private PaletteID HighscoreEntryPalette(int i)
+        {
+            if (i % 5 == 0)
+                return PaletteID.Blinky;
+            else if (i % 5 == 1)
+                return PaletteID.Pinky;
+            else if (i % 5 == 2)
+                return PaletteID.Inky;
+            else if (i % 5 == 3)
+                return PaletteID.Clyde;
+            else
+                return PaletteID.Pacman;
         }
 
         private protected override void ResetImpl()
@@ -784,7 +861,24 @@ namespace PacSharpApp
             GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
         }
 
-        private void ShowHighscoreScreen() => actionQueue.Add((HighscoreScreenDelay, () => { State = GameState.Highscores; }));
+        private void ShowHighscoreScreen()
+        {
+            if (Score > currentHighscores.Minimum)
+            {
+                highscoreToChangeIndex = currentHighscores.AddScore(Score, "---");
+                enteringHighscoreInitials = true;
+                highscoreInitialToChangePosition = 0;
+            }
+            Tiles.Clear();
+            GraphicsHandler.CommitTiles(Tiles);
+            Tiles.DrawText(1, 9, "HIGHSCORES", PaletteID.Pacman);
+            for (int i = 0; i < currentHighscores.ToDisplay.Count; ++i)
+            {
+                Tiles.DrawInteger(4 + 2 * i, 3, i + 1, HighscoreEntryPalette(i));
+                Tiles.DrawInteger(4 + 2 * i, 17, currentHighscores.ToDisplay[i].score, HighscoreEntryPalette(i));
+                Tiles.DrawText(4 + 2 * i, 23, currentHighscores.ToDisplay[i].initials, HighscoreEntryPalette(i));
+            }
+        }
         #endregion
 
         #region Tile Updates
@@ -807,7 +901,8 @@ namespace PacSharpApp
             base.UpdateScore(value);
             if (value > DisplayedHighScore)
                 DisplayedHighScore = value;
-            Tiles.DrawInteger(1, 6, Score);
+            if (State != GameState.Cutscene && State != GameState.Highscores)
+                Tiles.DrawInteger(1, 6, Score);
         }
 
         private void UpdateHighScore()
@@ -865,9 +960,9 @@ namespace PacSharpApp
             levelNumber = 0;
             State = GameState.Playing;
             Score = 0;
-            DisplayedHighScore = 0;
             LivesRemaining = StartingLives;
             StartNextLevel();
+            UpdateHighScore();
         }
 
         private void DelayStart()
