@@ -301,6 +301,7 @@ namespace PacSharpApp
 
         private void HandleEatingFruit(PacmanObject eater)
         {
+            fruitDespawnTimer = TimeSpan.MaxValue;
             Score += fruit.Score;
             Despawn(fruit);
             Vector2 fruitPos = fruit.Position;
@@ -412,6 +413,7 @@ namespace PacSharpApp
                 GraphicsHandler.Show(player);
             foreach (var ghost in ghostObjectsEaten)
                 GraphicsHandler.Show(ghost);
+            ghostObjectsEaten.Clear();
             EnableMovement();
             foreach (var ghost in ghosts.Where(ghost => ghost.IsFrightened))
                 ghost.PauseTimers = false;

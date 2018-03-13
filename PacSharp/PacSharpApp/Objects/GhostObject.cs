@@ -195,7 +195,7 @@ namespace PacSharpApp.Objects
         internal virtual void PerformTurn(Direction dir)
         {
             if (Direction != dir)
-                Position = Position.RoundedToNearest(4);
+                Position = Position.RoundedToNearest(2);
             Direction = dir;
             Velocity = DirectionVelocity(dir);
             if (!IsFrightened && sprite.CurrentAnimationSetID != Direction.ToGhostSpriteAnimationID().ToString())

@@ -113,8 +113,7 @@ namespace PacSharpApp.Objects
         internal bool CanTurnTo(IReadOnlyCollection<RectangleF> walls, Vector2 directionVelocity)
         {
             Vector2 temp = Position;
-            Position.Round();
-            Position += directionVelocity;
+            Position = Position.RoundedToNearest(2) + directionVelocity;
             bool canTurn = !walls.Any(wall => Bounds.IntersectsWith(wall));
             Position = temp;
             return canTurn;

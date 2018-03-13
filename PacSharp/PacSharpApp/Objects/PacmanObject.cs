@@ -121,8 +121,8 @@ namespace PacSharpApp.Objects
             Velocity = DirectionVelocity(newDirection.Value);
             if (sprite.Orientation != newDirection)
                 sprite.Orientation = newDirection.Value;
-            // Round position to nearest pixel to help with collision
-            Position.Round();
+            // Round position to nearest 2 pixels to help with collision
+            Position = Position.RoundedToNearest(2);
         }
 
         internal Vector2 DirectionVelocity(Direction newDirection)
