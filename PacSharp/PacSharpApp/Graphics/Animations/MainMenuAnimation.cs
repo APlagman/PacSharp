@@ -40,6 +40,11 @@ namespace PacSharpApp.Graphics.Animation
                 case 0:
                     graphicsHandler.PreventAnimatedSpriteUpdates = true;
                     tiles.DrawText(4, 7, CharacterNicknameString);
+                    tiles.DrawText(27, 5, "CTRL-H HIGHSCORES");
+                    tiles.DrawText(28, 5, "CTRL-R RESET");
+                    tiles.DrawText(29, 5, "WASD   MOVE");
+                    tiles.DrawText(30, 5, "P      PAUSE");
+                    tiles.DrawText(31, 5, "ENTER  START");
                     break;
                 case 1:
                     UntilNextFrame = 1000;

@@ -211,5 +211,73 @@ namespace PacSharpApp.Graphics
                 for (int col = start.col; col <= end.col; ++col)
                     SetTile(row, col, graphics, palette);
         }
+
+        internal void DrawFruit(int upperLeftRow, int UpperLeftCol, GraphicsID graphicsID)
+        {
+            Tile[,] fruitTiles = new Tile[2, 2];
+            switch (graphicsID)
+            {
+                case GraphicsID.SpriteCherry:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileCherryTopLeft, PaletteID.Cherry);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileCherryTopRight, PaletteID.Cherry);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileCherryBottomLeft, PaletteID.Cherry);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileCherryBottomRight, PaletteID.Cherry);
+                        break;
+                    }
+                case GraphicsID.SpriteStrawberry:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileStrawberryTopLeft, PaletteID.Strawberry);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileStrawberryTopRight, PaletteID.Strawberry);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileStrawberryBottomLeft, PaletteID.Strawberry);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileStrawberryBottomRight, PaletteID.Strawberry);
+                        break;
+                    }
+                case GraphicsID.SpriteOrange:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileOrangeTopLeft, PaletteID.Orange);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileOrangeTopRight, PaletteID.Orange);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileOrangeBottomLeft, PaletteID.Orange);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileOrangeBottomRight, PaletteID.Orange);
+                        break;
+                    }
+                case GraphicsID.SpriteMelon:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileMelonTopLeft, PaletteID.Melon);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileMelonTopRight, PaletteID.Melon);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileMelonBottomLeft, PaletteID.Melon);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileMelonBottomRight, PaletteID.Melon);
+                        break;
+                    }
+                case GraphicsID.SpriteKey:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileKeyTopLeft, PaletteID.Key);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileKeyTopRight, PaletteID.Key);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileKeyBottomLeft, PaletteID.Key);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileKeyBottomRight, PaletteID.Key);
+                        break;
+                    }
+                case GraphicsID.SpriteGalaxian:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileGalaxianTopLeft, PaletteID.Galaxian);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileGalaxianTopRight, PaletteID.Galaxian);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileGalaxianBottomLeft, PaletteID.Galaxian);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileGalaxianBottomRight, PaletteID.Galaxian);
+                        break;
+                    }
+                case GraphicsID.SpriteBell:
+                    {
+                        fruitTiles[0, 0] = new Tile(GraphicsID.TileBellTopLeft, PaletteID.Bell);
+                        fruitTiles[0, 1] = new Tile(GraphicsID.TileBellTopRight, PaletteID.Bell);
+                        fruitTiles[1, 0] = new Tile(GraphicsID.TileBellBottomLeft, PaletteID.Bell);
+                        fruitTiles[1, 1] = new Tile(GraphicsID.TileBellBottomRight, PaletteID.Bell);
+                        break;
+                    }
+            }
+            tiles[upperLeftRow, UpperLeftCol] = fruitTiles[0, 0];
+            tiles[upperLeftRow, UpperLeftCol + 1] = fruitTiles[0, 1];
+            tiles[upperLeftRow + 1, UpperLeftCol] = fruitTiles[1, 0];
+            tiles[upperLeftRow + 1, UpperLeftCol + 1] = fruitTiles[1, 1];
+        }
     }
 }

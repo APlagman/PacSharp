@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 using PacSharpApp.AI;
 using PacSharpApp.Graphics;
 using PacSharpApp.Graphics.Animation;
@@ -467,7 +466,7 @@ namespace PacSharpApp
             DisableMovement();
             ++ghostsEaten;
 
-            pausePlayerOnEatingGhostTimer = EatFruitDisplayScoreDuration;
+            pausePlayerOnEatingGhostTimer = EatGhostPauseDuration;
             ghostObjectsEaten.Add(eaten);
             foreach (var ghost in ghosts.Where(ghost => ghost.IsFrightened))
                 ghost.PauseTimers = true;
@@ -553,7 +552,9 @@ namespace PacSharpApp
             fruitDespawnTimer = TimeSpan.FromSeconds(new Random().NextDouble() + MinimumFruitAppearanceDurationInSeconds);
         }
 
-        private GraphicsID GetFruitFromLevelNumber()
+        private GraphicsID GetFruitFromLevelNumber() => GetFruitFromLevelNumber(levelNumber);
+
+        private static GraphicsID GetFruitFromLevelNumber(int levelNumber)
         {
             if (levelNumber == 0)
                 return GraphicsID.SpriteCherry;
@@ -696,6 +697,19 @@ namespace PacSharpApp
             fruitDespawnTimer = TimeSpan.MaxValue;
             pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
             ghostObjectsEaten.Clear();
+            DrawFruits();
+        }
+
+        private void DrawFruits()
+        {
+            int toDraw = Math.Min(6, levelNumber + 1);
+            int temp = levelNumber - (toDraw - 1);
+            while (toDraw > 0)
+            {
+                Tiles.DrawFruit(34, 26 - (toDraw - 1) * 2, GetFruitFromLevelNumber(temp));
+                ++temp;
+                --toDraw;
+            }
         }
 
         private void DelayRespawn()
@@ -857,7 +871,7 @@ namespace PacSharpApp
             {
                 Position = Vector2FromTilePosition(30, 19)
             };
-            GraphicsHandler.RotateFlip(GameObjects["PacMan"], RotateFlipType.RotateNoneFlipX);
+            (GameObjects["PacMan"] as PacmanObject).PerformTurn(Direction.Left);
             GameObjects["PacMan"].Behavior = new MenuPacmanAIBehavior(GameObjects);
         }
 
