@@ -27,11 +27,13 @@ namespace PacSharpApp
         {
             GraphicsHandler = new GraphicsHandler(owner, gameArea);
             InputHandler = new InputHandler();
+            SoundHandler = new SoundHandler();
         }
 
         private protected TileCollection Tiles { get; } = new TileCollection(28, 36);
         protected internal InputHandler InputHandler { get; private set; }
         private protected GraphicsHandler GraphicsHandler { get; private set; }
+        private protected SoundHandler SoundHandler { get; private set; }
         private protected IDictionary<string, GameObject> GameObjects { get; private set; } = new Dictionary<string, GameObject>();
         private protected Animation Animation { get; set; }
         private protected virtual int TargetFPS { get; } = 60;
