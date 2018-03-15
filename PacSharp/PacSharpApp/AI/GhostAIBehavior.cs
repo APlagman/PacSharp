@@ -178,6 +178,7 @@ namespace PacSharpApp.AI
         private bool EnsureNotMovingThroughWalls()
         {
             return !owner.IsHome
+                && !owner.IsWarping
                 && !(owner.IsRespawning
                     && owner.Position.RoundedToNearest(1).X == level.GhostHouseEntrance.X
                     && owner.Position.RoundedToNearest(1).Y <= (level.GhostRespawnTile.Y + 0.5) * GraphicsConstants.TileWidth
