@@ -225,10 +225,13 @@ namespace PacSharpApp
                     if (VictoryConditionReached && !victoryAlreadyReached)
                     {
                         GraphicsHandler.PreventAnimatedSpriteUpdates = true;
+                        player.PreventMovement = true;
+                        foreach (var ghost in ghosts)
+                            ghost.PreventMovement = true;
                         victoryAlreadyReached = true;
                         ++levelNumber;
                         StopSirens();
-                        actionQueue.Add((VictoryPauseDuration, StartNextLevel));
+                        actionQueue.Add((VictoryPauseDuration, () => StartNextLevel(TimeSpan.MaxValue)));
                     }
                     if (ghostObjectsEaten.Count == 0)
                     {
@@ -700,7 +703,7 @@ namespace PacSharpApp
             }
         }
 
-        private void StartNextLevel()
+        private void StartNextLevel(TimeSpan extraDelay)
         {
             pelletTimer = TimeSpan.MaxValue;
             ghostModeTimer = TimeSpan.MaxValue;
@@ -730,7 +733,7 @@ namespace PacSharpApp
 
             InitLevel();
             player.PerformTurn(Direction.Right);
-            DelayStart();
+            DelayStart(extraDelay);
 
             pelletTimer = PelletTimerInterval;
             DrawFruits();
@@ -1005,20 +1008,21 @@ namespace PacSharpApp
             Score = 0;
             SoundHandler.Disabled = true;
             LivesRemaining = StartingLives;
-            actionQueue.Add((TimeSpan.FromSeconds(1.3), () =>
-            {
-                StartNextLevel();
-            }
-            ));
+            StartNextLevel(TimeSpan.FromSeconds(1.3));
             UpdateHighScore();
             SoundHandler.Disabled = false;
             SoundHandler.Play("Content/Sound/intro.wav", false);
         }
 
-        private void DelayStart()
+        private void DelayStart() => DelayStart(TimeSpan.MaxValue);
+
+        private void DelayStart(TimeSpan extraDelay)
         {
             Tiles.DrawText(20, 11, ReadyText, PaletteID.Pacman);
-            actionQueue.Add((LevelStartDelay, EnableLevelPlay));
+            TimeSpan delay = LevelStartDelay;
+            if (extraDelay != TimeSpan.MaxValue)
+                delay += extraDelay;
+            actionQueue.Add((delay, EnableLevelPlay));
         }
 
         private void EnableLevelPlay()
