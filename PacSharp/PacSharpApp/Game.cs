@@ -11,7 +11,7 @@ using PacSharpApp.Utils;
 /// </summary>
 namespace PacSharpApp
 {
-    abstract class Game
+    abstract class Game : IDisposable
     {
         internal const int UpMultiplier = -1;
         internal const int DownMultiplier = 1;
@@ -203,6 +203,11 @@ namespace PacSharpApp
         internal static Vector2 Vector2FromTilePosition(double x, double y)
         {
             return new Vector2(x * GraphicsConstants.TileWidth, y * GraphicsConstants.TileWidth);
+        }
+
+        public void Dispose()
+        {
+            SoundHandler.Dispose();
         }
     }
 }

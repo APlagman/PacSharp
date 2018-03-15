@@ -33,6 +33,8 @@ namespace PacSharpApp.AI
 
         internal void ChangeDirection()
         {
+            if (owner.IsHome)
+                System.Diagnostics.Debug.WriteLine("Forced to change direction in home.");
             Direction chosen;
             var availableDirections =
                 Enum.GetValues(typeof(Direction)).Cast<Direction>()

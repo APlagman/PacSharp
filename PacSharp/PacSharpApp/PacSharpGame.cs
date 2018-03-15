@@ -76,23 +76,23 @@ namespace PacSharpApp
         private List<(TimeSpan delay, Action action)> actionQueue = new List<(TimeSpan, Action)>();
 
         private Maze level;
-        private ICollection<PelletObject> pellets;
-        private ICollection<PowerPelletObject> powerPellets;
+        private ICollection<PelletObject> pellets = new List<PelletObject>();
+        private ICollection<PowerPelletObject> powerPellets = new List<PowerPelletObject>();
         private ICollection<GameObject> lives = new List<GameObject>();
-        private ISet<GhostObject> ghosts;
+        private ICollection<GhostObject> ghosts = new List<GhostObject>();
         private PacmanObject player;
         private IReadOnlyCollection<RectangleF> walls;
         private FruitObject fruit;
 
-        private TimeSpan ghostModeTimer;
-        private int ghostPhase;
-        private TimeSpan fruitDespawnTimer;
+        private TimeSpan ghostModeTimer = TimeSpan.MaxValue;
+        private int ghostphase;
+        private TimeSpan fruitDespawnTimer = TimeSpan.MaxValue;
         private GameObject ghostScoreObj;
-        private TimeSpan pausePlayerOnEatingGhostTimer;
+        private TimeSpan pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
         private ICollection<GameObject> ghostObjectsEaten = new List<GameObject>();
 
         private bool victoryAlreadyReached = false;
-        private TimeSpan pelletTimer = TimeSpan.MinValue;
+        private TimeSpan pelletTimer = TimeSpan.MaxValue;
         private bool playerHasLostLifeThisLevel = false;
 
         private bool enteringHighscoreInitials = false;
@@ -113,13 +113,17 @@ namespace PacSharpApp
             set { displayedHighScore = value; UpdateHighScore(); }
         }
         private protected override bool PreventUpdate => Paused;
-        private bool VictoryConditionReached => pellets.Count == 0 && powerPellets.Count == 0;
+        private bool VictoryConditionReached => Score > 0 && pellets.Count == 0 && powerPellets.Count == 0;
         private int GhostScore => BaseGhostScore << ghostsEaten;
         private protected override bool UseFixedTimeStepForUpdates => true;
         private protected override bool UseFixedTimeStepForAnimations => true;
         private bool GhostsShouldTurnBlue => levelNumber < LevelNumberToStopGhostsTurningBlue;
         private GhostObject GhostToRelease => ghosts?.Where(ghost => ghost.IsHome).OrderBy(ghost => (ghost.Behavior as GhostAIBehavior).ReleasePriority).FirstOrDefault();
         private TimeSpan PelletTimerInterval => (levelNumber >= 4 ? TimeSpan.FromSeconds(4) : TimeSpan.FromSeconds(3));
+        private int GhostPhase
+        {
+            get => ghostphase; set { ghostphase = value;  PlaySirens(); }
+        }
         #endregion
 
         #region Input
@@ -223,6 +227,7 @@ namespace PacSharpApp
                         GraphicsHandler.PreventAnimatedSpriteUpdates = true;
                         victoryAlreadyReached = true;
                         ++levelNumber;
+                        StopSirens();
                         actionQueue.Add((VictoryPauseDuration, StartNextLevel));
                     }
                     if (ghostObjectsEaten.Count == 0)
@@ -231,11 +236,29 @@ namespace PacSharpApp
                         UpdatePelletTimer(elapsedTime);
                         UpdateFruitTimer(elapsedTime);
                     }
+                    UpdateSounds();
                     UpdateGhostEatenPauseTimer(elapsedTime);
                     CheckCruiseElroyState();
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void UpdateSounds()
+        {
+            int frightenedCount = ghosts.Count(ghost => ghost.IsFrightened);
+            if (frightenedCount == 0)
+            {
+                SoundHandler.Stop("Content/Sound/large pellet loop.wav");
+                PlaySirens();
+            }
+
+            if (ghosts.Count(ghost => ghost.IsRespawning) == 0)
+            {
+                SoundHandler.Stop("Content/Sound/ghost eat 2.wav");
+                if (frightenedCount > 0)
+                    SoundHandler.Play("Content/Sound/large pellet loop.wav", true);
             }
         }
 
@@ -245,7 +268,7 @@ namespace PacSharpApp
                 return;
             foreach (var ghost in ghosts)
             {
-                if (ghost.Behavior is BlinkyAIBehavior && (ghosts.Where(g => g.IsHome).Count() == 0 || playerHasLostLifeThisLevel == false))
+                if (ghost.Behavior is BlinkyAIBehavior && (ghosts.Count(g => g.IsHome) == 0 || playerHasLostLifeThisLevel == false))
                     ghost.CruiseElroyMode = (pellets.Count <= CruiseElroyThreshold2) ? 2 : 1;
             }
         }
@@ -293,13 +316,13 @@ namespace PacSharpApp
         {
             if (ghostModeTimer == TimeSpan.MaxValue)
                 return;
-            if (ghostPhase < 7 && ghostModeTimer <= elapsedTime)
+            if (GhostPhase < 7 && ghostModeTimer <= elapsedTime)
             {
-                ++ghostPhase;
+                ++GhostPhase;
                 ghostModeTimer = GhostModePhaseDuration();
                 foreach (var ghost in ghosts)
                 {
-                    ghost.ShouldScatter = (ghostPhase % 2 == 0);
+                    ghost.ShouldScatter = (GhostPhase % 2 == 0);
                 }
             }
             else
@@ -372,7 +395,7 @@ namespace PacSharpApp
             fruit.DrawPoints(Tiles, fruitRow, fruitLeftCol);
             actionQueue.Add((EatFruitDisplayScoreDuration, () => RemoveDisplayedFruitScore(fruitLeftCol, fruitRow)));
             fruit = null;
-            SoundHandler.Play(Resources.fruit);
+            SoundHandler.Play("Content/Sound/fruit.wav", false);
         }
 
         private void CheckWarping()
@@ -454,7 +477,8 @@ namespace PacSharpApp
             ghostObjectsEaten.Clear();
             Despawn(fruit);
             fruit = null;
-            SoundHandler.Play(Resources.death_1);
+            StopSirens();
+            SoundHandler.Play("Content/Sound/death 1.wav", false);
         }
 
         private void HandleGhostEaten(PacmanObject eater, GhostObject eaten)
@@ -474,7 +498,8 @@ namespace PacSharpApp
             ghostObjectsEaten.Add(eaten);
             foreach (var ghost in ghosts.Where(ghost => ghost.IsFrightened))
                 ghost.PauseTimers = true;
-            SoundHandler.Play(Resources.ghost_eat_7);
+            SoundHandler.Play("Content/Sound/ghost eat 7.wav", false);
+            SoundHandler.Stop("Content/Sound/large pellet loop.wav");
         }
 
         private void AfterGhostEatenPause()
@@ -488,6 +513,8 @@ namespace PacSharpApp
             EnableMovement();
             foreach (var ghost in ghosts.Where(ghost => ghost.IsFrightened))
                 ghost.PauseTimers = false;
+            pausePlayerOnEatingGhostTimer = TimeSpan.MaxValue;
+            SoundHandler.Play("Content/Sound/ghost eat 2.wav", true);
         }
 
         private void CheckIfEatingPellets(PacmanObject obj)
@@ -509,7 +536,20 @@ namespace PacSharpApp
                 powerPellets.Remove(pellet);
             }
             if (eaten.Count > 0)
+            {
                 obj.FramesToDelayMotion = PowerPelletMovementDelayFrames;
+                SoundHandler.Play("Content/Sound/munch A+B.wav", false);
+                if (ghosts.Count(ghost => ghost.IsRespawning) == 0)
+                    SoundHandler.Play("Content/Sound/large pellet loop.wav", true);
+                StopSirens();
+            }
+        }
+
+        private void StopSirens()
+        {
+            SoundHandler.Stop("Content/Sound/siren fast 2.wav");
+            SoundHandler.Stop("Content/Sound/siren slow 3.wav");
+            SoundHandler.Stop("Content/Sound/siren medium 3.wav");
         }
 
         private void HandleEatingNormalPellets(PacmanObject obj)
@@ -538,6 +578,7 @@ namespace PacSharpApp
                     UpdateGlobalPelletCounter();
                 pelletTimer = PelletTimerInterval;
                 obj.FramesToDelayMotion = PelletMovementDelayFrames;
+                SoundHandler.Play("Content/Sound/munch A+B.wav", false);
             }
         }
 
@@ -685,7 +726,7 @@ namespace PacSharpApp
             victoryAlreadyReached = false;
             globalPelletCounter = 0;
             globalPelletCounterEnabled = false;
-            GraphicsHandler.PreventAnimatedSpriteUpdates = false;
+            GraphicsHandler.PreventAnimatedSpriteUpdates = true;
 
             InitLevel();
             player.PerformTurn(Direction.Right);
@@ -727,7 +768,7 @@ namespace PacSharpApp
 
         private void RespawnPlayer()
         {
-            ghostPhase = 0;
+            GhostPhase = 0;
 
             SpawnPlayer(level);
             SpawnGhosts(level);
@@ -807,27 +848,51 @@ namespace PacSharpApp
         {
             if (levelNumber < 2)
             {
-                if (ghostPhase == 0 || ghostPhase == 2)
+                if (GhostPhase == 0 || GhostPhase == 2)
                     return TimeSpan.FromSeconds(7);
-                else if (ghostPhase == 4 || ghostPhase == 6)
+                else if (GhostPhase == 4 || GhostPhase == 6)
                     return TimeSpan.FromSeconds(5);
                 else
                     return TimeSpan.FromSeconds(20);
             }
             else
             {
-                if (ghostPhase == 0 || ghostPhase == 2)
+                if (GhostPhase == 0 || GhostPhase == 2)
                     return TimeSpan.FromSeconds((levelNumber < 5) ? 7 : 5);
-                else if (ghostPhase == 1 || ghostPhase == 3)
+                else if (GhostPhase == 1 || GhostPhase == 3)
                     return TimeSpan.FromSeconds(20);
-                else if (ghostPhase == 4)
+                else if (GhostPhase == 4)
                     return TimeSpan.FromSeconds(5);
-                else if (ghostPhase == 5)
+                else if (GhostPhase == 5)
                     return TimeSpan.FromSeconds((levelNumber < 5) ? 1033 : 1037);
                 else
                     return TimeSpan.FromSeconds(1.0d / 60);
             }
             throw new Exception("Unhandled ghost mode / level state.");
+        }
+
+        private void PlaySirens()
+        {
+            if (victoryAlreadyReached || player == null || player.PreventMovement == true || (!player.IsMoving || player.IsWarping) && ghosts.Count(ghost => ghost.IsFrightened) > 0)
+                return;
+            if (GhostPhase < 2)
+            {
+                SoundHandler.Stop("Content/Sound/siren fast 2.wav");
+                SoundHandler.Stop("Content/Sound/siren medium 3.wav");
+                SoundHandler.Play("Content/Sound/siren slow 3.wav", true);
+            }
+            else if (GhostPhase < 4)
+            {
+                SoundHandler.Stop("Content/Sound/siren fast 2.wav");
+                SoundHandler.Stop("Content/Sound/siren slow 3.wav");
+                SoundHandler.Play("Content/Sound/siren medium 3.wav", true);
+            }
+            else
+            {
+                SoundHandler.Stop("Content/Sound/siren medium 3.wav");
+                SoundHandler.Stop("Content/Sound/siren slow 3.wav");
+                SoundHandler.Play("Content/Sound/siren fast 2.wav", true);
+            }
         }
         #endregion
 
@@ -835,6 +900,7 @@ namespace PacSharpApp
         private protected override void OnGameStateChanged()
         {
             base.OnGameStateChanged();
+            SoundHandler.Dispose();
             if (State == GameState.Menu)
             {
                 Score = 0;
@@ -853,10 +919,10 @@ namespace PacSharpApp
             State = GameState.Menu;
             Paused = false;
             fruit = null;
-            ghosts = null;
+            ghosts.Clear();
             player = null;
-            pellets = null;
-            powerPellets = null;
+            pellets.Clear();
+            powerPellets.Clear();
             actionQueue.Clear();
             walls = null;
         }
@@ -893,7 +959,11 @@ namespace PacSharpApp
         private protected override void UpdateScore(int value)
         {
             if (Score < OneUpThreshold && value >= OneUpThreshold)
+            {
                 ++LivesRemaining;
+                SoundHandler.Play("Content/Sound/extra man.wav", false);
+            }
+
             base.UpdateScore(value);
             if (value > DisplayedHighScore)
                 DisplayedHighScore = value;
@@ -919,7 +989,6 @@ namespace PacSharpApp
                 });
                 GraphicsHandler.SetStaticSprite(lives.Last(), GraphicsID.SpritePacmanMiddleRight, PaletteID.Pacman);
             }
-            SoundHandler.Play(Resources.extra_man);
         }
 
         private void RemoveDisplayedFruitScore(int fruitLeftCol, int fruitRow)
@@ -934,10 +1003,16 @@ namespace PacSharpApp
             levelNumber = 0;
             State = GameState.Playing;
             Score = 0;
+            SoundHandler.Disabled = true;
             LivesRemaining = StartingLives;
-            StartNextLevel();
+            actionQueue.Add((TimeSpan.FromSeconds(1.3), () =>
+            {
+                StartNextLevel();
+            }
+            ));
             UpdateHighScore();
-            SoundHandler.Play(Resources.intro);
+            SoundHandler.Disabled = false;
+            SoundHandler.Play("Content/Sound/intro.wav", false);
         }
 
         private void DelayStart()
@@ -957,7 +1032,7 @@ namespace PacSharpApp
             GraphicsHandler.PreventAnimatedSpriteUpdates = false;
             Tiles.DrawRange((20, 11), (20, 16), GraphicsID.TileEmpty, PaletteID.Empty);
             player.PerformTurn(Direction.Right);
-            ghostPhase = 0;
+            GhostPhase = 0;
             ghostModeTimer = GhostModePhaseDuration();
         }
         #endregion
@@ -1003,7 +1078,7 @@ namespace PacSharpApp
                     ExitingGhostHouse = (spawn.Key == GhostType.Blinky),
                     LevelNumber = levelNumber
                 }));
-            if (ghosts.Where(ghost => ghost.Behavior is BlinkyAIBehavior).Count() > 0)
+            if (ghosts.Count(ghost => ghost.Behavior is BlinkyAIBehavior) > 0)
                 foreach (var ghost in ghosts.Where(ghost => ghost.Behavior is InkyAIBehavior))
                     (ghost.Behavior as InkyAIBehavior).Reference = ghosts.Where(g => g.Behavior is BlinkyAIBehavior).FirstOrDefault();
         }
@@ -1089,7 +1164,7 @@ namespace PacSharpApp
                 enteringHighscoreInitials = true;
                 highscoreInitialToChangePosition = 0;
                 Tiles.DrawText(30, 5, "PRESS ENTER TO SAVE");
-                Tiles.DrawText(31, 5, "  CTRL+R TO RESET  ");
+                Tiles.DrawText(31, 5, "  CTRL-R TO RESET  ");
             }
             GraphicsHandler.CommitTiles(Tiles);
             Tiles.DrawText(1, 9, "HIGHSCORES", PaletteID.Pacman);

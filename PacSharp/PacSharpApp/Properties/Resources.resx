@@ -118,83 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="death_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\death 1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="death_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\death 2.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="death_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\death 3.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="extra_man" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\extra man.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="fruit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\fruit.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ghost_eat_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\ghost eat 1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ghost_eat_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\ghost eat 2.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ghost_eat_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\ghost eat 7.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="insert_coin" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\insert coin.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="intermission" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\intermission.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="intro" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\intro.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="large_pellet_blip" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\large pellet blip.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="large_pellet_loop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\large pellet loop.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="munch_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\munch A.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="munch_A_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\munch A+B.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="munch_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\munch B.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="OriginalMaze" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Content\Mazes\Original.tmx;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Palettes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Content\Palettes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="siren_fast_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren fast 1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_fast_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren fast 2.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_medium_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren medium 1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_medium_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren medium 2.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_medium_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren medium 3.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_slow_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren slow 1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_slow_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren slow 2.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="siren_slow_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Content\Sound\siren slow 3.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Sprites" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Content\Sprites.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

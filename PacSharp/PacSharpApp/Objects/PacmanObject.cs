@@ -67,7 +67,10 @@ namespace PacSharpApp.Objects
         private void OnStateChanged()
         {
             if (State is PacmanDyingState || State is PacmanRespawningState)
+            {
                 sprite.UpdateAnimationSet(PacmanSprite.AnimationID.Dying.ToString());
+                Velocity = Vector2.Zero;
+            }
             else if (State is PacmanMovingState)
                 sprite.UpdateAnimationSet(sprite.Orientation.ToPacmanSpriteAnimationID().ToString());
         }

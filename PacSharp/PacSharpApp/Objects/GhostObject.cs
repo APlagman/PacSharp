@@ -142,8 +142,10 @@ namespace PacSharpApp.Objects
         private void OnStateChanged(GhostState prevState)
         {
             Velocity = DirectionVelocity(Direction);
-            if ((prevState is GhostChaseState || prevState is GhostScatterState) && !IsWarping)
+            if ((prevState is GhostChaseState || prevState is GhostScatterState) && !IsWarping && !IsHome)
                 (Behavior as GhostAIBehavior).ChangeDirection();
+            if (IsHome && Behavior is BlinkyAIBehavior)
+                ExitingGhostHouse = true;
             if (State is GhostFrightenedState)
             {
                 IsFrightened = true;
